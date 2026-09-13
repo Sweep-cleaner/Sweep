@@ -1,0 +1,57 @@
+id = "sbt"
+name = "sbt"
+description = "Scala build caches (projects are kept)"
+
+[[var]]
+name = "boot"
+[[var.value]]
+value = "~/.sbt/boot"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$USERPROFILE\\.sbt\\boot"
+search = "literal"
+os = "windows"
+
+[[var]]
+name = "ivy"
+[[var.value]]
+value = "~/.ivy2/cache"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$USERPROFILE\\.ivy2\\cache"
+search = "literal"
+os = "windows"
+
+[[var]]
+name = "coursier"
+[[var.value]]
+value = "~/.cache/coursier"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$LOCALAPPDATA\\Coursier\\cache"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "boot"
+label = "Boot directory"
+description = "Delete downloaded Scala boot jars (re-downloaded on next build)"
+warning = "Next build re-downloads the Scala toolchain."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$boot$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$ivy$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$coursier$$"

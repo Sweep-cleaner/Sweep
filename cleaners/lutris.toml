@@ -1,0 +1,35 @@
+id = "lutris"
+name = "Lutris"
+description = "Açık kaynak oyun yöneticisi günlükleri ve önbelleği (kurulu oyunlara dokunulmaz)"
+os = "linux"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Çalıştırma ve kurulum günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.local/share/lutris/logs"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "İndirilen kapak/banner önbelleği (yeniden iner)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/lutris"
+
+[[option]]
+id = "runners"
+label = "Çalıştırıcılar"
+description = "İndirilen Wine/emu çalıştırıcıları (GB'larca yer kaplayabilir, Lutris gerektiğinde yeniden indirir)"
+warning = "Oyunlar çalıştırıcısız açılmaz; Lutris ilk çalıştırmada yeniden indirir (büyük indirme)."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.local/share/lutris/runners"

@@ -1,0 +1,34 @@
+id = "rustup"
+name = "Rustup"
+description = "Rustup toolchain manager: download cache and temporary files (installed toolchains are kept)"
+
+[[var]]
+name = "root"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.rustup"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.rustup'
+
+[[option]]
+id = "downloads"
+label = "Download cache"
+description = "Delete downloaded toolchain and component archives"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$root$$/downloads"
+
+[[option]]
+id = "tmp"
+label = "Temporary files"
+description = "Delete rustup's temporary staging directory"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$root$$/tmp"

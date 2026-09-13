@@ -1,0 +1,179 @@
+---
+const docCards = [
+  {
+    icon: '⚡',
+    title: 'Installation Guide',
+    description: 'Live AppImage, Windows Setup.exe and macOS downloads — plus the package-manager channels that are still coming soon.',
+    href: '/docs/installation',
+    badge: 'Guide'
+  },
+  {
+    icon: '💻',
+    title: 'CLI Reference',
+    description: 'Master all 30+ commands: preview, devscan, residue, leftovers, bigfiles, dupes, memopt, sysinfo, and undo.',
+    href: '/docs/cli',
+    badge: 'Reference'
+  },
+  {
+    icon: '🎨',
+    title: 'Qt6/QML GUI & Themes',
+    description: 'Explore the 13 screens and 11 built-in color schemes in the sweep-qml desktop shell.',
+    href: '/docs/gui',
+    badge: 'Desktop'
+  },
+  {
+    icon: '🧠',
+    title: 'Memory, Startup & Health',
+    description: 'Native memory optimization, startup-impact analysis, SMART health, network caches and the privacy shield.',
+    href: '/docs/system-tools',
+    badge: 'System'
+  },
+  {
+    icon: '💾',
+    title: 'Disk Intelligence',
+    description: 'bigfiles, dupes with --keep/--link, du, analyze, devscan and deepscan — read-only until you ask.',
+    href: '/docs/disk-intelligence',
+    badge: 'Analysis'
+  },
+  {
+    icon: '🔬',
+    title: 'Residue Engine',
+    description: 'Context-aware leftover scanning with confidence scores and a safe_to_delete flag.',
+    href: '/docs/residue',
+    badge: 'Engine'
+  },
+  {
+    icon: '⏱️',
+    title: 'Automation & Snapshots',
+    description: 'Cross-platform scheduling, disk-usage watch, filesystem snapshots and undoable history.',
+    href: '/docs/automation',
+    badge: 'Automation'
+  },
+  {
+    icon: '🛡️',
+    title: 'Safety Model',
+    description: 'Protected roots and keep lists, symlink and mount isolation, the external-definition trust boundary.',
+    href: '/docs/safety',
+    badge: 'Architecture'
+  },
+  {
+    icon: '⚙️',
+    title: 'Configuration Reference',
+    description: 'Full config.toml specification: keep lists, custom paths, journal budgets, and the config CLI.',
+    href: '/docs/configuration',
+    badge: 'Config'
+  },
+  {
+    icon: '🔧',
+    title: 'TOML Cleaner Authoring',
+    description: 'Learn how to write, test, and contribute custom TOML cleaner definitions.',
+    href: '/docs/cleaners',
+    badge: 'Specification'
+  }
+];
+
+const comparison = [
+  { capability: 'Package caches (apt/dnf/pacman)', bleach: 'yes', stacer: 'partial', sweeper: 'no', sweep: 'yes + size preview' },
+  { capability: 'Distributed as AppImage / Setup.exe', bleach: 'yes', stacer: 'partial', sweeper: 'no', sweep: 'yes (CLI + GUI bundled)' },
+  { capability: 'Old kernels / orphan packages', bleach: 'partial', stacer: 'no', sweeper: 'no', sweep: 'yes (native)' },
+  { capability: 'Journal / Snap / Flatpak / Docker', bleach: 'no', stacer: 'no', sweeper: 'no', sweep: 'yes (deep clean)' },
+  { capability: 'KDE / GNOME deep cleaning', bleach: 'shallow', stacer: 'no', sweeper: 'shallow', sweep: 'deep (Baloo, Tracker, Akonadi)' },
+  { capability: 'Residue / leftover hunter', bleach: 'no', stacer: 'no', sweeper: 'no', sweep: 'yes + confidence scores' },
+  { capability: 'Dev cruft / duplicates / big files', bleach: 'no', stacer: 'partial', sweeper: 'no', sweep: 'yes (devscan, dupes, bigfiles)' },
+  { capability: 'Memory / startup / health tools', bleach: 'no', stacer: 'partial', sweeper: 'no', sweep: 'yes (memopt, startup, sysinfo)' },
+  { capability: 'Preview + confirm + backup + undo', bleach: 'partial', stacer: 'partial', sweeper: 'basic', sweep: 'yes + instant undo' },
+  { capability: 'Scheduled cleanup', bleach: 'no', stacer: 'partial', sweeper: 'no', sweep: 'yes (systemd / Task Scheduler / launchd)' },
+  { capability: 'GUI', bleach: 'GTK', stacer: 'Electron', sweeper: 'Qt', sweep: 'Qt6/QML (sweep-qml)' },
+  { capability: 'Winapp2 community rules', bleach: 'yes', stacer: 'no', sweeper: 'no', sweep: 'yes (sweep hub)' }
+];
+---
+
+<section id="docs" class="section">
+  <div class="text-center mb-16">
+    <p class="section-kicker">// DEDICATED DOCUMENTATION</p>
+    <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+      Everything Documented. Fully Open.
+    </h2>
+    <div class="section-divider"></div>
+    <p class="text-text-muted text-base sm:text-lg max-w-2xl mx-auto">
+      Comprehensive guides, architecture papers, CLI references, and authoring specifications.
+    </p>
+  </div>
+
+  <!-- Documentation Portal Cards Grid -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20 max-w-6xl mx-auto">
+    {docCards.map(doc => (
+      <a
+        href={doc.href}
+        class="card group block relative overflow-hidden"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-3xl">{doc.icon}</span>
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan/10 border border-cyan/30 text-cyan">
+            {doc.badge}
+          </span>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2 group-hover:text-cyan transition-colors">
+          {doc.title}
+        </h3>
+        <p class="text-xs sm:text-sm text-text-muted leading-relaxed mb-4">
+          {doc.description}
+        </p>
+        <div class="flex items-center gap-1.5 text-xs font-mono text-cyan group-hover:underline">
+          <span>Read documentation</span>
+          <span class="group-hover:translate-x-1 transition-transform">→</span>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <!-- Documentation Portal Banner -->
+  <div class="max-w-4xl mx-auto mb-20 p-8 rounded-2xl bg-gradient-to-r from-bg-surface via-[#17192a] to-bg-surface border border-cyan/30 text-center relative overflow-hidden">
+    <div class="relative z-10">
+      <span class="text-xs font-mono uppercase tracking-widest text-rust font-semibold">Ready to dive deeper?</span>
+      <h3 class="text-2xl sm:text-3xl font-bold text-white mt-1 mb-3">
+        Visit the Dedicated Documentation Portal
+      </h3>
+      <p class="text-sm text-text-muted max-w-xl mx-auto mb-6">
+        Search through all CLI commands, examine safety rules, study custom TOML syntax, and inspect hardware test benchmarks.
+      </p>
+      <a href="/docs" class="btn-primary text-sm shadow-glow-rust">
+        <span>Browse All Documentation (/docs) →</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Comparison Matrix Table -->
+  <div class="max-w-5xl mx-auto">
+    <div class="text-center mb-8">
+      <h3 class="text-2xl sm:text-3xl font-bold text-white mb-2">How Sweep Compares</h3>
+      <p class="text-text-muted text-sm max-w-xl mx-auto">A side-by-side feature capability comparison against BleachBit, Stacer, and Sweeper.</p>
+    </div>
+
+    <div class="overflow-x-auto rounded-2xl border border-border/80 bg-[#141522] shadow-xl">
+      <table class="w-full border-collapse text-xs sm:text-sm">
+        <thead>
+          <tr class="bg-[#191b2c] border-b border-border/70 text-xs font-mono uppercase tracking-wider text-text-muted">
+            <th class="p-4 text-left font-semibold">Capability</th>
+            <th class="p-4 text-left font-semibold text-text-muted">BleachBit</th>
+            <th class="p-4 text-left font-semibold text-text-muted">Stacer</th>
+            <th class="p-4 text-left font-semibold text-text-muted">Sweeper</th>
+            <th class="p-4 text-left font-bold text-cyan">Sweep</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-border/50">
+          {comparison.map(row => (
+            <tr class="hover:bg-white/[0.02] transition-colors">
+              <td class="p-4 font-medium text-text-primary">{row.capability}</td>
+              <td class="p-4 text-text-muted">{row.bleach}</td>
+              <td class="p-4 text-text-muted">{row.stacer}</td>
+              <td class="p-4 text-text-muted">{row.sweeper}</td>
+              <td class="p-4 font-semibold text-cyan">{row.sweep}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-text-dim text-xs text-center mt-4 italic">Source: Verified across native implementations. For complete hardware benchmarks, see <a href="/docs/benchmarks" class="text-cyan hover:underline">/docs/benchmarks</a>.</p>
+  </div>
+</section>

@@ -1,0 +1,58 @@
+---
+const steps = [
+  { num: '01', title: 'Read the source', desc: 'Inspect the relevant module under src/ before changing a cleaner or provider. Understand the platform guards already in place.' },
+  { num: '02', title: 'Author a TOML definition', desc: 'Create a narrowly scoped disposable fixture tree. Add or update a native TOML under cleaners/ using a stable lowercase id.' },
+  { num: '03', title: 'Validate statically', desc: 'Run python verify_tomls.py from the sweep/ directory. It parses all 202 embedded TOMLs and cross-checks them against the built-in registry: schema, providers, dispatcher reachability, duplicates and dangling includes.' },
+  { num: '04', title: 'Know the trust boundary', desc: 'External definitions load untrusted: process and winreg actions are stripped unless --trust-external is passed. Keep it that way, and never weaken a protected-path or keep-list guard to make a cleaner work.' },
+  { num: '05', title: 'Preview + exercise failures', desc: 'Use --preview against disposable fixtures. Test missing paths, permissions, malformed input, and interrupted operations.' }
+];
+
+const safetyItems = [
+  'Protected-path guards and the user keep list',
+  'Symbolic-link / mount-point / reparse-point checks',
+  'External-definition trust filter (process / winreg)',
+  'Preview-first workflow + undo + backup log',
+  'XML internal-subset DTD rejection'
+];
+---
+<section id="contributing" class="section">
+  <p class="section-kicker">// Contributing</p>
+  <h2 class="text-4xl md:text-5xl font-bold text-center mb-4">Build It With Us.</h2>
+  <div class="section-divider"></div>
+  <p class="text-text-muted text-center text-lg mb-16 max-w-2xl mx-auto">PRs welcome. Every change that touches a deletion path gets a safety review, not just a style review.</p>
+
+  <div class="grid md:grid-cols-2 gap-6 mb-16 max-w-5xl mx-auto">
+    {steps.map(step => (
+      <div class="card">
+        <div class="flex items-start gap-5">
+          <span class="text-cyan font-mono text-3xl font-bold shrink-0 leading-none">{step.num}</span>
+          <div>
+            <h3 class="text-lg font-bold text-text-primary mb-2">{step.title}</h3>
+            <p class="text-text-muted text-sm leading-relaxed">{step.desc}</p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="max-w-4xl mx-auto bg-bg-surface border border-border rounded-xl p-8 md:p-10">
+    <h3 class="text-xl font-bold text-rust mb-5 flex items-center gap-3">
+      <span class="text-2xl">🛡️</span>
+      <span>Safety boundaries we don't weaken</span>
+    </h3>
+    <ul class="space-y-3 mb-6">
+      {safetyItems.map(item => (
+        <li class="flex items-start gap-3 text-text-muted">
+          <span class="text-cyan font-mono mt-0.5 shrink-0">▸</span>
+          <span class="leading-relaxed">{item}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="text-text-dim text-sm italic mb-6 leading-relaxed">Destructive examples are explicit and narrowly scoped. Real personal data is never used as a test fixture. Secure overwrite is best-effort and cannot guarantee recovery resistance on SSDs, snapshots, journals, or copy-on-write filesystems.</p>
+    <div class="flex flex-wrap gap-3">
+      <a href="https://github.com/Sweep-cleaner/Sweep/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="btn-secondary text-sm">📄 CONTRIBUTING.md</a>
+      <a href="https://github.com/Sweep-cleaner/Sweep/blob/main/.github/PULL_REQUEST_TEMPLATE.md" target="_blank" rel="noopener" class="btn-secondary text-sm">📝 PR Template</a>
+      <a href="https://github.com/Sweep-cleaner/Sweep/blob/main/SECURITY.md" target="_blank" rel="noopener" class="btn-secondary text-sm">🔒 Security Policy</a>
+    </div>
+  </div>
+</section>

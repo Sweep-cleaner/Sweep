@@ -1,0 +1,24 @@
+id = "yt_dlp"
+name = "yt-dlp"
+description = "yt-dlp: cached player scripts and extractor data (your downloads are kept)"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/yt-dlp"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\yt-dlp'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete yt-dlp's cached player scripts and extractor data (re-fetched on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

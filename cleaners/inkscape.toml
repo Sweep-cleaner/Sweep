@@ -1,0 +1,53 @@
+id = "inkscape"
+name = "Inkscape"
+description = "Inkscape vektör grafik düzenleyici önbelleği ve günlükleri"
+
+[[running]]
+type = "exe"
+value = "inkscape"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "inkscape.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Inkscape"
+os = "macos"
+
+[[var]]
+name = "inkscape_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/inkscape"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/org.inkscape.Inkscape"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\inkscape'
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Eklenti ve filtre önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$inkscape_data$$/cache"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Hata ve işlemlim günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$inkscape_data$$/logs"

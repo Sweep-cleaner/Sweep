@@ -1,0 +1,24 @@
+id = "sdkman"
+name = "SDKMAN!"
+description = "SDKMAN! JVM SDK manager: downloaded archives and temporary staging files"
+os = "unix"
+
+[[option]]
+id = "archives"
+label = "Downloaded archives"
+description = "Delete cached SDK archives (re-downloaded when installing a version)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.sdkman/archives"
+
+[[option]]
+id = "tmp"
+label = "Temporary files"
+description = "Delete SDKMAN!'s temporary staging directory"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.sdkman/tmp"

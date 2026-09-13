@@ -1,0 +1,32 @@
+name: Feature request
+description: New cleaner, command, or platform support
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options: [New cleaner, New command, GUI, Packaging, Documentation, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What do you want? Which directories / app, and why is it safe?
+      description: Explain why the target is regenerable and safe to delete.
+    validations:
+      required: true
+  - type: textarea
+    id: paths
+    attributes:
+      label: Candidate paths (optional)
+      description: Example paths or globs, with OS conditions if platform-specific.
+      render: shell
+    validations:
+      required: false
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I can submit a cleaner TOML + `preview` output for this

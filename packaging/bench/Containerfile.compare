@@ -1,0 +1,25 @@
+# Comparison bench: BleachBit vs Stacer vs Sweep on identical junk.
+#
+#   podman build -t sweep -f packaging/podman/Containerfile .   # once
+#   podman build -t sweep-bench -f packaging/bench/Containerfile.compare .
+#   podman run --rm --shm-size=256m sweep-bench /bench/compare.sh
+#
+# The sweep binary comes from the local `sweep` image built above.
+
+FROM docker.io/library/debian:bookworm-slim
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        bleachbit ca-certificates wget xvfb xauth time \
+    && rm -rf /var/lib/apt/lists
+# Stacer 1.1.0 (last release, 2019) — GUI-only Electron app, included so the
+# headless-launch limitation can be demonstrated empirically.
+RUN wget -O /tmp/stacer.deb \
+        https://github.com/oguzhaninan/Stacer/releases/download/v1.1.0/stacer_1.1.0_amd64.deb \
+    && apt-get update && apt-get install -y --no-install-recommends /tmp/stacer.deb \
+    && rm -f /tmp/stacer.deb \
+    && rm -rf /var/lib/apt/lists
+COPY --from=localhost/sweep:latest /usr/local/bin/sweep /usr/local/bin/sweep
+COPY packaging/bench/fixture.sh packaging/bench/compare.sh /bench/
+RUN chmod +x /bench/fixture.sh /bench/compare.sh
+WORKDIR /bench
+ENTRYPOINT ["/bin/bash"]

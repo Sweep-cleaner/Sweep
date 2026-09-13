@@ -1,0 +1,47 @@
+id = "safari"
+name = "Safari"
+description = "Apple Safari web browser: cache, history and cookies"
+os = "macos"
+
+[[running]]
+type = "exe"
+value = "Safari"
+os = "macos"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Safari page and favicon caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/Library/Caches/com.apple.Safari"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/Library/Safari/Favicon Cache"
+
+[[option]]
+id = "history"
+label = "History"
+description = "Delete browsing history and downloads"
+warning = "This clears your browsing history but not your bookmarks."
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "~/Library/Safari/History.db*"
+type = "f"
+
+[[option]]
+id = "cookies"
+label = "Cookies"
+description = "Delete cookies"
+warning = "Deleting cookies will log you out of websites."
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "~/Library/Cookies/Cookies.binarycookies"

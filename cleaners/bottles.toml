@@ -1,0 +1,30 @@
+id = "bottles"
+name = "Bottles"
+description = "Windows compatibility bottles: per-bottle Windows temp files (prefixes, games and saves are kept)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "bottles"
+os = "unix"
+
+[[var]]
+name = "bottle_temp"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/bottles/bottles/*/drive_c/windows/temp"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.var/app/com.usebottles.bottles/data/bottles/bottles/*/drive_c/windows/temp"
+
+[[option]]
+id = "windows_temp"
+label = "Bottle Windows temp"
+description = "Delete drive_c/windows/temp inside every bottle (native and Flatpak installs)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$bottle_temp$$"

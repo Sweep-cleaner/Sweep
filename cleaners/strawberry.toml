@@ -1,0 +1,50 @@
+id = "strawberry"
+name = "Strawberry"
+description = "Strawberry music player: cover-art and stream cache plus logs (library is kept)"
+
+[[running]]
+type = "exe"
+value = "strawberry"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/strawberry"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\strawberry'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/strawberry"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\strawberry'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Strawberry's cover-art and stream cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Strawberry log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

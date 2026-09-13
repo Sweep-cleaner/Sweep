@@ -1,0 +1,45 @@
+id = "qtcreator"
+name = "Qt Creator"
+description = "Qt Creator IDE: build, QML and help caches plus logs (projects are kept)"
+
+[[running]]
+type = "exe"
+value = "qtcreator"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/QtProject"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/QtProject"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\QtProject'
+
+[[option]]
+id = "cache"
+label = "Caches"
+description = "Delete Qt Creator's build, QML and help caches (rebuilt on demand)"
+warning = "The next start rebuilds the help index and is slower."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Qt Creator log files older than 14 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$cache$$/**/*.log*"
+max_age_days = 14
+type = "f"

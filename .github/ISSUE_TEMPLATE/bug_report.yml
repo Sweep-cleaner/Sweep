@@ -1,0 +1,49 @@
+name: Bug report
+description: Wrong deletion, crash, or incorrect report
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: Version (`sweep --version` or commit hash)
+      placeholder: 0.1.0 / abc1234
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [Linux, Windows, macOS, Other]
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command run (with preview output)
+      description: Prefer `preview` output. Never run `clean` on real data to reproduce a bug.
+      placeholder: sweep preview firefox.cache
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs actual behavior
+      placeholder: Expected X files listed; got …
+    validations:
+      required: true
+  - type: textarea
+    id: config
+    attributes:
+      label: Config / environment (optional)
+      description: Relevant config fields, `--force` / `--trust-external` use, helper versions.
+      render: shell
+    validations:
+      required: false
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: "I reproduced with `preview` first; no real data was harmed"
+          required: true

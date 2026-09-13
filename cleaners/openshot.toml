@@ -1,0 +1,39 @@
+id = "openshot"
+name = "OpenShot"
+description = "OpenShot video editor: preview cache and logs (your projects and media are kept)"
+
+[[running]]
+type = "exe"
+value = "openshot-qt"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.openshot_qt"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.openshot_qt'
+
+[[option]]
+id = "cache"
+label = "Preview cache"
+description = "Delete OpenShot's preview and thumbnail cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/cache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete OpenShot log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

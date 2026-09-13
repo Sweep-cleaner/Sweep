@@ -1,0 +1,22 @@
+id = "flatpak_builder"
+name = "Flatpak Builder"
+description = "flatpak-builder build cache (can be gigabytes; manifests are kept)"
+os = "linux"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/flatpak-builder"
+
+[[option]]
+id = "cache"
+label = "Build cache"
+description = "Delete the flatpak-builder cache (rebuilt on next build)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

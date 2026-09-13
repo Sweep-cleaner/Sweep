@@ -1,0 +1,33 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Hero from '../components/Hero.astro';
+import Features from '../components/Features.astro';
+import CommandPlayground from '../components/CommandPlayground.tsx';
+import ThemeShowcase from '../components/ThemeShowcase.tsx';
+import Benchmarks from '../components/Benchmarks.astro';
+import Installation from '../components/Installation.astro';
+import Docs from '../components/Docs.astro';
+import Contributing from '../components/Contributing.astro';
+import Support from '../components/Support.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Base
+  title="Sweep — Blazing-Fast. Memory-Safe. 202 Cleaners."
+  description="Sweep is a blazing-fast, memory-safe system and privacy cleaner written in Rust. 202 native cleaners, 6.0 MB single binary, a Qt6/QML desktop shell. Zero telemetry. Modern open-source alternative to BleachBit & CCleaner."
+>
+  <Nav />
+  <main>
+    <Hero />
+    <Features />
+    <CommandPlayground client:visible />
+    <ThemeShowcase client:visible />
+    <Benchmarks />
+    <Installation />
+    <Docs />
+    <Contributing />
+    <Support />
+  </main>
+  <Footer />
+</Base>

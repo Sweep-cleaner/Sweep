@@ -1,0 +1,37 @@
+id = "composer"
+name = "Composer"
+description = "PHP package cache (projects and auth tokens are kept)"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/composer"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$LOCALAPPDATA\\Composer"
+search = "literal"
+os = "windows"
+
+[[var]]
+name = "legacy"
+[[var.value]]
+value = "~/.composer/cache"
+search = "literal"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Package cache"
+description = "Delete downloaded package archives (re-downloaded on next install)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$legacy$$"
+os = "linux"

@@ -1,0 +1,44 @@
+id = "heroic"
+name = "Heroic Games Launcher"
+description = "GOG/Epic/Amazon oyun başlatıcısı günlükleri ve önbelleği"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "heroic"
+os = "unix"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Başlatıcı ve oyun günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.config/heroic/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.config/legendary/logs"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Arayüz ve mağaza önbelleği (oyun dosyalarına dokunulmaz)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/heroic"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.config/heroic/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.config/heroic/GPUCache"

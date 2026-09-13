@@ -1,0 +1,51 @@
+id = "audacity"
+name = "Audacity"
+description = "Audio editor temp files and logs (projects and macros are kept)"
+
+[[running]]
+type = "exe"
+value = "audacity"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "audacity.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Audacity"
+os = "macos"
+
+[[var]]
+name = "config"
+[[var.value]]
+value = "~/.config/audacity"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$APPDATA\\audacity"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "temp"
+label = "Session temp"
+description = "Delete abandoned session temp directories (only when Audacity is closed)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "/tmp/audacity-*"
+max_depth = 2
+os = "linux"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete the application log"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$config$$/log.txt"

@@ -1,0 +1,52 @@
+id = "terraform"
+name = "Terraform"
+description = "Terraform CLI: provider plugin cache and crash logs"
+
+[[var]]
+name = "plugin_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.terraform.d/plugin-cache"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\terraform.d\plugin-cache'
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.terraform.d"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\terraform.d'
+
+[[option]]
+id = "plugin_cache"
+label = "Plugin cache"
+description = "Delete cached provider plugins (re-downloaded by `terraform init`)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$plugin_cache$$"
+
+[[option]]
+id = "logs"
+label = "Crash logs"
+description = "Delete Terraform crash log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/crash.log"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/crash.*.log"
+type = "f"

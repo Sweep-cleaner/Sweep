@@ -1,0 +1,37 @@
+id = "vim"
+name = "Vim"
+description = "Editor history and backups (config and plugins are kept)"
+os = "unix"
+
+[[option]]
+id = "history"
+label = "History files"
+description = "Delete command history and netrw history"
+warning = "Command-line history is lost."
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "~/.viminfo"
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "~/.vim/.netrwhist"
+os = "unix"
+
+[[option]]
+id = "backups"
+label = "Backup files"
+description = "Delete Vim backup files older than 30 days"
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "~/.vim/backup/*"
+max_age_days = 30
+type = "f"
+os = "unix"

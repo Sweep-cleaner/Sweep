@@ -1,0 +1,32 @@
+id = "keepassxc"
+name = "KeePassXC"
+description = "KeePassXC: browser-integration and icon caches (your password databases are never touched)"
+
+[[running]]
+type = "exe"
+value = "keepassxc"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/keepassxc"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/org.keepassxc.KeePassXC"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\KeePassXC'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the browser-integration and icon cache (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

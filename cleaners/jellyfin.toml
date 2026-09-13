@@ -1,0 +1,55 @@
+id = "jellyfin"
+name = "Jellyfin"
+description = "Jellyfin Media Server: transcode cache, logs and image cache (your media and library are kept)"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/jellyfin"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/jellyfin"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\jellyfin'
+
+[[option]]
+id = "transcodes"
+label = "Transcode cache"
+description = "Delete Jellyfin's temporary transcode output (recreated per stream)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/cache/transcodes"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/transcodes"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Jellyfin log files older than 14 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/log/*.log*"
+max_age_days = 14
+type = "f"
+
+[[option]]
+id = "image_cache"
+label = "Image cache"
+description = "Delete the cached artwork (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/cache/images"

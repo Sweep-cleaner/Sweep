@@ -1,0 +1,91 @@
+id = "cursor"
+name = "Cursor"
+description = "Cursor AI editor: workspace cache, web caches and logs (projects, settings and extensions are kept)"
+
+[[running]]
+type = "exe"
+value = "cursor"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Cursor.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Cursor"
+os = "macos"
+
+[[var]]
+name = "userdata"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/Cursor"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/Cursor"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\\Cursor'
+
+[[var]]
+name = "server"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cursor-server"
+
+[[option]]
+id = "workspace_cache"
+label = "Workspace cache"
+description = "Delete cached workspace storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/User/workspaceStorage"
+
+[[option]]
+id = "web_cache"
+label = "Web caches"
+description = "Delete the Chromium page, code and GPU caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/GPUCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/CachedData"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete editor and Remote-Server log files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$server$$/logs"
+os = "unix"

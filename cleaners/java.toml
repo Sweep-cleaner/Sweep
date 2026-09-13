@@ -1,0 +1,60 @@
+id = "java"
+name = "Java"
+description = "Java deployment and Web Start caches (downloaded applets and JNLP applications)"
+
+[[var]]
+name = "deployment"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.java/deployment"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Oracle/Java/Deployment"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Sun\Java\Deployment'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.java/deployment/cache"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/Java/cache"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Sun\Java\Deployment\cache'
+
+[[option]]
+id = "cache"
+label = "Deployment cache"
+description = "Delete downloaded applets and Web Start applications (re-downloaded on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Deployment logs"
+description = "Delete Java deployment trace and log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$deployment$$/log/*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$deployment$$/*.log*"
+type = "f"

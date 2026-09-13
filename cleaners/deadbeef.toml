@@ -1,0 +1,44 @@
+id = "deadbeef"
+name = "DeaDBeeF"
+description = "DeaDBeeF music player: cover-art and media cache plus logs (your music is kept)"
+
+[[running]]
+type = "exe"
+value = "deadbeef"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/deadbeef"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\deadbeef'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete DeaDBeeF's cover-art and media cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/coverart"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete DeaDBeeF log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

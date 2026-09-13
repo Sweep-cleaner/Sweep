@@ -1,0 +1,24 @@
+id = "mlflow"
+name = "MLflow"
+description = "Old tracking artifacts (experiment metadata is kept)"
+
+[[var]]
+name = "tracking"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/mlruns"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\mlruns'
+
+[[option]]
+id = "artifacts"
+label = "Run artifacts"
+description = "Delete stored run artifacts (metrics and params metadata is kept)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$tracking$$/*/artifacts"

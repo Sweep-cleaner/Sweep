@@ -1,0 +1,83 @@
+id = "vscodium"
+name = "VSCodium"
+description = "VSCodium editor: workspace cache, logs and extension data"
+
+[[running]]
+type = "exe"
+value = "codium"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "VSCodium.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "VSCodium"
+os = "macos"
+
+[[var]]
+name = "userdata"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/VSCodium/User"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = "$APPDATA\\VSCodium\\User"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/VSCodium/User"
+
+[[var]]
+name = "workspace"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/VSCodium/User/workspaceStorage"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = "$APPDATA\\VSCodium\\User\\workspaceStorage"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/VSCodium/User/workspaceStorage"
+
+[[option]]
+id = "workspace_cache"
+label = "Workspace cache"
+description = "Delete cached workspace storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$workspace$$"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete VSCodium log files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/logs"
+
+[[option]]
+id = "gpu_cache"
+label = "GPU cache"
+description = "Delete the GPU and shader caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/GPUCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/CachedData"

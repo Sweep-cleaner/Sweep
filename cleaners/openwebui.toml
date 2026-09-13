@@ -1,0 +1,47 @@
+id = "openwebui"
+name = "Open WebUI"
+description = "Open WebUI server: cache and logs under the data dir (uploads, database and models are NEVER touched)"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.open-webui"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\.open-webui'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/open-webui"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the server cache (uploads and database are kept)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete server log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/*.log"
+type = "f"

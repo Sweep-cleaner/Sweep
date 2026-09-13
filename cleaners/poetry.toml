@@ -1,0 +1,24 @@
+id = "poetry"
+name = "Poetry"
+description = "Python package cache (virtualenvs and projects are kept)"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/pypoetry/cache"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$LOCALAPPDATA\\pypoetry\\Cache"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "cache"
+label = "Artifact cache"
+description = "Delete downloaded wheel/sdist artifacts (re-downloaded on next lock)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

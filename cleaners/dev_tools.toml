@@ -1,0 +1,292 @@
+id = "dev_tools"
+name = "Developer tools"
+description = "Caches and temporary data from common developer toolchains"
+
+[[var]]
+name = "cargo"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cargo/registry"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.cargo\registry'
+
+[[var]]
+name = "npm"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.npm/_cacache"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\npm-cache'
+
+[[var]]
+name = "pip"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/pip"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\pip\Cache'
+
+[[var]]
+name = "gradle"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.gradle/caches"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$GRADLE_USER_HOME\caches'
+
+[[var]]
+name = "go_modcache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/go/pkg/mod/cache/download"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\go\pkg\mod\cache\download'
+
+[[var]]
+name = "go_buildcache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/go-build"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\go-build'
+
+[[var]]
+name = "yarn"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/yarn"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Yarn\Cache'
+
+[[var]]
+name = "pnpm_store"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.local/share/pnpm/store"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\pnpm\store'
+
+[[var]]
+name = "maven"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.m2/repository"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.m2\repository'
+
+[[var]]
+name = "gradle_home"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.gradle"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.gradle'
+
+[[var]]
+name = "cargo_git"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cargo/git"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.cargo\git'
+
+[[var]]
+name = "uv_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/uv"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\uv\cache'
+
+[[var]]
+name = "bun_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.bun/install/cache"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.bun\install\cache'
+
+[[var]]
+name = "deno_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/deno"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\deno'
+
+[[option]]
+id = "cargo"
+label = "Cargo registry cache"
+description = "Delete the downloaded crate registry and git checkouts"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cargo$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cargo_git$$"
+
+[[option]]
+id = "npm"
+label = "npm cache"
+description = "Delete the npm package cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$npm$$"
+
+[[option]]
+id = "pip"
+label = "pip cache"
+description = "Delete the pip download cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$pip$$"
+
+[[option]]
+id = "gradle"
+label = "Gradle cache"
+description = "Delete the Gradle build cache"
+warning = "Forces re-download of dependencies on the next build."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gradle$$"
+
+[[option]]
+id = "go"
+label = "Go module and build cache"
+description = "Delete the downloaded module cache and build cache (rebuilt by go build)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$go_modcache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$go_buildcache$$"
+
+[[option]]
+id = "yarn"
+label = "Yarn cache"
+description = "Delete the Yarn package cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$yarn$$"
+
+[[option]]
+id = "pnpm"
+label = "pnpm store"
+description = "Delete the pnpm content-addressable store (equivalent to pnpm store prune)"
+warning = "Forces re-download of packages on the next install."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$pnpm_store$$"
+
+[[option]]
+id = "maven"
+label = "Maven repository"
+description = "Delete downloaded Maven artifacts (re-downloaded on next build)"
+warning = "Forces re-download of dependencies on the next build."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$maven$$"
+
+[[option]]
+id = "gradle_daemon"
+label = "Gradle daemon logs"
+description = "Delete Gradle daemon log files older than 30 days (registry kept)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$gradle_home$$/daemon/*/*.log*"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "uv"
+label = "uv cache"
+description = "Delete the uv package cache (re-downloaded on next sync)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$uv_cache$$"
+
+[[option]]
+id = "bun"
+label = "Bun cache"
+description = "Delete the Bun package cache (re-downloaded on next install)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$bun_cache$$"
+
+[[option]]
+id = "deno"
+label = "Deno cache"
+description = "Delete the Deno dependency cache (re-downloaded on next run)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$deno_cache$$"

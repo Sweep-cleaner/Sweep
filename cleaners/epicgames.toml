@@ -1,0 +1,53 @@
+id = "epicgames"
+name = "Epic Games Launcher"
+description = "Epic Games mağaza başlatıcısı günlükleri ve önbelleği"
+
+[[running]]
+type = "exe"
+value = "EpicGamesLauncher"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "EpicGamesLauncher"
+os = "macos"
+
+[[var]]
+name = "epic_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/Epic/EpicGamesLauncher"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/Epic/EpicGamesLauncher"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$LOCALAPPDATA\Epic\EpicGamesLauncher'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Başlatıcı ve indirme günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$epic_data$$/Saved/Logs"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Arayüz ve mağaza önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$epic_data$$/Saved/webcache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$epic_data$$/Saved/HttpCache"

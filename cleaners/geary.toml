@@ -1,0 +1,30 @@
+id = "geary"
+name = "Geary"
+description = "Geary mail client: cache and logs (mail on the server is untouched)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "geary"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete cached message bodies and attachments (re-fetched from the server)"
+warning = "Messages will be re-downloaded on the next sync."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/geary"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Geary log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "~/.cache/geary/**/*.log"
+type = "f"

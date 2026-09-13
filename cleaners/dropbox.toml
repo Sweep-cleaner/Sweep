@@ -1,0 +1,38 @@
+id = "dropbox"
+name = "Dropbox"
+description = "Bulut istemcisi günlükleri (eşleştirilen dosyalar korunur)"
+
+[[running]]
+type = "exe"
+value = "dropbox"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Dropbox.exe"
+os = "windows"
+
+[[var]]
+name = "dropbox_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.dropbox"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/.dropbox"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Dropbox\*'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Eşleştirme ve istemci günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$dropbox_data$$/logs"

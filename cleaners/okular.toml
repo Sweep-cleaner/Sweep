@@ -1,0 +1,18 @@
+id = "okular"
+name = "Okular"
+description = "Okular document viewer: page and thumbnail caches (your documents are never touched)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "okular"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Okular's page, thumbnail and rendering caches (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/okular"

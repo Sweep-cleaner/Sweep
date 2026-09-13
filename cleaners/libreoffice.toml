@@ -1,0 +1,44 @@
+id = "libreoffice"
+name = "LibreOffice"
+description = "LibreOffice suite: cache and recent-document registry"
+
+[[running]]
+type = "exe"
+value = "soffice"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "soffice.bin"
+os = "unix"
+
+[[var]]
+name = "user"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/libreoffice/*/user"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\LibreOffice\4\user'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the LibreOffice cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$user$$/cache"
+
+[[option]]
+id = "recent"
+label = "Recent documents"
+description = "Clear the list of recently opened documents"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$user$$/registrymodifications.xcu"

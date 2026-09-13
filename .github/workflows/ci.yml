@@ -1,0 +1,166 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-test:
+    name: fmt + clippy + test (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test --locked
+      - run: python3 verify_tomls.py
+
+  msrv:
+    name: MSRV (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # `rust-version` in Cargo.toml is the single source of truth: the job
+      # checks with exactly the compiler we promise to support, so bumping a
+      # dependency past it fails here instead of on a user's machine.
+      - name: Read MSRV from Cargo.toml
+        id: msrv
+        run: |
+          version=$(sed -n 's/^rust-version *= *"\(.*\)".*/\1/p' Cargo.toml | head -n1)
+          if [ -z "$version" ]; then
+            echo "::error::could not read rust-version from Cargo.toml"
+            exit 1
+          fi
+          echo "declared MSRV: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.msrv.outputs.version }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --locked
+
+  generated:
+    name: generated files in sync (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      # The CLI definition is the single source of truth for completions and
+      # the man page. Re-generating them must be a no-op on a clean tree.
+      - name: Regenerate completions and man page
+        run: |
+          cargo build --locked --quiet
+          BIN=target/debug/sweep
+          "$BIN" completions bash > /tmp/sweep.bash
+          "$BIN" completions zsh  > /tmp/_sweep
+          "$BIN" completions fish > /tmp/sweep.fish
+          "$BIN" man             > /tmp/sweep.1
+          diff -u packaging/completions/sweep.bash /tmp/sweep.bash
+          diff -u packaging/completions/_sweep     /tmp/_sweep
+          diff -u packaging/completions/sweep.fish /tmp/sweep.fish
+          diff -u packaging/man/sweep.1            /tmp/sweep.1
+
+  cleaner-defs:
+    name: cleaner definitions (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: python3 verify_tomls.py
+      # Every *cleaner* id (the top-level `id` above the first [[option]])
+      # must be unique and lower-case so `sweep list`, the selector language
+      # and `cleaner.option` parsing stay predictable.
+      - name: Check cleaner ids
+        run: |
+          python3 - <<'PY'
+          import pathlib, re, sys
+          ids, bad = {}, []
+          for path in sorted(pathlib.Path("cleaners").glob("*.toml")):
+              text = path.read_text(encoding="utf-8")
+              # Only the header, i.e. everything before the first table.
+              header = text.split("[[", 1)[0]
+              found = re.search(r'(?m)^id\s*=\s*"([^"]+)"', header)
+              if not found:
+                  bad.append(f"{path}: no top-level cleaner id")
+                  continue
+              cid = found.group(1)
+              if not re.fullmatch(r"[a-z0-9][a-z0-9_]*", cid):
+                  bad.append(f"{path}: invalid cleaner id '{cid}'")
+              if cid in ids:
+                  bad.append(f"{path}: duplicate cleaner id '{cid}' (also {ids[cid]})")
+              ids[cid] = str(path)
+          print(f"{len(ids)} cleaner ids checked")
+          for line in bad:
+              print("::error::" + line)
+          sys.exit(1 if bad else 0)
+          PY
+
+  qml-shell:
+    name: QML module wiring (Ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      # The Qt6/QML shell is compiled in a container, but its module wiring is a
+      # plain file list. A component that exists under qml/ but is missing from
+      # QML_FILES is compiled away and only fails at runtime (that is exactly
+      # how NeonCard, NeonBadge and Settings were lost), so check it here where
+      # it costs nothing.
+      - run: python3 verify_qml.py
+
+  windows-gui:
+    name: QML GUI build (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      # The Qt6/QML shell must compile on Windows (tray, Mica, UAC paths in
+      # main.cpp are cfg-guarded and only really exercised by a Windows build).
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.1'
+          cache: true
+      - name: Configure
+        shell: pwsh
+        run: cmake -B packaging/qml/build -S packaging/qml -DCMAKE_PREFIX_PATH="$env:Qt6_DIR" -DCMAKE_BUILD_TYPE=Release
+      - name: Build sweep-qml.exe
+        shell: pwsh
+        run: cmake --build packaging/qml/build --config Release
+      - name: Verify QML wiring
+        run: python verify_qml.py
+
+  portable:
+    name: check + test ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --locked --all-targets
+      # Unit tests used to be Ubuntu-only, so POSIX-only assumptions (critical
+      # dirs, `/tmp` scratch dirs, `|` in filenames) went unnoticed. Running
+      # them here keeps the suite honest on every supported platform.
+      - run: cargo test --locked
+      - run: python3 verify_tomls.py

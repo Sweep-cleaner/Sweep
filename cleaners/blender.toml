@@ -1,0 +1,25 @@
+id = "blender"
+name = "Blender"
+description = "3B düzenleyici önbelleği ve son dosya listesi (projeler korunur)"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Küçük resim ve derleme önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/blender"
+
+[[option]]
+id = "recent"
+label = "Son dosyalar"
+description = "Son açılan dosya listesini temizler (gizlilik)"
+warning = "Son dosya listesi boşalır."
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "~/.config/blender/*/recent-files.txt"

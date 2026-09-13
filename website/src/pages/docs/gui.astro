@@ -1,0 +1,169 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'qt-architecture', title: 'Qt6/QML Architecture' },
+  { id: 'screens', title: 'The 13 Navigation Screens' },
+  { id: 'theme-system', title: '11 Built-in Themes' },
+  { id: 'rendering', title: 'Software vs. GPU Rendering' },
+  { id: 'i18n-support', title: 'Multilingual Support (8 Languages)' },
+  { id: 'running-gui', title: 'Launching sweep-qml' }
+];
+
+const screens = [
+  { name: 'Dashboard', glyph: '▦', desc: 'Live CPU/RAM/disk cards, reclaim-share donut and cleaner tree with per-option size previews.' },
+  { name: 'Cleaner', glyph: '◈', desc: 'Hierarchical checkbox tree over all 202 cleaners with live size previews and safety badges.' },
+  { name: 'Files', glyph: '▤', desc: 'The hunters: dev cruft, leftover app finder, duplicate finder and big-file ranking.' },
+  { name: 'Disk', glyph: '◍', desc: 'The sweep du engine — volume bars and double-click folder drill-down with breadcrumbs.' },
+  { name: 'History', glyph: '◔', desc: 'Audit log of past cleanups parsed from the operation log, with instant undo.' },
+  { name: 'System', glyph: '▣', desc: 'Hardware and kernel diagnostics: CPU core allocation, memory breakdown and platform specs.' },
+  { name: 'Memory', glyph: '◎', desc: 'Native memory optimization — drop caches, trim working sets, purge — with an auto-keeper toggle.' },
+  { name: 'Startup', glyph: '▶', desc: 'Startup entries with high/medium/low impact estimates and reversible enable/disable.' },
+  { name: 'System Health', glyph: '◫', desc: 'CPU, memory, disks, uptime, temperature and SMART rolled into a green/yellow/red verdict.' },
+  { name: 'Network', glyph: '⇄', desc: 'Flush the DNS resolver cache and clean npm/pip/yarn/cargo/gem caches, git gc, docker prune.' },
+  { name: 'Privacy', glyph: '◉', desc: 'Telemetry shield, recent-files wipe and clipboard clear.' },
+  { name: 'Schedule', glyph: '◷', desc: 'Manage the daily cleanup timer and the separate daily memory-trim task per backend.' },
+  { name: 'Settings', glyph: '⚙', desc: 'Theme, transparency, motion, language, keep lists and the in-app memory keeper.' }
+];
+
+const themes = [
+  { name: 'Midnight Blue', tag: 'Default', bg: '#070B16', accent: '#1D4ED8' },
+  { name: 'Gruvbox Dark', tag: 'Retro', bg: '#282828', accent: '#fe8019' },
+  { name: 'Catppuccin Mocha', tag: 'Pastel', bg: '#1e1e2e', accent: '#89b4fa' },
+  { name: 'Nord', tag: 'Arctic', bg: '#2e3440', accent: '#88c0d0' },
+  { name: 'Dracula', tag: 'Vibrant', bg: '#282a36', accent: '#bd93f9' },
+  { name: 'Tokyo Night', tag: 'Cyber', bg: '#1a1b26', accent: '#7aa2f7' },
+  { name: 'One Dark', tag: 'Modern', bg: '#282c34', accent: '#61afef' },
+  { name: 'Solarized Dark', tag: 'Classic', bg: '#002b36', accent: '#268bd2' },
+  { name: 'Monokai Pro', tag: 'Contrast', bg: '#1C1B18', accent: '#66D9EF' },
+  { name: 'Everforest', tag: 'Nature', bg: '#2d353b', accent: '#a7c080' },
+  { name: 'Rose Pine', tag: 'Soho', bg: '#191724', accent: '#ebbcba' }
+];
+---
+
+<DocsLayout
+  title="Qt6/QML GUI & Themes"
+  description="Explore sweep-qml: the Qt6/QML desktop shell over the --json CLI, with 13 navigation screens, 11 built-in themes and 8 languages."
+  currentSlug="gui"
+  toc={toc}
+  prevPage={{ title: 'CLI Reference & Commands', href: '/docs/cli' }}
+  nextPage={{ title: 'Memory, Startup & Health', href: '/docs/system-tools' }}
+>
+  <div class="space-y-10">
+    <!-- Qt Architecture -->
+    <section id="qt-architecture">
+      <h2 class="text-2xl font-bold text-white mb-3">Qt6/QML Architecture</h2>
+      <p class="text-text-muted leading-relaxed">
+        Unlike applications bundled with Chromium and Node.js runtimes that consume hundreds of megabytes of RAM, <code class="text-cyan font-mono">sweep-qml</code> is a thin Qt6/QML shell. It never re-implements the cleaner: an async bridge invokes the exact same <code class="text-cyan font-mono">sweep</code> binary with <code class="text-cyan font-mono">--json --summary</code>, so every GUI action is reproducible from the terminal and the engine has a single implementation. The <code class="text-cyan font-mono">--summary</code> flag matters: selecting every cleaner is a preview of hundreds of thousands of files, and shipping one JSON object per file would mean tens of megabytes for the UI thread to parse. The summary report carries exact per-<code class="text-cyan font-mono">cleaner.option</code> totals plus a sampled entry list, which is all the screen renders.
+      </p>
+      <div class="grid sm:grid-cols-3 gap-4 my-6">
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/70 text-center">
+          <div class="text-2xl font-bold font-mono text-cyan">13</div>
+          <div class="text-xs text-text-dim mt-1 font-mono">Navigation Screens</div>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/70 text-center">
+          <div class="text-2xl font-bold font-mono text-rust">11</div>
+          <div class="text-xs text-text-dim mt-1 font-mono">Built-in Themes</div>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/70 text-center">
+          <div class="text-2xl font-bold font-mono text-cyan-glow">0</div>
+          <div class="text-xs text-text-dim mt-1 font-mono">Electron / Webview Dependencies</div>
+        </div>
+      </div>
+      <p class="text-sm text-text-muted leading-relaxed">
+        The bridge supports cancellation, kills an in-flight CLI child on quit, and reports a missing engine with an amber banner instead of a silent empty screen. The window is frameless with a custom 42 px title bar (drag to move, double-click to maximize), a bottom-right resize grip, a system tray, notifications, and Windows 11 Mica.
+      </p>
+    </section>
+
+    <!-- The Screens -->
+    <section id="screens">
+      <h2 class="text-2xl font-bold text-white mb-4">The 13 Navigation Screens</h2>
+      <p class="text-sm text-text-muted mb-6 leading-relaxed">
+        The sidebar is grouped into cleaning, analysis, system and storage sections. Every route is titled and subtitled, and the shell is checked by <code class="text-cyan">verify_qml.py</code> so a half-wired screen cannot ship.
+      </p>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        {screens.map(s => (
+          <div class="p-4 rounded-xl bg-bg-surface/40 border border-border/60">
+            <div class="text-lg font-bold text-white mb-1 flex items-center gap-2">
+              <span class="text-cyan font-mono">{s.glyph}</span> <span>{s.name}</span>
+            </div>
+            <p class="text-xs text-text-muted leading-relaxed">{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Theme System -->
+    <section id="theme-system">
+      <h2 class="text-2xl font-bold text-white mb-4">11 Built-in Themes</h2>
+      <p class="text-sm text-text-muted mb-6 leading-relaxed">
+        Each theme is a small QML file under <code class="text-cyan">qml/themes/</code> exposing a full palette plus a chart colour ramp, so charts and status badges stay legible in every scheme. Transparency, panel gloss, corner radius, motion scale and an accent override are adjustable from Settings.
+      </p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {themes.map(t => (
+          <div class="p-3 rounded-xl border border-border/60 bg-bg-surface/50 flex flex-col justify-between h-24">
+            <div class="flex items-center justify-between">
+              <span class="w-3.5 h-3.5 rounded-full" style={`background-color: ${t.accent}`}></span>
+              <span class="text-[10px] font-mono text-text-dim">{t.tag}</span>
+            </div>
+            <div>
+              <div class="text-xs font-semibold text-text-primary truncate">{t.name}</div>
+              <div class="text-[10px] font-mono text-text-dim truncate">{t.bg}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Rendering -->
+    <section id="rendering">
+      <h2 class="text-2xl font-bold text-white mb-3">Software vs. GPU Rendering</h2>
+      <p class="text-sm text-text-muted leading-relaxed">
+        Qt's <code class="text-cyan font-mono">win64_mingw</code> build ships no ANGLE, so Qt Quick depends on the machine's native OpenGL. Where that driver is missing or broken, Qt cannot create a context and the process dies with no message. Sweep therefore renders on the <strong>software scene graph by default</strong> — safe side first. Hardware acceleration is opt-in:
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># Opt into the GPU path (falls back automatically if no GL context)</span>
+<span class="text-rust">$ </span>SWEEP_GPU=1 sweep-qml</code></pre>
+      <div class="callout callout-note mt-4">
+        A probe can report a context that then fails to render, so a false negative (the app never opens) is worse than a false positive (a little lost speed). That is why the default is software.
+      </div>
+    </section>
+
+    <!-- Multilingual Support -->
+    <section id="i18n-support">
+      <h2 class="text-2xl font-bold text-white mb-3">Multilingual Support (8 Languages)</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        Sweep inspects your desktop environment's <code class="text-cyan">$LANG</code> locale and falls back gracefully. The language can also be changed live in Settings or set in <code class="text-cyan">config.toml</code>. The Qt translator carries full key parity across all eight languages, and the CLI shares the same dictionary:
+      </p>
+      <div class="flex flex-wrap gap-2 text-xs font-mono">
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">English (en)</span>
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">Türkçe (tr)</span>
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">Español (es)</span>
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">Français (fr)</span>
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">Deutsch (de)</span>
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">Русский (ru)</span>
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">Português (pt)</span>
+        <span class="px-3 py-1 rounded-lg bg-bg-surface border border-border text-cyan">Italiano (it)</span>
+      </div>
+    </section>
+
+    <!-- Launching GUI -->
+    <section id="running-gui">
+      <h2 class="text-2xl font-bold text-white mb-3">Launching sweep-qml</h2>
+      <p class="text-sm text-text-muted mb-4 leading-relaxed">
+        If installed through a package, the primary Start Menu / application entry opens the GUI (the CLI keeps its own terminal entry). Build it in a container, or compile the Qt target directly:
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># Container build (needs a display to run)</span>
+<span class="text-rust">$ </span>podman build -t sweep-qml -f packaging/qml/Containerfile.qml .
+<span class="text-rust">$ </span>podman run --rm -e DISPLAY="$DISPLAY" -v /tmp/.X11-unix:/tmp/.X11-unix:ro sweep-qml
+
+<span class="text-rust"># Or build from a source checkout</span>
+<span class="text-rust">$ </span>cmake -B packaging/qml/build -S packaging/qml -DCMAKE_BUILD_TYPE=Release
+<span class="text-rust">$ </span>cmake --build packaging/qml/build --config Release</code></pre>
+      <div class="callout callout-tip mt-4">
+        <strong>Headless route check:</strong> setting <code class="text-cyan">SWEEP_SCREEN=&lt;route&gt;</code> opens the shell directly on that screen, so every route can be validated offscreen (<code class="text-cyan">QT_QPA_PLATFORM=offscreen</code>) without a display.
+      </div>
+    </section>
+  </div>
+</DocsLayout>

@@ -1,0 +1,79 @@
+id = "prismlauncher"
+name = "Prism Launcher"
+description = "Minecraft başlatıcısı günlükleri, çökme raporları ve meta önbelleği (dünyalar ve modlar korunur)"
+
+[[running]]
+type = "exe"
+value = "prismlauncher"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "PrismLauncher.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Prism Launcher"
+os = "macos"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.local/share/PrismLauncher"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/PrismLauncher"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\PrismLauncher'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.cache/PrismLauncher"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Caches/PrismLauncher"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$LOCALAPPDATA\PrismLauncher\cache'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Başlatıcı ve örnek günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/logs"
+
+[[option]]
+id = "crash_reports"
+label = "Çökme raporları"
+description = "Örnek çökme raporları (dünyalar korunur)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/instances/*/crash-reports/crash-*.txt"
+type = "f"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Sürüm listesi ve simge önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

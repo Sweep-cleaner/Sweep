@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+# PPA/Debian kuralları: `debuild -us -uc` veya `dpkg-buildpackage -b`
+%:
+	dh $@
+
+override_dh_auto_build:
+	cargo build --release --locked
+
+override_dh_auto_install:
+	install -Dm755 target/release/sweep debian/sweep/usr/bin/sweep
+	install -Dm644 README.md debian/sweep/usr/share/doc/sweep/README
+	install -Dm644 packaging/systemd/sweep-clean.service debian/sweep/lib/systemd/system/sweep-clean.service
+	install -Dm644 packaging/systemd/sweep-clean.timer debian/sweep/lib/systemd/system/sweep-clean.timer
+
+override_dh_auto_test:
+	python3 verify_tomls.py

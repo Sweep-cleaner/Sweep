@@ -1,0 +1,116 @@
+---
+const RELEASES = 'https://github.com/Sweep-cleaner/Sweep/releases/latest';
+---
+
+<footer class="border-t border-border/60 bg-[#0d0e15] mt-24">
+  <div class="max-w-7xl mx-auto px-6 py-16">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+      <!-- Brand Column -->
+      <div class="col-span-2 space-y-4">
+        <a href="/" class="flex items-center gap-3 group">
+          <img src="/logo.jpg" alt="Sweep" class="h-8 w-8 rounded-lg shadow-sm" />
+          <span class="font-mono text-cyan font-bold tracking-tight text-xl">sweep</span>
+        </a>
+        <p class="text-xs sm:text-sm text-text-muted max-w-sm leading-relaxed">
+          Blazing-fast, memory-safe system cleaner written in Rust. Single 6.0 MB binary. Zero telemetry.
+        </p>
+        <div class="text-xs font-mono text-text-dim">
+          <span>Part of the </span>
+          <span class="text-cyan font-semibold">Halcyon Empire</span>
+          <span> · Maintained by </span>
+          <span class="text-rust font-semibold">NebulaDev7</span>
+        </div>
+        <a
+          href={RELEASES}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan/5 border border-cyan/30 text-cyan hover:bg-cyan/15 hover:border-cyan text-xs font-medium transition-all"
+        >
+          <span>↓ Download v0.4.0</span>
+        </a>
+        <p class="text-[11px] font-mono text-text-dim leading-relaxed">
+          AppImage · Windows Setup.exe · portable tarballs<br />
+          <span class="text-amber-300/80">Package managers: coming soon</span>
+        </p>
+      </div>
+
+      <!-- Documentation Links -->
+      <div class="space-y-3">
+        <div class="text-xs font-mono uppercase font-bold text-white tracking-wider">Documentation</div>
+        <ul class="space-y-2 text-xs">
+          <li><a href="/docs" class="text-text-muted hover:text-cyan transition-colors">Overview</a></li>
+          <li><a href="/docs/installation" class="text-text-muted hover:text-cyan transition-colors">Installation Guide</a></li>
+          <li><a href="/docs/cli" class="text-text-muted hover:text-cyan transition-colors">CLI Reference</a></li>
+          <li><a href="/docs/gui" class="text-text-muted hover:text-cyan transition-colors">Native GUI &amp; Themes</a></li>
+          <li><a href="/docs/safety" class="text-text-muted hover:text-cyan transition-colors">Safety Model</a></li>
+          <li><a href="/docs/cleaners" class="text-text-muted hover:text-cyan transition-colors">TOML Authoring</a></li>
+        </ul>
+      </div>
+
+      <!-- Community Links -->
+      <div class="space-y-3">
+        <div class="text-xs font-mono uppercase font-bold text-white tracking-wider">Community</div>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href="https://github.com/Sweep-cleaner/Sweep" target="_blank" rel="noopener" class="text-text-muted hover:text-cyan transition-colors">
+              GitHub Repository
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Sweep-cleaner/Sweep/issues" target="_blank" rel="noopener" class="text-text-muted hover:text-cyan transition-colors">
+              Issue Tracker
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Sweep-cleaner/Sweep/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener" class="text-text-muted hover:text-cyan transition-colors">
+              Contributing Guide
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Sweep-cleaner/Sweep/blob/main/SECURITY.md" target="_blank" rel="noopener" class="text-text-muted hover:text-cyan transition-colors">
+              Security Policy
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Legal & Project -->
+      <div class="space-y-3">
+        <div class="text-xs font-mono uppercase font-bold text-white tracking-wider">Project</div>
+        <ul class="space-y-2 text-xs">
+          <li>
+            <a href={RELEASES} target="_blank" rel="noopener" class="text-text-muted hover:text-cyan transition-colors">
+              Download Latest Release
+            </a>
+          </li>
+          <li><a href="/docs/benchmarks" class="text-text-muted hover:text-cyan transition-colors">
+              Benchmarks &amp; Proof
+            </a></li>
+          <li><a href="/docs/system-tools" class="text-text-muted hover:text-cyan transition-colors">System Tools</a></li>
+          <li><a href="/docs/residue" class="text-text-muted hover:text-cyan transition-colors">Residue Engine</a></li>
+          <li><a href="/docs/automation" class="text-text-muted hover:text-cyan transition-colors">Automation</a></li>
+          <li>
+            <a href="/docs/configuration" class="text-text-muted hover:text-cyan transition-colors">
+              config.toml Specs
+            </a>
+          </li>
+          <li>
+            <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener" class="text-text-muted hover:text-cyan transition-colors">
+              GPL v3.0 License
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom copyright -->
+    <div class="pt-8 border-t border-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-dim">
+      <p>© 2026 NebulaDev7. Released under the GNU General Public License v3.0 (GPL-3.0-or-later).</p>
+      <div class="flex items-center gap-4">
+        <span>Rust Edition 2021</span>
+        <span>•</span>
+        <span>Version 0.4.0</span>
+      </div>
+    </div>
+  </div>
+</footer>

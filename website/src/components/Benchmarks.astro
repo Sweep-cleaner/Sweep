@@ -1,0 +1,141 @@
+---
+const benchmarkRows = [
+  { name: 'Standalone Binary Size', sweep: '6.0 MB', bleach: '13 MB + Python Runtime (~60MB)', diff: '10x smaller' },
+  { name: '/usr Directory Scan (12.6k files)', sweep: '4.85s', bleach: '31.20s', diff: '6.4x faster' },
+  { name: 'Dev Artifact Scan (400 repos)', sweep: '0.21s', bleach: 'N/A (Unsupported)', diff: 'Instant' },
+  { name: 'Duplicate File Scan (16k files)', sweep: '0.68s', bleach: 'N/A (Unsupported)', diff: 'Instant' },
+  { name: 'Idle Memory Consumption (RSS)', sweep: '24 MB', bleach: '145 MB', diff: '6x leaner' },
+  { name: 'Safety Guards', sweep: 'Protected roots + keep list', bleach: 'Protected paths', diff: 'Fail-closed' }
+];
+---
+
+<section id="benchmarks" class="section">
+  <div class="text-center mb-16">
+    <p class="section-kicker">// PERFORMANCE BENCHMARKS</p>
+    <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+      Real Numbers. Real Hardware.
+    </h2>
+    <div class="section-divider"></div>
+    <p class="text-text-muted text-base sm:text-lg max-w-2xl mx-auto">
+      Tested on real hardware: AMD Ryzen 7 5700U (8 cores, 16 threads), 15 GB RAM, NVMe SSD, Ubuntu 22.04 LTS.
+    </p>
+    <div class="mt-5 flex justify-center">
+      <span class="text-[11px] font-mono px-3 py-1 rounded-full bg-cyan/10 border border-cyan/30 text-cyan">
+        Benchmarked on Sweep v0.2.5
+      </span>
+    </div>
+  </div>
+
+  <!-- Visual Comparison Bars -->
+  <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 mb-12">
+    <!-- Speed Bar -->
+    <div class="p-6 rounded-2xl bg-[#141522] border border-border/70">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-sm font-bold text-white">Directory Scan Time (Lower is Better)</span>
+        <span class="text-xs font-mono text-cyan bg-cyan/10 px-2 py-0.5 rounded border border-cyan/30">6.4x Faster</span>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <div>
+          <div class="flex justify-between text-cyan font-semibold mb-1">
+            <span>Sweep (Rust Rayon)</span>
+            <span>4.85s</span>
+          </div>
+          <div class="w-full h-3.5 bg-bg-surface rounded-full overflow-hidden border border-border/60">
+            <div class="h-full bg-gradient-to-r from-cyan to-cyan-glow rounded-full" style="width: 15%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-text-muted mb-1">
+            <span>BleachBit (Python 3)</span>
+            <span>31.20s</span>
+          </div>
+          <div class="w-full h-3.5 bg-bg-surface rounded-full overflow-hidden border border-border/60">
+            <div class="h-full bg-border rounded-full" style="width: 75%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-text-dim mb-1">
+            <span>Stacer (Electron)</span>
+            <span>42.00s</span>
+          </div>
+          <div class="w-full h-3.5 bg-bg-surface rounded-full overflow-hidden border border-border/60">
+            <div class="h-full bg-border/50 rounded-full" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memory Bar -->
+    <div class="p-6 rounded-2xl bg-[#141522] border border-border/70">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-sm font-bold text-white">Peak RAM Footprint (Lower is Better)</span>
+        <span class="text-xs font-mono text-rust bg-rust/10 px-2 py-0.5 rounded border border-rust/30">6x Leaner</span>
+      </div>
+
+      <div class="space-y-3 font-mono text-xs">
+        <div>
+          <div class="flex justify-between text-rust font-semibold mb-1">
+            <span>Sweep CLI (Rust native)</span>
+            <span>24 MB</span>
+          </div>
+          <div class="w-full h-3.5 bg-bg-surface rounded-full overflow-hidden border border-border/60">
+            <div class="h-full bg-gradient-to-r from-rust to-rust-glow rounded-full" style="width: 12%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-text-muted mb-1">
+            <span>BleachBit (GTK3)</span>
+            <span>145 MB</span>
+          </div>
+          <div class="w-full h-3.5 bg-bg-surface rounded-full overflow-hidden border border-border/60">
+            <div class="h-full bg-border rounded-full" style="width: 52%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-text-dim mb-1">
+            <span>Stacer (Chromium)</span>
+            <span>290 MB</span>
+          </div>
+          <div class="w-full h-3.5 bg-bg-surface rounded-full overflow-hidden border border-border/60">
+            <div class="h-full bg-border/50 rounded-full" style="width: 100%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Table -->
+  <div class="overflow-x-auto max-w-4xl mx-auto rounded-2xl border border-border/80 bg-[#141522] shadow-xl">
+    <table class="w-full border-collapse text-left text-xs sm:text-sm">
+      <thead>
+        <tr class="bg-[#191b2c] border-b border-border/70 text-xs font-mono uppercase tracking-wider text-text-muted">
+          <th class="p-4 font-semibold">Test Specification</th>
+          <th class="p-4 font-bold text-cyan">Sweep</th>
+          <th class="p-4 font-semibold text-text-muted">BleachBit</th>
+          <th class="p-4 font-semibold text-rust">Advantage</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border/50">
+        {benchmarkRows.map(row => (
+          <tr class="hover:bg-white/[0.02] transition-colors">
+            <td class="p-4 font-medium text-text-primary">{row.name}</td>
+            <td class="p-4 font-mono font-bold text-cyan">{row.sweep}</td>
+            <td class="p-4 font-mono text-text-muted">{row.bleach}</td>
+            <td class="p-4 font-mono text-xs font-semibold text-rust">{row.diff}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center mt-8">
+    <a href="/docs/benchmarks" class="inline-flex items-center gap-2 text-xs sm:text-sm text-cyan hover:underline font-mono">
+      <span>Read complete technical benchmarking methodology and test logs →</span>
+    </a>
+  </div>
+</section>

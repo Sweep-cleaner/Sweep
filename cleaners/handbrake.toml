@@ -1,0 +1,44 @@
+id = "handbrake"
+name = "HandBrake"
+description = "HandBrake video transcoder: saved activity logs and preview data"
+
+[[running]]
+type = "exe"
+value = "ghb"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "HandBrake.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/ghb"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/HandBrake"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\HandBrake'
+
+[[option]]
+id = "logs"
+label = "Activity logs"
+description = "Delete HandBrake's saved encode activity logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/EncodeLogs"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

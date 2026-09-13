@@ -1,0 +1,36 @@
+id = "shotcut"
+name = "Shotcut"
+description = "Video editor logs (projects, presets and exports are kept)"
+
+[[running]]
+type = "exe"
+value = "shotcut"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "shotcut.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+value = "~/.config/Meltytech"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$APPDATA\\Meltytech"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/Shotcut*.log"
+max_age_days = 30
+type = "f"

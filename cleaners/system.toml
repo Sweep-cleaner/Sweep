@@ -1,0 +1,120 @@
+id = "system"
+name = "System"
+description = "Cross-platform system maintenance: temporary files, trash, clipboard, DNS and more"
+
+[[option]]
+id = "tmp"
+label = "Temporary files"
+description = "Delete stale files from the system temporary directory (older than 1 day)"
+
+[[option.action]]
+command = "system.tmp"
+search = "file"
+path = ""
+max_age_days = 1
+
+[[option]]
+id = "trash"
+label = "Trash"
+description = "Empty the desktop trash / recycle bin"
+
+[[option.action]]
+command = "system.trash"
+search = "file"
+path = ""
+
+[[option]]
+id = "clipboard"
+label = "Clipboard"
+description = "Clear the clipboard contents"
+
+[[option.action]]
+command = "system.clipboard"
+search = "file"
+path = ""
+
+[[option]]
+id = "dns"
+label = "DNS cache"
+description = "Flush the system DNS resolver cache"
+
+[[option.action]]
+command = "system.dns"
+search = "file"
+path = ""
+
+[[option]]
+id = "recent"
+label = "Recent documents"
+description = "Clear the recently-used documents list"
+
+[[option.action]]
+command = "system.recent_documents"
+search = "file"
+path = ""
+
+[[option]]
+id = "rotated_logs"
+label = "Rotated logs"
+description = "Delete rotated and compressed system log files"
+os = "linux"
+
+[[option.action]]
+command = "system.rotated_logs"
+search = "file"
+path = ""
+
+[[option]]
+id = "localizations"
+label = "Localisations"
+description = "Delete unused translation files, keeping the languages configured in config.toml"
+os = "unix"
+
+[[option.action]]
+command = "system.localizations"
+search = "file"
+path = ""
+
+[[option]]
+id = "journald"
+label = "Systemd journal"
+description = "Vacuum the systemd journal (frees space from old logs)"
+os = "linux"
+
+[[option.action]]
+command = "system.journald"
+search = "file"
+path = ""
+
+[[option]]
+id = "font_cache"
+label = "Font cache"
+description = "Rebuild the font cache"
+os = "unix"
+
+[[option.action]]
+command = "system.font_cache"
+search = "file"
+path = ""
+
+[[option]]
+id = "cups_cache"
+label = "Print spool cache"
+description = "Delete cached printer data (queued jobs are kept)"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "/var/cache/cups"
+
+[[option]]
+id = "fwupd_cache"
+label = "Firmware update cache"
+description = "Delete downloaded firmware packages (re-downloaded when needed)"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "/var/cache/fwupd"

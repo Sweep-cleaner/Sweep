@@ -1,0 +1,38 @@
+id = "lazarus"
+name = "Lazarus"
+description = "Pascal IDE package downloads and logs (projects and components are kept)"
+os = "unix"
+
+[[var]]
+name = "primary"
+[[var.value]]
+value = "~/.lazarus"
+search = "literal"
+os = "unix"
+
+[[option]]
+id = "packages"
+label = "Online packages"
+description = "Delete downloaded online-package archives (re-downloadable)"
+warning = "Re-installing online packages re-downloads them."
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$primary$$/onlinepackagemanager/packages"
+os = "unix"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files older than 30 days"
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$primary$$/*.log"
+max_age_days = 30
+type = "f"
+os = "unix"

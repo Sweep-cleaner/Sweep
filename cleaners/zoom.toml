@@ -1,0 +1,59 @@
+id = "zoom"
+name = "Zoom"
+description = "Görüntülü görüşme istemcisi önbelleği ve günlükleri"
+
+[[running]]
+type = "exe"
+value = "zoom"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Zoom.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "zoom.us"
+os = "macos"
+
+[[var]]
+name = "zoom_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.zoom"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/zoom.us"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\Zoom'
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Toplantı arayüz önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/zoom"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$zoom_data$$/avatars"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Çağrı ve istemci günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$zoom_data$$/logs"

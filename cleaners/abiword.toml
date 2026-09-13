@@ -1,0 +1,35 @@
+id = "abiword"
+name = "AbiWord"
+description = "AbiWord word processor: cache and logs (your documents are kept)"
+
+[[running]]
+type = "exe"
+value = "abiword"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/abiword"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete AbiWord's cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/abiword"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete AbiWord log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/**/*.log*"
+type = "f"

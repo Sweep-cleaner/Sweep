@@ -1,0 +1,51 @@
+id = "conda"
+name = "Conda"
+description = "Anaconda/Miniconda package cache (the equivalent of `conda clean --all`)"
+
+[[var]]
+name = "pkgs"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/miniconda3/pkgs"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/anaconda3/pkgs"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/miniforge3/pkgs"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.conda/pkgs"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\miniconda3\pkgs'
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\anaconda3\pkgs'
+
+[[option]]
+id = "packages"
+label = "Package cache"
+description = "Delete downloaded package tarballs and extracted package directories"
+warning = "The next environment change will re-download affected packages."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$pkgs$$"
+
+[[option]]
+id = "index_cache"
+label = "Index cache"
+description = "Delete cached channel index metadata (re-fetched on the next conda command)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$pkgs$$/cache"

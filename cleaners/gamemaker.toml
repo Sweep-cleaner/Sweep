@@ -1,0 +1,42 @@
+id = "gamemaker"
+name = "GameMaker"
+description = "GameMaker Studio cache and temp files (projects are kept)"
+
+[[running]]
+type = "exe"
+value = "GameMaker"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+value = "~/.config/GameMakerStudio2"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$APPDATA\\GameMakerStudio2"
+search = "literal"
+os = "windows"
+
+[[var]]
+name = "temp"
+[[var.value]]
+value = "$LOCALAPPDATA\\GameMakerStudio2\\GMS2TEMP"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the IDE cache and temp build files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$temp$$"
+os = "windows"

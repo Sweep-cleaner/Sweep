@@ -1,0 +1,36 @@
+id = "aria2"
+name = "aria2"
+description = "aria2 downloader: log files and the cached DHT routing table"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/aria2"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\aria2'
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete aria2 log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"
+
+[[option]]
+id = "dht"
+label = "DHT state"
+description = "Delete the cached DHT routing table (rebuilt automatically)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/dht*.dat"
+type = "f"

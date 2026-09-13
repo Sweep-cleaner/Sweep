@@ -1,0 +1,63 @@
+id = "slack"
+name = "Slack"
+description = "Ekip mesajlaşması önbelleği ve günlükleri (oturum korunur)"
+
+[[running]]
+type = "exe"
+value = "slack"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "slack.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Slack"
+os = "macos"
+
+[[var]]
+name = "slack_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/Slack"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/Slack"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\Slack'
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Arayüz ve kod önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$slack_data$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$slack_data$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$slack_data$$/GPUCache"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "İstemci günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$slack_data$$/logs"

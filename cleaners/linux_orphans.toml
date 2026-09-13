@@ -1,0 +1,15 @@
+id = "linux_orphans"
+name = "Öksüz Paketler"
+description = "Bağımlılığı kalmamış otomatik paketler (apt/dnf/pacman; root gerekir)"
+os = "linux"
+
+[[option]]
+id = "autoremove"
+label = "Öksüz paketler"
+description = "Önce dry-run ile listelenir, onay sonrası dağıtım aracıyla kaldırılır"
+warning = "Paket kaldırma geri alınamaz. Önizleme listesindeki her paketi gözden geçirin."
+
+[[option.action]]
+command = "system.orphans"
+search = "file"
+path = ""

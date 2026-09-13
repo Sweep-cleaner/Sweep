@@ -1,0 +1,44 @@
+id = "rclone"
+name = "rclone"
+description = "rclone: VFS and chunk caches plus logs (remotes and configuration are kept)"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/rclone"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/rclone"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\rclone'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete rclone's VFS and chunk cache (re-fetched on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$/vfs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$/cache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete rclone log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$cache$$/**/*.log*"
+type = "f"

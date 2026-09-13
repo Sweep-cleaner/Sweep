@@ -1,0 +1,16 @@
+Source: sweep
+Section: utils
+Priority: optional
+Maintainer: Sweep contributors <nebulawastaken.dev@proton.me>
+Build-Depends: debhelper-compat (= 13), cargo, python3
+Standards-Version: 4.6.2
+Homepage: https://github.com/sweep-cleaner/sweep
+
+Package: sweep
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Fast, safe, cross-platform system cleaner
+ Sweep is a BleachBit-inspired system and privacy cleaner written in Rust.
+ It cleans package caches, old kernels, journals, user caches, Snap/Flatpak/
+ Docker leftovers and more, with dry-run previews, keep-list guards,
+ per-category size reports and operation logging.

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Sweep — Panel (yeni tasarım önizlemesi)</title>
+<style>
+  :root{
+    --bg:#000000; --panel:#070B16; --panel2:#0C1326; --edge:#1E2B4D;
+    --text:#DCE6FF; --muted:#5B6B93; --accent:#1D4ED8; --accent2:#60A5FA;
+    --success:#34D399; --warning:#FBBF24;
+    --c1:#2563EB; --c2:#60A5FA; --c3:#34D399; --c4:#FBBF24; --c5:#F472B6; --c6:#5B6B93;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#05070d;color:var(--text);
+    font-family:"Inter","Segoe UI",system-ui,-apple-system,"Noto Sans",sans-serif;
+    -webkit-font-smoothing:antialiased}
+  #wrap{width:100%;overflow:hidden}
+  #app{
+    width:1360px;height:860px;position:relative;overflow:hidden;
+    background:var(--bg);transform-origin:top left;display:flex;
+  }
+  /* calm background: faint grid + two low-contrast glows */
+  #app::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(rgba(220,230,255,.03) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(220,230,255,.03) 1px,transparent 1px);
+    background-size:48px 48px;
+  }
+  #app::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(620px 620px at -60px -120px, rgba(29,78,216,.28), transparent 70%),
+      radial-gradient(520px 520px at 1040px -60px, rgba(96,165,250,.12), transparent 70%),
+      radial-gradient(680px 420px at 360px 900px, rgba(52,211,153,.07), transparent 70%),
+      radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.32));
+  }
+  .layer{position:relative;z-index:1;display:flex;width:100%}
+
+  /* ---------------- sidebar ---------------- */
+  .side{width:232px;flex:0 0 232px;border-right:1px solid rgba(30,43,77,.7);
+    background:rgba(7,11,22,.9);padding:14px;display:flex;flex-direction:column}
+  .logo{display:flex;align-items:center;gap:11px;height:46px;margin-bottom:8px}
+  .tile{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;
+    background:linear-gradient(180deg,#2b5ce6,#1D4ED8);font-weight:800;font-size:19px;color:#fff}
+  img.tile{display:block;object-fit:cover;padding:0}
+  .brand b{display:block;font-size:17px;font-weight:700;letter-spacing:.1px}
+  .brand span{display:block;font-size:9px;font-weight:600;letter-spacing:.8px;color:var(--muted)}
+  .hr{height:1px;background:var(--edge);opacity:.55;margin:2px 0 10px}
+  .grp{font-size:10px;font-weight:700;letter-spacing:.9px;color:var(--muted);
+    padding:8px 6px 6px}
+  .nav{display:flex;align-items:center;gap:11px;height:54px;padding:0 10px;border-radius:12px;
+    color:var(--text);border:1px solid transparent;margin-bottom:2px}
+  .nav .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
+    font-size:16px;color:var(--muted);background:rgba(12,19,38,.85);border:1px solid var(--edge)}
+  .nav .tx b{display:block;font-size:13px;font-weight:400}
+  .nav .tx span{display:block;font-size:10px;color:var(--muted)}
+  .nav.on{background:rgba(29,78,216,.13);border-color:rgba(29,78,216,.4)}
+  .nav.on .ic{background:rgba(29,78,216,.18);border-color:rgba(29,78,216,.45);color:var(--accent2)}
+  .nav.on .tx b{font-weight:600}
+  .nav.on .tx span{color:var(--accent2)}
+  .disk{margin-top:6px;border:1px solid var(--edge);border-radius:12px;
+    background:rgba(12,19,38,.9);padding:12px}
+  .disk .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px}
+  .disk .row b{font-weight:600}
+  .disk .row i{font-style:normal;font-weight:700;color:var(--accent2)}
+  .bar{height:6px;border-radius:3px;background:var(--edge);overflow:hidden;margin:8px 0 7px}
+  .bar>i{display:block;height:100%;border-radius:3px;background:var(--accent2)}
+  .disk small{font-size:11px;color:var(--muted)}
+  .theme{margin-top:auto;border:1px solid var(--edge);border-radius:12px;
+    background:rgba(12,19,38,.9);padding:10px;display:flex;align-items:center;gap:10px}
+  .theme .ic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;
+    background:rgba(29,78,216,.16);border:1px solid rgba(29,78,216,.45);color:var(--accent2);font-size:15px}
+  .theme .tx b{display:block;font-size:12px;font-weight:600}
+  .theme .tx span{display:block;font-size:10px;color:var(--muted)}
+  .theme .chev{margin-left:auto;color:var(--muted);font-size:18px}
+
+  /* ---------------- main ---------------- */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .top{height:58px;flex:0 0 58px;display:flex;align-items:center;
+    padding:0 20px 0 24px;border-bottom:1px solid rgba(30,43,77,.6);
+    background:rgba(7,11,22,.5)}
+  .top h1{font-size:18px;font-weight:600}
+  .top p{font-size:12px;color:var(--muted);margin-top:2px}
+  .pill{margin-left:auto;display:flex;align-items:center;gap:12px;
+    border:1px solid var(--edge);border-radius:16px;background:rgba(12,19,38,.8);
+    padding:0 13px;height:32px}
+  .pill .k{font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--muted)}
+  .pill .v{font-size:12px;font-weight:700;margin-left:6px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--accent2);display:inline-block;margin-right:6px}
+  .sep{width:1px;height:14px;background:var(--edge)}
+  .content{flex:1;padding:16px 22px;display:flex;flex-direction:column;gap:16px;overflow:hidden}
+
+  .card{border:1px solid var(--edge);border-radius:16px;background:rgba(7,11,22,.82);
+    position:relative}
+  .card::before{content:"";position:absolute;inset:1px 1px auto 1px;height:1px;
+    border-radius:15px;background:rgba(255,255,255,.05)}
+
+  /* hero */
+  .hero{height:158px;display:flex;align-items:center;gap:20px;padding:0 20px}
+  .ring{width:118px;height:118px;flex:0 0 118px;position:relative}
+  .ring .cap{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .ring .cap b{font-size:19px;font-weight:700;line-height:1}
+  .ring .cap span{font-size:10px;color:var(--muted);display:block;margin-top:3px}
+  .hero .mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
+  .eyebrow{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;
+    letter-spacing:.9px;color:var(--muted)}
+  .livedot{width:7px;height:7px;border-radius:50%;background:var(--success);
+    box-shadow:0 0 0 3px rgba(52,211,153,.14)}
+  .badge{font-size:9px;font-weight:700;letter-spacing:.7px;color:var(--muted);
+    border:1px solid var(--edge);background:rgba(30,43,77,.6);
+    border-radius:9px;padding:3px 10px}
+  .bignum{font-size:34px;font-weight:600;letter-spacing:-.5px}
+  .sub{font-size:12px;color:var(--muted)}
+  .stats{display:flex;align-items:center;gap:16px;margin-top:2px}
+  .stat{display:flex;align-items:center;gap:16px}
+  .stat .d{width:1px;height:22px;background:var(--edge)}
+  .stat em{display:block;font-style:normal;font-size:9px;font-weight:700;
+    letter-spacing:.7px;color:var(--muted)}
+  .stat b{display:block;font-size:14px;font-weight:600;margin-top:1px}
+  .btns{width:210px;flex:0 0 210px;display:flex;flex-direction:column;gap:10px}
+  .btn{height:38px;border-radius:11px;display:grid;place-items:center;
+    font-size:13px;font-weight:600;border:1px solid var(--edge);
+    background:rgba(12,19,38,.9);color:var(--text)}
+  .btn.primary{background:var(--accent);border-color:rgba(255,255,255,.16);color:#fff}
+
+  /* quick actions */
+  .quick{height:78px;display:flex}
+  .seg{flex:1;display:flex;align-items:center;justify-content:center;gap:11px;
+    position:relative}
+  .seg+.seg::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:1px;
+    background:var(--edge);opacity:.7}
+  .seg .g{font-size:16px;color:var(--muted)}
+  .seg b{display:block;font-size:13px;font-weight:600}
+  .seg span{display:block;font-size:11px;color:var(--muted)}
+
+  .sect{display:flex;align-items:center;gap:12px}
+  .sect .t{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted)}
+  .sect .l{flex:1;height:1px;background:var(--edge);opacity:.6}
+  .sect .live{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;
+    letter-spacing:.8px;color:var(--success)}
+  .sect .live i{width:6px;height:6px;border-radius:50%;background:var(--success);display:block}
+
+  .metrics{display:flex;gap:14px}
+  .metric{flex:1;border:1px solid var(--edge);border-radius:14px;background:rgba(7,11,22,.82);
+    padding:14px;height:126px;position:relative}
+  .metric::before{content:"";position:absolute;inset:1px 1px auto 1px;height:1px;
+    border-radius:13px;background:rgba(255,255,255,.05)}
+  .metric em{display:block;font-style:normal;font-size:11px;font-weight:600;
+    letter-spacing:.6px;color:var(--muted)}
+  .metric b{display:block;font-size:21px;font-weight:600;margin:6px 0 6px}
+  .charts{display:flex;gap:14px;flex:1;min-height:0}
+  .chart{flex:1;border:1px solid var(--edge);border-radius:16px;background:rgba(7,11,22,.82);
+    padding:18px;height:264px;position:relative;display:flex;flex-direction:column}
+  .chart::before{content:"";position:absolute;inset:1px 1px auto 1px;height:1px;
+    border-radius:15px;background:rgba(255,255,255,.05)}
+  .chart h2{font-size:13px;font-weight:600;color:var(--muted)}
+  .chart .hd{display:flex;align-items:center}
+  .chart .hd .right{margin-left:auto;font-size:12px;font-weight:600}
+  .empty{margin-left:172px;margin-top:52px;max-width:230px}
+  .empty b{display:block;font-size:13px;font-weight:600}
+  .empty p{font-size:11px;color:var(--muted);margin:6px 0 10px;line-height:1.5}
+  .empty .btn{width:132px;height:32px;font-size:12px}
+  .io{display:flex;align-items:center;gap:10px;font-size:11px;color:var(--muted);margin-top:8px}
+  .io .bar{flex:1;margin:0;height:6px}
+  .io .bar>i{background:var(--success);width:22%}
+  .io .val{color:var(--text)}
+  .chart .foot{border-top:1px solid rgba(30,43,77,.5);margin-top:auto;padding-top:8px;
+    font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="app">
+  <div class="layer">
+    <!-- ============ sidebar ============ -->
+    <aside class="side">
+      <div class="logo">
+        <img class="tile" src="qml/assets/sweep-logo.png" alt="Sweep">
+        <div class="brand"><b>Sweep</b><span>SİSTEM TEMİZLEYİCİ</span></div>
+      </div>
+      <div class="hr"></div>
+      <div class="grp">MENÜ</div>
+      <div class="nav on"><div class="ic">▦</div><div class="tx"><b>Panel</b><span>Sistem durumu</span></div></div>
+      <div class="nav"><div class="ic">◈</div><div class="tx"><b>Temizleyici</b><span>Alan temizle</span></div></div>
+      <div class="nav"><div class="ic">▤</div><div class="tx"><b>Dosyalar</b><span>Büyük &amp; kopya dosyalar</span></div></div>
+      <div class="grp">ANALİZ &amp; AYAR</div>
+      <div class="nav"><div class="ic">◔</div><div class="tx"><b>Geçmiş</b><span>Temizlik geçmişi</span></div></div>
+      <div class="nav"><div class="ic">▣</div><div class="tx"><b>Sistem</b><span>Donanım nabzı</span></div></div>
+      <div class="nav"><div class="ic">◎</div><div class="tx"><b>Bellek</b><span>Bellek optimizasyonu</span></div></div>
+      <div class="nav"><div class="ic">⚙</div><div class="tx"><b>Ayarlar</b><span>Tema &amp; ayarlar</span></div></div>
+      <div class="grp">DEPOLAMA</div>
+      <div class="disk">
+        <div class="row"><b>Disk kullanımı</b><i>11%</i></div>
+        <div class="bar"><i style="width:11%"></i></div>
+        <small>48.3 GB / 455.0 GB dolu</small>
+      </div>
+      <div class="theme">
+        <div class="ic">◐</div>
+        <div class="tx"><b>Midnight Blue</b><span>Temayı değiştir</span></div>
+        <div class="chev">›</div>
+      </div>
+    </aside>
+
+    <!-- ============ main ============ -->
+    <div class="main">
+      <header class="top">
+        <div>
+          <h1>Panel</h1>
+          <p>Sistem durumuna genel bakış</p>
+        </div>
+        <div class="pill">
+          <span><i class="dot"></i><span class="k">CPU</span><span class="v">82%</span></span>
+          <span class="sep"></span>
+          <span><span class="k">DİSK</span><span class="v">11%</span></span>
+        </div>
+      </header>
+
+      <div class="content">
+        <!-- hero -->
+        <section class="card hero">
+          <div class="ring">
+            <svg width="118" height="118" viewBox="0 0 118 118">
+              <circle cx="59" cy="59" r="48" fill="none" stroke="#1E2B4D" stroke-width="10" opacity=".5"/>
+              <circle cx="59" cy="59" r="48" fill="none" stroke="#60A5FA" stroke-width="10"
+                      stroke-linecap="round" stroke-dasharray="33 268" transform="rotate(-90 59 59)"/>
+            </svg>
+            <div class="cap"><b>11%</b><span>disk dolu</span></div>
+          </div>
+          <div class="mid">
+            <div class="eyebrow"><i class="livedot"></i>GERİ KAZANILABİLİR ALAN
+              <span class="badge">HAZIR</span></div>
+            <div class="bignum">0.0 B</div>
+            <div class="sub">Henüz tarama yapılmadı · 0 dosya</div>
+            <div class="stats">
+              <div class="stat"><div><em>KATEGORİ</em><b>0</b></div></div>
+              <div class="stat"><div class="d"></div><div><em>DOSYA</em><b>0</b></div></div>
+              <div class="stat"><div class="d"></div><div><em>HATA</em><b>0</b></div></div>
+            </div>
+          </div>
+          <div class="btns">
+            <div class="btn primary">Tümünü tara</div>
+            <div class="btn">Temizleyiciyi aç</div>
+          </div>
+        </section>
+
+        <!-- quick actions -->
+        <section class="card quick">
+          <div class="seg"><span class="g">▶</span><div><b>Hızlı tara</b><span>Tümünü önizle</span></div></div>
+          <div class="seg"><span class="g">◈</span><div><b>Temizleyici</b><span>Seç ve temizle</span></div></div>
+          <div class="seg"><span class="g">◐</span><div><b>Görünüm</b><span>Tema ve saydamlık</span></div></div>
+        </section>
+
+        <!-- system -->
+        <div class="sect"><span class="t">SİSTEM</span><span class="l"></span>
+          <span class="live"><i></i>CANLI</span></div>
+        <div class="metrics">
+          <div class="metric">
+            <em>CPU</em><b>81.7 %</b>
+            <svg width="100%" height="34" viewBox="0 0 300 34" preserveAspectRatio="none">
+              <line x1="0" y1="33" x2="300" y2="33" stroke="#1E2B4D" stroke-width="1" opacity=".5"/>
+              <polyline fill="none" stroke="#60A5FA" stroke-width="1.4" stroke-linejoin="round"
+                points="0,20 20,14 40,22 60,10 80,18 100,26 120,16 140,9 160,19 180,24 200,12 220,20 240,15 260,23 280,17 300,21"/>
+            </svg>
+          </div>
+          <div class="metric">
+            <em>RAM</em><b>6.2 GB / 31.1 GB</b>
+            <svg width="100%" height="34" viewBox="0 0 300 34" preserveAspectRatio="none">
+              <line x1="0" y1="33" x2="300" y2="33" stroke="#1E2B4D" stroke-width="1" opacity=".5"/>
+              <polyline fill="none" stroke="#60A5FA" stroke-width="1.4" stroke-linejoin="round"
+                points="0,24 20,23 40,25 60,22 80,24 100,21 120,23 140,22 160,24 180,20 200,23 220,22 240,24 260,21 280,23 300,22"/>
+            </svg>
+          </div>
+          <div class="metric">
+            <em>DİSK</em><b>48.3 GB / 455.0 GB</b>
+            <div style="height:34px;display:flex;align-items:center">
+              <div class="bar" style="width:100%;height:6px;margin:0"><i style="width:11%"></i></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- charts -->
+        <div class="sect"><span class="t">GRAFİKLER</span><span class="l"></span></div>
+        <div class="charts">
+          <div class="chart">
+            <h2>Disk dağılımı</h2>
+            <svg width="240" height="200" viewBox="0 0 240 200" style="margin-top:8px">
+              <circle cx="86" cy="100" r="61" fill="none" stroke="#1E2B4D" stroke-width="22" opacity=".55"/>
+            </svg>
+            <div class="empty" style="position:absolute;left:190px;top:70px;margin:0">
+              <b>Henüz veri yok</b>
+              <p>Geri kazanılabilir alanı görmek için bir tarama çalıştırın.</p>
+              <div class="btn">Tümünü tara</div>
+            </div>
+          </div>
+          <div class="chart">
+            <div class="hd"><h2>CPU / RAM dalgası</h2><span class="right">82% CPU</span></div>
+            <svg width="100%" height="104" viewBox="0 0 400 104" preserveAspectRatio="none" style="margin-top:10px">
+              <defs>
+                <linearGradient id="wfill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2563EB" stop-opacity=".28"/>
+                  <stop offset="100%" stop-color="#2563EB" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="wline" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#60A5FA"/>
+                  <stop offset="100%" stop-color="#1E2B4D"/>
+                </linearGradient>
+              </defs>
+              <line x1="0" y1="103" x2="400" y2="103" stroke="#1E2B4D" stroke-width="1" opacity=".5"/>
+              <path d="M0,74 L25,60 L50,70 L75,44 L100,62 L125,80 L150,52 L175,38 L200,64 L225,78 L250,48 L275,66 L300,56 L325,72 L350,60 L375,68 L400,58 L400,104 L0,104 Z"
+                    fill="url(#wfill)"/>
+              <path d="M0,74 L25,60 L50,70 L75,44 L100,62 L125,80 L150,52 L175,38 L200,64 L225,78 L250,48 L275,66 L300,56 L325,72 L350,60 L375,68 L400,58"
+                    fill="none" stroke="url(#wline)" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+            <div class="io"><span>I/O</span><div class="bar"><i></i></div><span class="val">0.0 B/s</span></div>
+            <div class="foot">
+              <span>RAM 6.2 GB / 31.1 GB</span>
+              <span>Son rapor: Henüz tarama yapılmadı · 0.0 B · 0 dosya</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+  // scale the 1360x860 frame down to the panel width, keep the aspect
+  (function () {
+    var app = document.getElementById('app'), wrap = document.getElementById('wrap');
+    function fit() {
+      var s = Math.min(1, (window.innerWidth - 24) / 1360);
+      app.style.transform = 'scale(' + s + ')';
+      wrap.style.height = (860 * s + 24) + 'px';
+    }
+    fit();
+    window.addEventListener('resize', fit);
+  })();
+</script>
+</body>
+</html>

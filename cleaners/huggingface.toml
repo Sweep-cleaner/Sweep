@@ -1,0 +1,35 @@
+id = "huggingface"
+name = "Hugging Face"
+description = "Model hub cache housekeeping: stale locks and negative-lookup markers (downloaded weights are NEVER touched)"
+
+[[var]]
+name = "hub"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/huggingface/hub"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\.cache\\huggingface\\hub'
+
+[[option]]
+id = "locks"
+label = "Stale download locks"
+description = "Delete *.lock files left behind by interrupted downloads"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$hub$$/models--*/*.lock"
+type = "f"
+
+[[option]]
+id = "negative_cache"
+label = "Negative-lookup markers"
+description = "Delete .no_exist markers (re-created on the next 404, saves a re-check)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$hub$$/models--*/.no_exist"

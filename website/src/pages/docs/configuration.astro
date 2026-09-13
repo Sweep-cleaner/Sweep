@@ -1,0 +1,149 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'config-locations', title: 'Default File Locations' },
+  { id: 'config-cli', title: 'The config Sub-command' },
+  { id: 'full-example', title: 'Complete config.toml Example' },
+  { id: 'whitelist-settings', title: 'Keep Lists & Safety Overrides' },
+  { id: 'budget-retention', title: 'Disk Budgets & Retention Policies' }
+];
+---
+
+<DocsLayout
+  title="Configuration Reference"
+  description="Exhaustive reference for Sweep's configuration system, file locations, keep lists, and retention budgets."
+  currentSlug="configuration"
+  toc={toc}
+  prevPage={{ title: 'TOML Cleaner Authoring', href: '/docs/cleaners' }}
+  nextPage={{ title: 'Benchmarks & Matrix', href: '/docs/benchmarks' }}
+>
+  <div class="space-y-10">
+    <!-- Config Locations -->
+    <section id="config-locations">
+      <h2 class="text-2xl font-bold text-white mb-3">Default File Locations</h2>
+      <p class="text-text-muted leading-relaxed mb-4">
+        Sweep resolves its configuration automatically based on standard operating system paths. In portable mode it lives inside the folder you point at instead:
+      </p>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-mono">
+        <div class="p-3.5 rounded-xl bg-bg-surface border border-border">
+          <div class="text-text-dim mb-1 uppercase font-semibold">Linux &amp; BSD</div>
+          <div class="text-cyan truncate">~/.config/sweep/config.toml</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-bg-surface border border-border">
+          <div class="text-text-dim mb-1 uppercase font-semibold">Windows</div>
+          <div class="text-cyan truncate">%APPDATA%\sweep\config.toml</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-bg-surface border border-border">
+          <div class="text-text-dim mb-1 uppercase font-semibold">macOS</div>
+          <div class="text-cyan truncate">~/Library/Application Support/sweep/config.toml</div>
+        </div>
+        <div class="p-3.5 rounded-xl bg-bg-surface border border-border">
+          <div class="text-text-dim mb-1 uppercase font-semibold">Portable</div>
+          <div class="text-cyan truncate">&lt;DIR&gt;/config.toml</div>
+        </div>
+      </div>
+      <p class="text-xs text-text-dim mt-3">
+        A missing file falls back to safe defaults. If the configured file is unreadable or malformed, the CLI logs a warning and uses defaults; use <code class="text-cyan">--config PATH</code> when the exact location matters. A legacy double-<code class="text-cyan">sweep/sweep</code> path is still read for migration compatibility.
+      </p>
+    </section>
+
+    <!-- Config CLI -->
+    <section id="config-cli">
+      <h2 class="text-2xl font-bold text-white mb-3">The config Sub-command</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        You never have to edit the file by hand. <code class="text-cyan">set</code> validates types and lists (comma-separated or a JSON array) and writes atomically.
+      </p>
+      <pre class="code-block"><code><span class="text-rust">$ </span>sweep config path                  <span class="text-text-dim"># where it is</span>
+<span class="text-rust">$ </span>sweep config show                  <span class="text-text-dim"># every setting + value</span>
+<span class="text-rust">$ </span>sweep config get shred             <span class="text-text-dim"># one value (script-friendly)</span>
+<span class="text-rust">$ </span>sweep config set shred true        <span class="text-text-dim"># validated write (atomic replace)</span>
+<span class="text-rust">$ </span>sweep config set languages tr,en   <span class="text-text-dim"># lists: comma-separated or a JSON array</span>
+<span class="text-rust">$ </span>sweep config init                  <span class="text-text-dim"># write the defaults</span></code></pre>
+    </section>
+
+    <!-- Complete Example -->
+    <section id="full-example">
+      <h2 class="text-2xl font-bold text-white mb-4">Complete config.toml Example</h2>
+      <p class="text-sm text-text-muted mb-4 leading-relaxed">
+        Every key below is optional and defaults are safe. Field names match <code class="text-cyan">Config</code> in <code class="text-cyan">src/config/mod.rs</code>:
+      </p>
+
+      <pre class="code-block overflow-x-auto"><code><span class="text-text-dim"># === Safety &amp; Overwrite ===</span>
+shred = <span class="text-rust">false</span>                 <span class="text-text-dim"># If true, overwrites files before deletion</span>
+languages = [<span class="text-cyan">"en"</span>, <span class="text-cyan">"tr"</span>]      <span class="text-text-dim"># Priority language order; falls back to $LANG</span>
+
+<span class="text-text-dim"># === Keep Lists (never touched, even with --force) ===</span>
+whitelist_files = [
+  <span class="text-cyan">"~/Documents/keep.txt"</span>,
+  <span class="text-cyan">"~/.ssh/known_hosts"</span>
+]
+whitelist_folders = [
+  <span class="text-cyan">"~/Projects/production-app"</span>,
+  <span class="text-cyan">"~/.gnupg"</span>
+]
+
+<span class="text-text-dim"># === Custom &amp; DeepScan Discovery ===</span>
+custom_paths = [<span class="text-cyan">"~/tmp/disposable-cache"</span>]
+deepscan_roots = [<span class="text-cyan">"~/Downloads"</span>, <span class="text-cyan">"/tmp"</span>]
+deepscan_patterns = [<span class="text-cyan">"*.tmp"</span>, <span class="text-cyan">"*.log"</span>, <span class="text-cyan">"Thumbs.db"</span>, <span class="text-cyan">".DS_Store"</span>]
+
+<span class="text-text-dim"># === Selection Memory ===</span>
+remember_last = <span class="text-rust">true</span>
+last_selection = [<span class="text-cyan">"firefox.cache"</span>, <span class="text-cyan">"system.cache"</span>]
+
+<span class="text-text-dim"># === System Retention Budgets ===</span>
+journal_size = <span class="text-cyan">"500M"</span>         <span class="text-text-dim"># Cap systemd journal logs</span>
+journal_days = <span class="text-rust">7</span>              <span class="text-text-dim"># Keep logs for a maximum of 7 days</span>
+pacman_keep = <span class="text-rust">2</span>               <span class="text-text-dim"># Retain the last 2 versions in the pacman cache</span>
+temp_max_age_days = <span class="text-rust">1</span>         <span class="text-text-dim"># Only delete /tmp files older than 24 hours</span>
+docker_build_cache = <span class="text-rust">false</span>    <span class="text-text-dim"># Do not purge Docker builders unless requested</span>
+
+<span class="text-text-dim"># === Community Hub ===</span>
+hub_url = <span class="text-cyan">"https://raw.githubusercontent.com/sweep-cleaner/hub/main/index.toml"</span>
+
+<span class="text-text-dim"># === Backups &amp; Logs ===</span>
+backup_dir = <span class="text-cyan">""</span>                <span class="text-text-dim"># Empty = no backups (CLI flag overrides)</span>
+log_file = <span class="text-cyan">""</span>                  <span class="text-text-dim"># Empty = the standard operation log</span></code></pre>
+
+      <div class="callout callout-note mt-4">
+        GUI appearance — theme, transparency, motion, language and the in-app memory keeper — is stored as application settings, not in <code class="text-cyan">config.toml</code>. Change it directly on the Settings screen.
+      </div>
+    </section>
+
+    <!-- Whitelists -->
+    <section id="whitelist-settings">
+      <h2 class="text-2xl font-bold text-white mb-3">Keep Lists &amp; Safety Overrides</h2>
+      <p class="text-sm text-text-muted leading-relaxed">
+        Directories and files configured in <code class="text-cyan">whitelist_folders</code> or <code class="text-cyan">whitelist_files</code> are strictly ignored by every scanning pass — including <code class="text-cyan">sweep devscan</code>, <code class="text-cyan">sweep bigfiles</code>, and <code class="text-cyan">sweep dupes</code>. Even if the user passes <code class="text-cyan">--force</code>, the keep-list check acts as an unbypassable circuit breaker.
+      </p>
+    </section>
+
+    <!-- Budgets -->
+    <section id="budget-retention">
+      <h2 class="text-2xl font-bold text-white mb-3">Disk Budgets &amp; Retention Policies</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        Rather than blind deletion, Sweep provides budget-aware pruning:
+      </p>
+      <ul class="space-y-2 text-sm text-text-muted">
+        <li class="flex items-start gap-2">
+          <span class="text-cyan">▸</span>
+          <span><strong>Journalctl:</strong> <code class="text-cyan">journal_size</code> uses systemd's <code class="text-cyan">--vacuum-size</code> to trim the oldest logs only until the cap is met; <code class="text-cyan">journal_days</code> bounds the age.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-cyan">▸</span>
+          <span><strong>Package rollback:</strong> <code class="text-cyan">pacman_keep = 2</code> ensures you can always downgrade a broken package even after cleaning.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-cyan">▸</span>
+          <span><strong>Active sockets:</strong> <code class="text-cyan">temp_max_age_days = 1</code> prevents deleting UNIX sockets or pipes created during your active desktop session.</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-cyan">▸</span>
+          <span><strong>Docker builders:</strong> <code class="text-cyan">docker_build_cache</code> stays off by default so a clean never discards a build cache you rely on.</span>
+        </li>
+      </ul>
+    </section>
+  </div>
+</DocsLayout>

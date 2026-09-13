@@ -1,0 +1,82 @@
+id = "teams"
+name = "Microsoft Teams"
+description = "Teams client: cache, logs and crash dumps (login and chat history are kept)"
+
+[[running]]
+type = "exe"
+value = "teams"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "teams-for-linux"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "ms-teams"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Teams"
+os = "macos"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/teams"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/Microsoft/Microsoft Teams"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Microsoft/Teams"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Microsoft\Teams'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the client, GPU and code caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/GPUCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/ShaderCache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files and crash dumps"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Crashpad"

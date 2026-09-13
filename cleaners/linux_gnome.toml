@@ -1,0 +1,36 @@
+id = "linux_gnome"
+name = "GNOME"
+description = "GNOME uygulama önbellekleri, Tracker dizini ve Zeitgeist etkinlik günlüğü (dconf ve eklentiler korunur)"
+os = "unix"
+
+[[option]]
+id = "app_cache"
+label = "Uygulama önbellekleri"
+description = "Yeniden üretilebilir GNOME uygulama önbellekleri; eklentiler ve dconf'a dokunulmaz"
+
+[[option.action]]
+command = "system.gnome_cache"
+search = "file"
+path = ""
+
+[[option]]
+id = "tracker"
+label = "Tracker dosya dizini"
+description = "tracker3 reset ile dosya arama dizinini sıfırlar (arama geçici olarak yavaşlar)"
+warning = "Tracker dizini sıfırlandıktan sonra dosya araması bir süre eksik sonuç verir."
+
+[[option.action]]
+command = "system.tracker"
+search = "file"
+path = ""
+
+[[option]]
+id = "zeitgeist"
+label = "Zeitgeist etkinliği"
+description = "Uygulama/belge etkinlik günlüğünü temizler (gizlilik)"
+warning = "Etkinlik geçmişi silinir; GNOME Etkinlikler'deki 'son kullanılanlar' boşalır."
+
+[[option.action]]
+command = "system.zeitgeist"
+search = "file"
+path = ""

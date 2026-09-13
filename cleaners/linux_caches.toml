@@ -1,0 +1,14 @@
+id = "linux_caches"
+name = "Kullanıcı Önbellekleri"
+description = "Yeniden üretilebilir kullanıcı/uygulama önbellekleri (pip, npm, cargo, mesa, crash raporları)"
+os = "linux"
+
+[[option]]
+id = "app_caches"
+label = "Uygulama önbellekleri"
+description = "Yalnızca güvenli, yeniden üretilebilir önbellek dizinleri; canlı uygulama kilitleri korunur"
+
+[[option.action]]
+command = "system.user_caches"
+search = "file"
+path = ""

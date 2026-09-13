@@ -1,0 +1,79 @@
+id = "thunderbird"
+name = "Thunderbird"
+description = "E-posta istemcisi önbelleği ve telemetrisi (e-postalar ve hesaplar ASLA silinmez)"
+
+[[running]]
+type = "exe"
+value = "thunderbird"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "thunderbird.exe"
+os = "windows"
+
+[[var]]
+name = "profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.thunderbird/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Thunderbird/Profiles/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Thunderbird\Profiles\*'
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Sayfa ve eklenti önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/startupCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/shader-cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/thunderbird"
+os = "linux"
+
+[[option]]
+id = "crashes"
+label = "Çökme raporları"
+description = "Gönderilmemiş çökme bildirimleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/minidumps"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/crashes"
+
+[[option]]
+id = "telemetry"
+label = "Telemetri"
+description = "Kullanım verileri ve sağlık raporları"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/datareporting"

@@ -1,0 +1,14 @@
+id = "linux_flatpak"
+name = "Flatpak"
+description = "Kullanılmayan Flatpak runtime'ları ve kalıntı dizinleri"
+os = "linux"
+
+[[option]]
+id = "unused"
+label = "Kullanılmayan runtime'lar"
+description = "flatpak uninstall --unused çalıştırır ve .removed/appstream kalıntılarını süpürür"
+
+[[option.action]]
+command = "system.flatpak"
+search = "file"
+path = ""

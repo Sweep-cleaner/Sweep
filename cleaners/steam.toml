@@ -1,0 +1,68 @@
+id = "steam"
+name = "Steam"
+description = "Oyun istemcisi günlükleri, çökme dökümleri ve yeniden inen önbellekler (oyun dosyalarına dokunulmaz)"
+
+[[running]]
+type = "exe"
+value = "steam"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "steam.exe"
+os = "windows"
+
+[[var]]
+name = "steam_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.local/share/Steam"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/Steam"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$PROGRAMFILES(X86)\Steam'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "İstemci ve oyun çalıştırma günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$steam_data$$/logs"
+
+[[option]]
+id = "dumps"
+label = "Çökme dökümleri"
+description = "Kilitlenme anı döküm dosyaları"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$steam_data$$/dumps"
+
+[[option]]
+id = "shadercache"
+label = "Shader önbelleği"
+description = "Derlenmiş shader'lar (Vulkan/OpenGL); oyun açılışında yeniden üretilir, GB'larca tutabilir"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$steam_data$$/steamapps/shadercache"
+
+[[option]]
+id = "htmlcache"
+label = "Arayüz önbelleği"
+description = "Mağaza/tarayıcı arayüz önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$steam_data$$/config/htmlcache"

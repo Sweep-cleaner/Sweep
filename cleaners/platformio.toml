@@ -1,0 +1,24 @@
+id = "platformio"
+name = "PlatformIO"
+description = "Embedded toolchain cache (platforms, packages and projects are kept)"
+
+[[var]]
+name = "core"
+[[var.value]]
+value = "~/.platformio"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$USERPROFILE\\.platformio"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "cache"
+label = "Core cache"
+description = "Delete the PlatformIO core cache (rebuilt on next build)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$core$$/.cache"

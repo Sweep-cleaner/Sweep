@@ -1,0 +1,286 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const GITHUB = 'https://github.com/Sweep-cleaner/Sweep';
+const RELEASES = `${GITHUB}/releases/latest`;
+const ALL_RELEASES = `${GITHUB}/releases`;
+
+const support = [
+  { target: 'Windows 10 / 11 · x86_64', artifact: 'Sweep-0.4.0-Setup.exe (NSIS)', status: 'Shipped' },
+  { target: 'Windows · portable', artifact: 'CLI tarball + sweep-qml-windows.zip', status: 'Shipped' },
+  { target: 'Linux · x86_64 (glibc)', artifact: 'Sweep-0.4.0-x86_64.AppImage (CLI + GUI)', status: 'Shipped' },
+  { target: 'Linux · universal', artifact: 'sweep-x86_64-unknown-linux-gnu.tar.gz', status: 'Shipped' },
+  { target: 'macOS · Apple Silicon', artifact: 'sweep-aarch64-apple-darwin.tar.gz', status: 'Shipped' },
+  { target: 'Containers · Podman / Docker', artifact: 'Containerfile in-repo', status: 'Shipped' },
+  { target: 'WinGet · Scoop · Chocolatey', artifact: '—', status: 'Coming soon' },
+  { target: 'AUR · COPR · APT · Flatpak', artifact: '—', status: 'Coming soon' }
+];
+
+const toc = [
+  { id: 'support-matrix', title: 'Support matrix' },
+  { id: 'windows', title: 'Windows' },
+  { id: 'linux', title: 'Linux (AppImage & tarball)' },
+  { id: 'package-managers', title: 'Package managers (coming soon)' },
+  { id: 'macos', title: 'macOS' },
+  { id: 'containers', title: 'Containers' },
+  { id: 'from-source', title: 'Building from source' },
+  { id: 'gui-build', title: 'Building the Qt6/QML GUI' },
+  { id: 'portable-mode', title: 'Portable USB mode' }
+];
+---
+
+<DocsLayout
+  title="Installation Guide"
+  description="Every download channel for Sweep 0.4.0: Windows, Linux AppImage, macOS, containers and source builds — plus the package-manager channels that are still coming soon."
+  currentSlug="installation"
+  toc={toc}
+  prevPage={{ title: 'Overview & Philosophy', href: '/docs' }}
+  nextPage={{ title: 'CLI Reference & Commands', href: '/docs/cli' }}
+>
+  <div class="space-y-10">
+    <p class="text-text-muted leading-relaxed">
+      Sweep 0.4.0 ships as a single static binary with no runtime dependencies — no Python, no GTK,
+      no system libraries to negotiate. The Qt6/QML desktop shell is a separate, optional target.
+      Every artifact is published to
+      <a href={RELEASES} target="_blank" rel="noopener" class="text-cyan hover:underline">GitHub Releases</a>,
+      which is currently the only distribution channel that is live.
+    </p>
+
+    <div class="callout callout-warning">
+      <strong>Packaging status.</strong> The PKGBUILD, RPM spec, Debian rules and Flatpak manifest all
+      exist in <code class="text-cyan">packaging/</code> inside the repository, but none of them are
+      published to a public repository yet. Until they are, no package manager can install Sweep —
+      use the AppImage or the portable tarball.
+    </div>
+
+    <!-- Support matrix -->
+    <section id="support-matrix">
+      <h2 class="text-xl font-bold text-white mb-4">Support matrix</h2>
+      <div class="overflow-x-auto rounded-2xl border border-border/80 bg-[#141522]">
+        <table class="w-full border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-[#191b2c] border-b border-border/70 text-xs font-mono uppercase tracking-wider text-text-muted">
+              <th class="p-4 text-left font-semibold">Target</th>
+              <th class="p-4 text-left font-semibold">Artifact</th>
+              <th class="p-4 text-left font-semibold">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/50">
+            {support.map(row => (
+              <tr class="hover:bg-white/[0.02] transition-colors">
+                <td class="p-4 font-medium text-text-primary">{row.target}</td>
+                <td class="p-4 text-text-muted">{row.artifact}</td>
+                <td class="p-4">
+                  <span class={row.status === 'Shipped' ? 'badge-ok' : 'badge-soon'}>{row.status}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Windows -->
+    <section id="windows" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">🪟</span>
+        <h2 class="text-xl font-bold text-white">Windows</h2>
+        <span class="badge-ok">Shipped</span>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        Three Windows assets are published: the NSIS installer
+        (<code class="text-cyan">Sweep-0.4.0-Setup.exe</code>), the portable CLI archive
+        (<code class="text-cyan">sweep-x86_64-pc-windows-msvc.tar.gz</code>, bundled with the generated
+        completions and man page) and the Qt6/QML desktop bundle
+        (<code class="text-cyan">sweep-qml-windows.zip</code>).
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># Installer — run it, or silently from a script</span>
+<span class="text-rust">> </span>.\Sweep-0.4.0-Setup.exe /S
+
+<span class="text-rust"># Portable CLI (PowerShell / CMD)</span>
+<span class="text-rust">> </span>tar -xzf sweep-x86_64-pc-windows-msvc.tar.gz
+<span class="text-rust">> </span>.\sweep.exe --help
+
+<span class="text-rust"># Desktop shell</span>
+<span class="text-rust">> </span>Expand-Archive sweep-qml-windows.zip -DestinationPath sweep-gui
+<span class="text-rust">> </span>.\sweep-gui\sweep-qml.exe</code></pre>
+      <p class="text-xs text-text-muted mt-3">
+        The installer is generated from <code class="text-cyan">packaging/dist/windows/sweep.nsi</code>,
+        driven by <code class="text-cyan">packaging/dist/windows/build-setup.ps1</code>. Windows binaries
+        are Authenticode-signed when <code class="text-cyan">WINDOWS_SIGN_CERT_BASE64</code> is configured
+        in the release secrets; otherwise SmartScreen warns on first launch. The GUI is built with
+        Qt's matching MinGW toolchain so it never links two C runtimes.
+      </p>
+    </section>
+
+    <!-- Linux -->
+    <section id="linux" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">🐧</span>
+        <h2 class="text-xl font-bold text-white">Linux — AppImage &amp; tarball</h2>
+        <span class="badge-ok">Shipped</span>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        The AppImage is the distro-agnostic path: one self-contained file, no root, no package
+        manager. It bundles the CLI and the Qt6/QML desktop shell together. If you only want the
+        headless binary, the universal tarball
+        (<code class="text-cyan">sweep-x86_64-unknown-linux-gnu.tar.gz</code>) runs on any glibc
+        distro.
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># AppImage (CLI + Qt6/QML GUI)</span>
+<span class="text-rust">$ </span>chmod +x Sweep-0.4.0-x86_64.AppImage
+<span class="text-rust">$ </span>./Sweep-0.4.0-x86_64.AppImage
+
+<span class="text-rust"># Universal tarball</span>
+<span class="text-rust">$ </span>tar -xzf sweep-x86_64-unknown-linux-gnu.tar.gz
+<span class="text-rust">$ </span>./sweep-x86_64-unknown-linux-gnu/sweep --help</code></pre>
+      <a
+        href={RELEASES}
+        target="_blank"
+        rel="noopener"
+        class="btn-secondary text-xs mt-4"
+      >
+        <span>Download from GitHub Releases →</span>
+      </a>
+    </section>
+
+    <!-- Package managers -->
+    <section id="package-managers" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">📦</span>
+        <h2 class="text-xl font-bold text-white">Package managers</h2>
+        <span class="badge-soon">Coming soon</span>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        Native repository packaging is prepared but not published. The commands below are the intended
+        installers once each channel goes live — they do not work at 0.4.0.
+      </p>
+      <div class="grid sm:grid-cols-2 gap-2.5 mb-4">
+        {
+          [
+            { name: 'AUR · Arch Linux', hint: 'yay -S sweep' },
+            { name: 'COPR · Fedora & RHEL', hint: 'sudo dnf install sweep' },
+            { name: 'APT · Debian & Ubuntu', hint: 'sudo apt install sweep' },
+            { name: 'Flatpak · Flathub', hint: 'flatpak install flathub org.sweep.Sweep' }
+          ].map(channel => (
+            <div class="channel-row">
+              <span class="flex-1 min-w-0">
+                <span class="block text-xs font-medium text-text-primary truncate">{channel.name}</span>
+                <code class="block text-[11px] font-mono text-text-dim truncate mt-0.5">{channel.hint}</code>
+              </span>
+              <span class="badge-soon">Coming soon</span>
+            </div>
+          ))
+        }
+      </div>
+      <p class="text-xs text-text-dim">
+        Maintainers can build the packages from source in the meantime — see
+        <code class="text-cyan">packaging/README.md</code> for the PKGBUILD, RPM spec, Debian rules and
+        Flatpak manifest. Note that the Flatpak manifest needs
+        <code class="text-cyan">--filesystem=host-reset</code>, because a cleaner that cannot see
+        outside the sandbox is not useful.
+      </p>
+      <a href={ALL_RELEASES} target="_blank" rel="noopener" class="btn-github text-xs mt-4">
+        <span>Watch GitHub Releases for the first published channel →</span>
+      </a>
+    </section>
+
+    <!-- macOS -->
+    <section id="macos" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">🍎</span>
+        <h2 class="text-xl font-bold text-white">macOS</h2>
+        <span class="badge-ok">Shipped</span>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        A single unsigned CLI archive built on GitHub-hosted macOS runners. Only
+        <code class="text-cyan">aarch64-apple-darwin</code> is produced — Intel Macs need to build from
+        source. Homebrew is planned but not staged yet.
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># macOS (Apple Silicon)</span>
+<span class="text-rust">$ </span>tar -xzf sweep-aarch64-apple-darwin.tar.gz
+<span class="text-rust">$ </span>./sweep --help</code></pre>
+    </section>
+
+    <!-- Containers -->
+    <section id="containers" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">🐳</span>
+        <h2 class="text-xl font-bold text-white">Containers</h2>
+        <span class="badge-ok">Shipped</span>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        Run the CLI in a throwaway container without touching the host's packages:
+      </p>
+      <pre class="code-block"><code><span class="text-rust">$ </span>podman build -t sweep -f packaging/podman/Containerfile .
+<span class="text-rust">$ </span>podman run --rm sweep --help</code></pre>
+      <p class="text-xs text-text-dim mt-3">
+        See <code class="text-cyan">packaging/podman/README.md</code> for host bind mounts and the
+        SELinux <code class="text-cyan">:z</code> note.
+      </p>
+    </section>
+
+    <!-- From Source -->
+    <section id="from-source" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">🦀</span>
+        <h2 class="text-xl font-bold text-white">Building from Source</h2>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        Sweep requires Rust <strong>1.88+</strong>. Clone the repository and compile the optimized
+        release profile:
+      </p>
+      <pre class="code-block"><code><span class="text-rust">$ </span>git clone https://github.com/Sweep-cleaner/Sweep.git
+<span class="text-rust">$ </span>cd Sweep
+<span class="text-rust">$ </span>cargo build --release --locked
+
+<span class="text-rust"># The compiled binary will be in ./target/release/sweep</span></code></pre>
+      <div class="callout callout-note mt-4">
+        The release profile uses <code class="text-cyan">lto = "thin"</code>,
+        <code class="text-cyan">codegen-units = 1</code>, <code class="text-cyan">panic = "abort"</code>
+        and symbol stripping, producing a roughly 6.0 MB binary. The declared MSRV in
+        <code class="text-cyan">Cargo.toml</code> and CI agree on 1.88.
+      </div>
+    </section>
+
+    <!-- GUI -->
+    <section id="gui-build" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">🎨</span>
+        <h2 class="text-xl font-bold text-white">Building the Qt6/QML GUI</h2>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        The desktop shell is a separate CMake target under
+        <code class="text-cyan">packaging/qml/</code> — there is no Cargo
+        <code class="text-cyan">gui</code> feature. Build it directly with Qt 6.8, or in a container:
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># Direct CMake build (Qt 6.8 + MinGW on Windows, Qt6 dev packages on Linux)</span>
+<span class="text-rust">$ </span>cmake -B packaging/qml/build -S packaging/qml -DCMAKE_BUILD_TYPE=Release
+<span class="text-rust">$ </span>cmake --build packaging/qml/build --config Release
+
+<span class="text-rust"># Or the container path</span>
+<span class="text-rust">$ </span>podman build -t sweep-qml -f packaging/qml/Containerfile.qml .
+<span class="text-rust">$ </span>podman run --rm -e DISPLAY="$DISPLAY" -v /tmp/.X11-unix:/tmp/.X11-unix:ro sweep-qml</code></pre>
+      <p class="text-xs text-text-dim mt-3">
+        The GUI renders on Qt's software scene graph by default; opt into hardware acceleration with
+        <code class="text-cyan">SWEEP_GPU=1</code>. On Windows the one-command driver
+        <code class="text-cyan">packaging/dist/windows/build-setup.ps1</code> builds, verifies, stages
+        and packages both the CLI and GUI.
+      </p>
+    </section>
+
+    <!-- Portable Mode -->
+    <section id="portable-mode" class="p-6 rounded-2xl bg-bg-surface/50 border border-border/70">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="text-2xl">💾</span>
+        <h2 class="text-xl font-bold text-white">Portable USB Mode</h2>
+      </div>
+      <p class="text-sm text-text-muted mb-4">
+        Carry Sweep on a flash drive. In portable mode, configuration files, logs, backups and
+        community rules are stored inside the designated folder rather than your system profile:
+      </p>
+      <pre class="code-block"><code><span class="text-rust">$ </span>sweep --portable /mnt/usb/sweep preview --all
+<span class="text-rust">$ </span>sweep --portable /mnt/usb/sweep clean --yes</code></pre>
+    </section>
+  </div>
+</DocsLayout>

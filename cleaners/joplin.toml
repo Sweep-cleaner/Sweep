@@ -1,0 +1,51 @@
+id = "joplin"
+name = "Joplin"
+description = "Note-taking app: cache, temp files and logs (notes and settings are kept)"
+
+[[running]]
+type = "exe"
+value = "joplin"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Joplin.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/joplin-desktop"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\joplin-desktop'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the renderer cache and temporary files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/tmp"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log"
+max_age_days = 30
+type = "f"

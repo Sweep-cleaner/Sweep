@@ -1,0 +1,88 @@
+---
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '../styles/global.css';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Sweep — Blazing-Fast, Memory-Safe System Cleaner in Rust',
+  description = 'Sweep is a blazing-fast, memory-safe system and privacy cleaner written from scratch in Rust. 202 native cleaners, 6.0 MB single binary, Qt6/QML desktop shell. Zero telemetry. Modern open-source alternative to BleachBit & CCleaner.'
+} = Astro.props;
+---
+<!doctype html>
+<html lang="en" class="dark scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#111219" />
+    <link rel="icon" type="image/jpeg" href="/logo.jpg" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <title>{title}</title>
+  </head>
+  <body class="bg-[#111219] text-text-primary min-h-screen selection:bg-rust/30 selection:text-white">
+    <slot />
+    <script is:inline>
+      // Staggered fade-up for each homepage section. Progressive enhancement:
+      // the markup carries no reveal classes, so if this script never runs the
+      // page simply renders at full opacity.
+      (function () {
+        var root = document.documentElement;
+        var targets = [];
+        var fold = window.innerHeight * 0.92;
+
+        document.querySelectorAll('main .section').forEach(function (section) {
+          Array.prototype.forEach.call(section.children, function (child, index) {
+            if (!child.tagName || child.tagName === 'SCRIPT' || child.tagName === 'STYLE') return;
+            if (child.classList.contains('hidden')) return;
+            // Only animate content that is still below the fold. Anything the
+            // visitor can already see is left untouched, so revealing can never
+            // flash visible content out and back in.
+            if (child.getBoundingClientRect().top < fold) return;
+            child.classList.add('reveal');
+            child.style.transitionDelay = Math.min(index, 6) * 70 + 'ms';
+            targets.push(child);
+          });
+        });
+
+        if (!targets.length) return;
+        root.classList.add('js');
+
+        if (!('IntersectionObserver' in window)) {
+          targets.forEach(function (el) {
+            el.classList.add('is-visible');
+          });
+          return;
+        }
+
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.05 }
+        );
+
+        targets.forEach(function (el) {
+          observer.observe(el);
+        });
+      })();
+    </script>
+  </body>
+</html>

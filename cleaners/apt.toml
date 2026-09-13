@@ -1,0 +1,55 @@
+id = "apt"
+name = "APT"
+description = "Debian/Ubuntu package manager cache"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Package cache"
+description = "apt-get clean: remove downloaded .deb packages"
+
+[[option.action]]
+command = "apt.clean"
+search = "file"
+path = ""
+
+[[option]]
+id = "autoclean"
+label = "Obsolete packages"
+description = "apt-get autoclean: remove only obsolete downloaded packages"
+
+[[option.action]]
+command = "apt.autoclean"
+search = "file"
+path = ""
+
+[[option]]
+id = "autoremove"
+label = "Unneeded packages"
+description = "apt-get autoremove: remove packages that are no longer required"
+warning = "This may remove packages no longer depended on. Review carefully."
+
+[[option.action]]
+command = "apt.autoremove"
+search = "file"
+path = ""
+
+[[option]]
+id = "deep_cache"
+label = "Derin önbellek taraması"
+description = "/var/cache/apt/archives içindeki her .deb için boyut bazında önizleme, sonra apt-get clean"
+
+[[option.action]]
+command = "system.apt_cache"
+search = "file"
+path = ""
+
+[[option]]
+id = "package_lists"
+label = "Paket listeleri"
+description = "/var/lib/apt/lists içeriğini temizler (apt-get update ile yeniden iner, yüzlerce MB tutabilir)"
+
+[[option.action]]
+command = "system.apt_lists"
+search = "file"
+path = ""

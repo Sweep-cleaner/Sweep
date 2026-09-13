@@ -1,0 +1,53 @@
+# syntax=docker/dockerfile:1
+# Sweep — containerized build & run (podman and docker compatible).
+#
+#   podman build -t sweep -f packaging/podman/Containerfile .
+#   podman run --rm sweep --help
+#
+# Only the `sweep` CLI is shipped. The graphical interface is the Qt6/QML
+# shell under `packaging/qml/` (it needs a display; see its README).
+#
+# Cleaning HOST paths from the container: mount them explicitly, e.g.
+#   podman run --rm -v "$HOME/Downloads:/data:rw" sweep bigfiles /data
+# (On SELinux systems append `,z`: `-v "$HOME/Downloads:/data:rw,z"`.)
+
+ARG RUST_VERSION=1.82
+
+# ---------------------------------------------------------------- builder ---
+FROM docker.io/library/rust:${RUST_VERSION}-slim-bookworm AS builder
+WORKDIR /src
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential pkg-config ca-certificates \
+    && rm -rf /var/lib/apt/lists
+
+# Prime the dependency cache first so source edits don't recompile crates.
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir -p src \
+    && echo 'fn main() {}' > src/main.rs \
+    && echo '// placeholder' > src/lib.rs \
+    && cargo build --release --locked \
+    && rm -rf src
+
+# Now the real sources (cleaners/ is embedded via include_str!).
+COPY rust-toolchain.toml rustfmt.toml ./
+COPY src ./src
+COPY cleaners ./cleaners
+COPY packaging ./packaging
+# NOTE: no `|| true` here — a failed compile must fail the image build,
+# otherwise an empty stub binary would be shipped silently.
+# The touch defeats cargo's mtime check: the prime build above stamps
+# fingerprints with build-time mtimes, so the real (older) sources would
+# otherwise look fresh and the stub would ship again.
+RUN find src cleaners -type f -exec touch {} + \
+    && cargo build --release --locked \
+    && strip target/release/sweep \
+    && ./target/release/sweep --version
+
+# ---------------------------------------------------------------- runtime ---
+FROM docker.io/library/debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists
+COPY --from=builder /src/target/release/sweep /usr/local/bin/sweep
+ENTRYPOINT ["sweep"]
+CMD ["--help"]

@@ -1,0 +1,24 @@
+id = "zypper"
+name = "Zypper"
+description = "openSUSE paket yöneticisi önbelleği"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Paket önbelleği"
+description = "zypper clean --all: indirilen paketleri ve metadata'yı temizler"
+
+[[option.action]]
+command = "zypper.clean"
+search = "file"
+path = ""
+
+[[option]]
+id = "deep_cache"
+label = "Derin önbellek taraması"
+description = "/var/cache/zypp için dosya bazında boyut önizlemesi, sonra clean --all"
+
+[[option.action]]
+command = "system.zypp_cache"
+search = "file"
+path = ""

@@ -1,0 +1,18 @@
+id = "samba"
+name = "Samba"
+description = "Windows-share server logs (shares and databases are kept)"
+os = "linux"
+
+[[option]]
+id = "logs"
+label = "Log files"
+description = "Delete Samba log files older than 30 days"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "/var/log/samba/*.log"
+max_age_days = 30
+type = "f"
+os = "linux"

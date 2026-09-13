@@ -1,0 +1,78 @@
+id = "lmstudio"
+name = "LM Studio"
+description = "LM Studio: web caches, shader caches and logs (downloaded models under ~/.lmstudio are NEVER touched)"
+
+[[running]]
+type = "exe"
+value = "lm-studio"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "LM Studio.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "LM Studio"
+os = "macos"
+
+[[var]]
+name = "userdata"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/LM Studio"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/LM Studio"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\LM Studio'
+
+[[option]]
+id = "web_cache"
+label = "Web caches"
+description = "Delete the Chromium page, code and GPU caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/GPUCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/DawnCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/ShaderCache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete client logs and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$userdata$$/Crashpad"

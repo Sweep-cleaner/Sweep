@@ -1,0 +1,173 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'toml-overview', title: 'Why Native TOML?' },
+  { id: 'cleaner-schema', title: 'Cleaner TOML Specification' },
+  { id: 'action-providers', title: 'Supported Action Providers' },
+  { id: 'variables-system', title: 'Path Variables ($$var$$)' },
+  { id: 'static-validation', title: 'Validating with verify_tomls.py' },
+  { id: 'community-hub', title: 'Sharing via Sweep Hub' }
+];
+---
+
+<DocsLayout
+  title="TOML Cleaner Authoring"
+  description="Comprehensive guide for writing, testing, and distributing native TOML cleaner definitions in Sweep."
+  currentSlug="cleaners"
+  toc={toc}
+  prevPage={{ title: 'Safety Model', href: '/docs/safety' }}
+  nextPage={{ title: 'Configuration Reference', href: '/docs/configuration' }}
+>
+  <div class="space-y-10">
+    <!-- Why Native TOML -->
+    <section id="toml-overview">
+      <h2 class="text-2xl font-bold text-white mb-3">Why Native TOML?</h2>
+      <p class="text-text-muted leading-relaxed">
+        Legacy cleaners use XML (CleanerML) or INI files with complex escaping hacks. Sweep uses strict, human-readable <strong>TOML</strong> definitions located under <code class="text-cyan font-mono">cleaners/</code>. Every one of the 202 cleaner definitions is strongly typed, statically validated, and embedded directly into the 6.0 MB binary with zero runtime file overhead.
+      </p>
+    </section>
+
+    <!-- Cleaner Schema -->
+    <section id="cleaner-schema">
+      <h2 class="text-2xl font-bold text-white mb-4">Cleaner TOML Specification</h2>
+      <p class="text-sm text-text-muted mb-4 leading-relaxed">
+        Here is a complete, minimal example of a native cleaner (<code class="text-cyan font-mono">cleaners/my_editor.toml</code>):
+      </p>
+
+      <pre class="code-block overflow-x-auto"><code><span class="text-text-dim"># cleaners/my_editor.toml</span>
+id = <span class="text-cyan">"my_editor"</span>
+name = <span class="text-cyan">"My Modern Editor"</span>
+description = <span class="text-cyan">"Clean temporary workspace state and caches"</span>
+category = <span class="text-cyan">"development"</span>
+os = [<span class="text-cyan">"linux"</span>, <span class="text-cyan">"windows"</span>, <span class="text-cyan">"macos"</span>]
+
+<span class="text-text-dim"># Define cross-platform path variables</span>
+[[var]]
+id = <span class="text-cyan">"cache_root"</span>
+linux = <span class="text-cyan">"~/.cache/my_editor"</span>
+windows = <span class="text-cyan">"%LOCALAPPDATA%/MyEditor/Cache"</span>
+macos = <span class="text-cyan">"~/Library/Caches/MyEditor"</span>
+
+<span class="text-text-dim"># Option 1: Temporary Caches</span>
+[[option]]
+id = <span class="text-cyan">"cache"</span>
+name = <span class="text-cyan">"Cache"</span>
+description = <span class="text-cyan">"Discard editor index caches and downloaded telemetry"</span>
+default = <span class="text-rust">true</span>
+
+[[option.action]]
+provider = <span class="text-cyan">"path"</span>
+path = <span class="text-cyan">"$$cache_root$$"</span>
+mode = <span class="text-cyan">"delete"</span>
+
+<span class="text-text-dim"># Option 2: Workspace Session State</span>
+[[option]]
+id = <span class="text-cyan">"session"</span>
+name = <span class="text-cyan">"Recent Sessions"</span>
+description = <span class="text-cyan">"Reset recent workspaces list from SQLite database"</span>
+default = <span class="text-rust">false</span>
+
+[[option.action]]
+provider = <span class="text-cyan">"sqlite"</span>
+path = <span class="text-cyan">"~/.config/my_editor/state.vscdb"</span>
+query = <span class="text-cyan">"DELETE FROM ItemTable WHERE key LIKE 'recentWorkspaces%';"</span>
+vacuum = <span class="text-rust">true</span></code></pre>
+    </section>
+
+    <!-- Action Providers -->
+    <section id="action-providers">
+      <h2 class="text-2xl font-bold text-white mb-4">Supported Action Providers</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse bg-bg-surface border border-border rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-bg-elevated text-left text-xs uppercase tracking-wider text-text-muted">
+              <th class="p-3">Provider</th>
+              <th class="p-3">Primary Keys</th>
+              <th class="p-3">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60 text-xs">
+            <tr>
+              <td class="p-3 font-mono text-cyan">path</td>
+              <td class="p-3 font-mono text-text-primary">path, mode (delete|truncate)</td>
+              <td class="p-3 text-text-muted">Unlinks files or entire directory trees safely with recursion guards.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">glob</td>
+              <td class="p-3 font-mono text-text-primary">root, pattern, recursive</td>
+              <td class="p-3 text-text-muted">Expands fast glob patterns within a designated directory.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">sqlite</td>
+              <td class="p-3 font-mono text-text-primary">path, query, vacuum</td>
+              <td class="p-3 text-text-muted">Executes SQL cleanups without corrupting active WAL files.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">structured</td>
+              <td class="p-3 font-mono text-text-primary">path, format (json|yaml|ini), key</td>
+              <td class="p-3 text-text-muted">Edits JSON/YAML/INI state files without corrupting surrounding keys.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">journal</td>
+              <td class="p-3 font-mono text-text-primary">vacuum_size, vacuum_time</td>
+              <td class="p-3 text-text-muted">Interface with <code class="text-cyan">journalctl</code> to trim systemd logs.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">winreg</td>
+              <td class="p-3 font-mono text-text-primary">key, value_name, tree</td>
+              <td class="p-3 text-text-muted">Removes orphaned Windows Registry keys. Privileged (untrusted filter applies).</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">process</td>
+              <td class="p-3 font-mono text-text-primary">command, args</td>
+              <td class="p-3 text-text-muted">Runs cleanup helper processes. Stripped unless <code class="text-cyan">--trust-external</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Path Variables -->
+    <section id="variables-system">
+      <h2 class="text-2xl font-bold text-white mb-3">Path Variables ($$var$$)</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        Variables defined in <code class="text-cyan">[[var]]</code> blocks can reference common environment keys or platform abstractions. In paths, wrap the variable identifier in double dollar signs:
+      </p>
+      <pre class="code-block"><code>path = <span class="text-cyan">"$$cache_root$$/temp_logs"</span></code></pre>
+      <p class="text-xs text-text-dim mt-2">
+        Sweep resolves environment variables dynamically (<code class="text-cyan">$HOME</code>, <code class="text-cyan">%APPDATA%</code>, <code class="text-cyan">$XDG_CACHE_HOME</code>) while guarding against path traversal attacks (<code class="text-cyan">..</code> escapes).
+      </p>
+    </section>
+
+    <!-- Static Validation -->
+    <section id="static-validation">
+      <h2 class="text-2xl font-bold text-white mb-3">Validating with verify_tomls.py</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        Before submitting a PR or using a custom TOML, validate it statically. Sweep includes a zero-dependency verification script that validates schemas, variable references, provider dispatchers, and syntax:
+      </p>
+      <pre class="code-block"><code><span class="text-rust">$ </span>python verify_tomls.py
+
+<span class="text-cyan">✓ Checked 202 embedded TOML cleaner definitions</span>
+<span class="text-cyan">✓ 0 undefined $$var$$ references</span>
+<span class="text-cyan">✓ All provider dispatchers reachable</span>
+<span class="text-cyan">✓ Zero schema violations</span></code></pre>
+    </section>
+
+    <!-- Community Hub -->
+    <section id="community-hub">
+      <h2 class="text-2xl font-bold text-white mb-3">Sharing via Sweep Hub</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        Created a cleaner for a niche tool? Share it through the community Hub repository:
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># Update available community rule catalogs</span>
+<span class="text-rust">$ </span>sweep hub update
+
+<span class="text-rust"># List verified community packages</span>
+<span class="text-rust">$ </span>sweep hub list
+
+<span class="text-rust"># Install a community bundle</span>
+<span class="text-rust">$ </span>sweep hub install gaming</code></pre>
+    </section>
+  </div>
+</DocsLayout>

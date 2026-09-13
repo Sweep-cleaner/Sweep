@@ -1,0 +1,28 @@
+id = "comfyui"
+name = "ComfyUI"
+description = "ComfyUI temporary files (models and output renders are NEVER touched)"
+
+[[var]]
+name = "home"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.comfyui"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/ComfyUI"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\.comfyui'
+
+[[option]]
+id = "temp"
+label = "Temporary files"
+description = "Delete temp working files (models, custom nodes and outputs are kept)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$home$$/temp"

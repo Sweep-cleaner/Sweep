@@ -1,0 +1,23 @@
+id = "appimage"
+name = "AppImage"
+description = "AppImage runtime cache (applications are kept)"
+os = "linux"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/appimagekit"
+search = "literal"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Runtime cache"
+description = "Delete AppImage runtime downloads (re-downloaded on next run)"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

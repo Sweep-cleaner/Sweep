@@ -1,0 +1,45 @@
+id = "filezilla"
+name = "FileZilla"
+description = "FileZilla FTP client: logs and cache (sites and the transfer queue are kept)"
+
+[[running]]
+type = "exe"
+value = "filezilla"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/filezilla"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\FileZilla'
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete FileZilla log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/logs/*"
+type = "f"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete FileZilla's local cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/cache"

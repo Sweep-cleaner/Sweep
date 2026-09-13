@@ -1,0 +1,37 @@
+id = "krita"
+name = "Krita"
+description = "Digital painting cache (brushes, documents and settings are kept)"
+
+[[running]]
+type = "exe"
+value = "krita"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "krita.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "krita"
+os = "macos"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/krita"
+search = "literal"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete brush preset and filter caches (rebuilt on next start)"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

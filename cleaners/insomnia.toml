@@ -1,0 +1,63 @@
+id = "insomnia"
+name = "Insomnia"
+description = "Insomnia API client: cache, logs and crash reports (your collections are kept)"
+
+[[running]]
+type = "exe"
+value = "insomnia"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/Insomnia"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Insomnia"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Insomnia'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Electron, code and GPU caches (rebuilt on the next start)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/GPUCache"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete Insomnia logs and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Crashpad"

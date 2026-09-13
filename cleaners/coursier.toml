@@ -1,0 +1,28 @@
+id = "coursier"
+name = "Coursier"
+description = "Coursier artifact cache (re-fetched on next build; build configs are kept)"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/coursier"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/Coursier"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\\Coursier'
+
+[[option]]
+id = "cache"
+label = "Artifact cache"
+description = "Delete cached artifacts (re-downloaded on next resolve)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

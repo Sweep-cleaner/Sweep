@@ -1,0 +1,34 @@
+id = "rawtherapee"
+name = "RawTherapee"
+description = "RAW editor cache (profiles and edits are kept)"
+
+[[running]]
+type = "exe"
+value = "rawtherapee"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "rawtherapee.exe"
+os = "windows"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/RawTherapee"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$LOCALAPPDATA\\RawTherapee"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete generated preview cache (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

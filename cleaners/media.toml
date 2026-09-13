@@ -1,0 +1,66 @@
+id = "media"
+name = "Media & graphics"
+description = "Cache and thumbnail data from VLC, GIMP and Inkscape"
+
+[[var]]
+name = "vlc"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/vlc"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\vlc'
+
+[[var]]
+name = "gimp"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/gimp"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\GIMP'
+
+[[var]]
+name = "inkscape"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/inkscape"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\inkscape'
+
+[[option]]
+id = "vlc"
+label = "VLC cache"
+description = "Delete VLC's thumbnail and stream cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vlc$$"
+
+[[option]]
+id = "gimp"
+label = "GIMP cache"
+description = "Delete GIMP's cache and temporary data"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gimp$$"
+
+[[option]]
+id = "inkscape"
+label = "Inkscape cache"
+description = "Delete Inkscape's cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$inkscape$$/cache"

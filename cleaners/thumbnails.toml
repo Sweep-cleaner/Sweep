@@ -1,0 +1,31 @@
+id = "thumbnails"
+name = "Thumbnails"
+description = "Cached image and file thumbnails"
+
+[[option]]
+id = "thumbnails"
+label = "Thumbnails"
+description = "Delete cached file-manager thumbnails"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/thumbnails"
+os = "unix"
+
+[[option.action]]
+command = "system.explorer_caches"
+search = "file"
+path = ""
+os = "windows"
+
+[[option]]
+id = "filmstrip"
+label = "Filmstrip thumbnails"
+description = "Delete the Nautilus filmstrip cache"
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/thumbnails/fail"

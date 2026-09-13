@@ -1,0 +1,22 @@
+id = "distrobox"
+name = "Distrobox"
+description = "Container home caches (container filesystems are kept)"
+os = "linux"
+
+[[var]]
+name = "boxes"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.local/share/distrobox"
+
+[[option]]
+id = "container_cache"
+label = "Container caches"
+description = "Delete .cache inside container homes"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$boxes$$/*/home/.cache"
+os = "linux"

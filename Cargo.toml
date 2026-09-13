@@ -1,0 +1,77 @@
+[package]
+name = "sweep"
+version = "0.4.0"
+edition = "2021"
+authors = ["Sweep contributors"]
+description = "Fast, safe, cross-platform system cleaner inspired by BleachBit, written in Rust"
+license = "GPL-3.0-or-later"
+readme = "README.md"
+homepage = "https://github.com/sweep-cleaner/sweep"
+repository = "https://github.com/sweep-cleaner/sweep"
+documentation = "https://github.com/sweep-cleaner/sweep/tree/main/docs"
+exclude = [".codegraph/", ".omo/"]
+keywords = ["cleaner", "privacy", "system", "cli", "bleachbit"]
+categories = ["command-line-utilities", "filesystem"]
+rust-version = "1.88"
+
+[[bin]]
+name = "sweep"
+path = "src/main.rs"
+
+[lib]
+name = "sweep"
+path = "src/lib.rs"
+
+[dependencies]
+# --- error handling ---------------------------------------------------------
+thiserror = "1"
+
+# --- logging ----------------------------------------------------------------
+log = "0.4"
+env_logger = "0.11"
+
+# --- CLI --------------------------------------------------------------------
+clap = { version = "4", features = ["derive", "wrap_help"] }
+
+# --- serialisation ----------------------------------------------------------
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# --- integrity --------------------------------------------------------------
+sha2 = "0.10"
+
+# --- definition parsing -----------------------------------------------------
+quick-xml = "0.36"
+
+# --- matching / traversal ---------------------------------------------------
+regex = "1"
+globset = "0.4"
+walkdir = "2"
+shell-words = "1"
+
+# --- concurrency ------------------------------------------------------------
+rayon = "1"
+num_cpus = "1"
+
+# --- databases --------------------------------------------------------------
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# --- misc -------------------------------------------------------------------
+dirs = "5"
+rand = "0.8"
+sysinfo = "0.30"
+indicatif = "0.17"
+
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.52"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

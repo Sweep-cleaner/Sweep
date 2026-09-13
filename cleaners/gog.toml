@@ -1,0 +1,53 @@
+id = "gog"
+name = "GOG Galaxy"
+description = "GOG oyun başlatıcısı günlükleri ve önbelleği"
+
+[[running]]
+type = "exe"
+value = "GOGGalaxy"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "GOGGalaxy"
+os = "macos"
+
+[[var]]
+name = "gog_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/gog-galaxy"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/GOG.com/Galaxy"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$PROGRAMDATA\GOG.com\Galaxy'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Başlatıcı ve oyun günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gog_data$$/Logs"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Arayüz ve mağaza önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gog_data$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gog_data$$/WebCache"

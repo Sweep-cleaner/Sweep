@@ -1,0 +1,41 @@
+id = "deluge"
+name = "Deluge"
+description = "Deluge BitTorrent client: log files (torrents, settings and resume data are kept)"
+
+[[running]]
+type = "exe"
+value = "deluge"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "deluge.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/deluge"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\deluge'
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Deluge daemon and client log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log.*"
+type = "f"

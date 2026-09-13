@@ -1,0 +1,36 @@
+id = "sumatrapdf"
+name = "SumatraPDF"
+description = "SumatraPDF reader: cache, thumbnail cache and crash dumps"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "SumatraPDF.exe"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\SumatraPDF'
+
+[[option]]
+id = "cache"
+label = "Cache and thumbnails"
+description = "Delete the SumatraPDF cache, thumbnail cache and crash dumps"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/ThumbnailCache"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/*.dmp"
+type = "f"

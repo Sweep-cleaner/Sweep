@@ -1,0 +1,18 @@
+id = "pulseaudio"
+name = "PulseAudio"
+description = "Sound server runtime databases (regenerated, volume levels reset)"
+os = "linux"
+
+[[option]]
+id = "db"
+label = "Runtime databases"
+description = "Delete card/device database files (volume levels reset to defaults)"
+warning = "Volume levels reset to defaults."
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "~/.config/pulse/*.tdb"
+type = "f"
+os = "linux"

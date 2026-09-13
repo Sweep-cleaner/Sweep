@@ -1,0 +1,40 @@
+id = "transmission"
+name = "Transmission"
+description = "Transmission BitTorrent client: log files (torrents and resume data are kept)"
+
+[[running]]
+type = "exe"
+value = "transmission-daemon"
+os = "unix"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/transmission"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Transmission"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Transmission log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Transmission's local cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/transmission"

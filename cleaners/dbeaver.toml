@@ -1,0 +1,64 @@
+id = "dbeaver"
+name = "DBeaver"
+description = "DBeaver database client: workspace logs, metadata and cache (connections are kept)"
+
+[[running]]
+type = "exe"
+value = "dbeaver"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/DBeaverData"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/DBeaverData"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\DBeaverData'
+
+[[var]]
+name = "legacy"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.dbeaver4"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\DBeaver'
+
+[[option]]
+id = "logs"
+label = "Workspace logs"
+description = "Delete DBeaver workspace logs and metadata (saved connections are kept)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/workspace6/.metadata/.log"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/workspace6/.metadata/.plugins"
+
+[[option]]
+id = "cache"
+label = "Driver cache"
+description = "Delete DBeaver's cached driver and temporary data"
+warning = "JDBC drivers are re-downloaded the next time a connection is opened."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$legacy$$/.cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$legacy$$/driver"

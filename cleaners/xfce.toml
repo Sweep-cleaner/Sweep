@@ -1,0 +1,25 @@
+id = "xfce"
+name = "XFCE"
+description = "XFCE desktop: saved session state and Thunar caches"
+os = "linux"
+
+[[option]]
+id = "sessions"
+label = "Saved sessions"
+description = "Delete saved XFCE/xfwm4 session state (window positions and saved sessions)"
+warning = "The desktop layout and saved sessions will be forgotten."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/sessions"
+
+[[option]]
+id = "thunar"
+label = "Thunar cache"
+description = "Delete Thunar's directory and thumbnail caches (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/Thunar"

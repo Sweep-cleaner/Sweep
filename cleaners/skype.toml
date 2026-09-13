@@ -1,0 +1,85 @@
+id = "skype"
+name = "Skype"
+description = "Skype client: cache, logs and crash dumps (login and chat history are kept)"
+
+[[running]]
+type = "exe"
+value = "skypeforlinux"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Skype.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Skype"
+os = "macos"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/skypeforlinux"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Skype"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Skype'
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/skypeforlinux/*"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the client, GPU and code caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/GPUCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/ShaderCache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files, media traces and crash dumps"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/media_messaging"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Crashpad"

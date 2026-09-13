@@ -1,0 +1,54 @@
+id = "linux_devcache"
+name = "Geliştirici Önbellekleri"
+description = "npm, pip, cargo ve gradle indirme/derleme önbellekleri (projeler korunur, yeniden iner)"
+os = "unix"
+
+[[option]]
+id = "npm"
+label = "npm önbelleği"
+description = "~/.npm içeriğini temizler (npm install ile yeniden iner)"
+
+[[option.action]]
+command = "system.dev_npm"
+search = "file"
+path = ""
+
+[[option]]
+id = "pip"
+label = "pip önbelleği"
+description = "~/.cache/pip içeriğini temizler (pip download ile yeniden iner)"
+
+[[option.action]]
+command = "system.dev_pip"
+search = "file"
+path = ""
+
+[[option]]
+id = "cargo"
+label = "cargo kayıt defteri"
+description = "~/.cargo/registry ve ~/.cargo/git içeriğini temizler (cargo build ile yeniden iner)"
+
+[[option.action]]
+command = "system.dev_cargo"
+search = "file"
+path = ""
+
+[[option]]
+id = "gradle"
+label = "gradle önbelleği"
+description = "~/.gradle/caches ve wrapper dağıtımlarını temizler"
+
+[[option.action]]
+command = "system.dev_gradle"
+search = "file"
+path = ""
+
+[[option]]
+id = "go"
+label = "go önbelleği"
+description = "~/.cache/go-build ve ~/go/pkg/mod içeriğini temizler (go build ile yeniden iner)"
+
+[[option.action]]
+command = "system.dev_go"
+search = "file"
+path = ""

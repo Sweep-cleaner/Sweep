@@ -1,0 +1,18 @@
+id = "digikam"
+name = "digiKam"
+description = "digiKam photo manager: thumbnail and face-detection caches (your photos are never touched)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "digikam"
+
+[[option]]
+id = "cache"
+label = "Thumbnail cache"
+description = "Delete digiKam's thumbnail, face-detection and image caches (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/digikam"

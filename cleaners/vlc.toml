@@ -1,0 +1,53 @@
+id = "vlc"
+name = "VLC Media Player"
+description = "VLC oynatıcı önbelleği ve günlükleri"
+
+[[running]]
+type = "exe"
+value = "vlc"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "vlc.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "VLC"
+os = "macos"
+
+[[var]]
+name = "vlc_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/vlc"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/org.videolan.vlc"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\vlc'
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Oynatma listesi önbelleği ve geçici dosyalar"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vlc_data$$/cache"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Hata ve oynatma günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vlc_data$$/logs"

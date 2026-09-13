@@ -1,0 +1,59 @@
+id = "retroarch"
+name = "RetroArch"
+description = "Multi-system emulator: logs and downloaded thumbnails (saves, states and cores are kept)"
+
+[[running]]
+type = "exe"
+value = "retroarch"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "retroarch.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/retroarch"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\RetroArch'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/retroarch"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/logs/*.log"
+max_age_days = 30
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "thumbnails"
+label = "Thumbnails"
+description = "Delete downloaded box-art thumbnails (re-downloadable from the online updater)"
+warning = "Thumbnails are re-downloaded on demand; large sets take a while to fetch again."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/thumbnails"

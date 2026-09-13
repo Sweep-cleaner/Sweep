@@ -1,0 +1,26 @@
+id = "nginx"
+name = "nginx"
+description = "nginx: rotated access and error logs (configuration and web content are never touched)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "nginx"
+
+[[option]]
+id = "logs"
+label = "Rotated logs"
+description = "Delete compressed and rotated nginx logs older than 7 days (the active log is kept)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "/var/log/nginx/*.log.*"
+max_age_days = 7
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "/var/log/nginx/*.gz"
+type = "f"

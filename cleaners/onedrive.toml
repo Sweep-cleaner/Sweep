@@ -1,0 +1,56 @@
+id = "onedrive"
+name = "OneDrive"
+description = "OneDrive sync client: logs and local cache (your synced files are never touched)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "onedrive"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/onedrive"
+
+[[var]]
+name = "state"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/onedrive"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete OneDrive client log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$state$$/*.log*"
+type = "f"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the client's local cache and database"
+warning = "The client will do a full rescan of your OneDrive on the next start."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$state$$/cache"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$state$$/items.sqlite3*"
+type = "f"

@@ -1,0 +1,429 @@
+//! Shell-completion and man-page generation.
+//!
+//! Implemented directly on clap's `Command` introspection API rather than via
+//! `clap_complete`/`clap_mangen`: CI builds with `--locked`, and adding crates
+//! would require regenerating `Cargo.lock` with a cargo we do not have here.
+//! This keeps the dependency tree untouched while the CLI definition stays the
+//! single source of truth — the generated scripts can never drift out of sync
+//! with the parser.
+//!
+//! Packagers generate at build time:
+//!
+//! ```text
+//! sweep completions bash  > packaging/completions/sweep.bash
+//! sweep completions zsh   > packaging/completions/_sweep
+//! sweep completions fish  > packaging/completions/sweep.fish
+//! sweep man --output packaging/man/
+//! ```
+
+use clap::{Arg, ArgAction, Command, CommandFactory};
+
+use super::Cli;
+
+/// A flag worth exposing in completions / the man page.
+struct ArgSpec {
+    /// `--long` (or `-s` when no long form exists).
+    flag: String,
+    /// Help text (styling stripped).
+    help: String,
+    /// Does the flag take a value?
+    value: bool,
+}
+
+/// Fresh, unmutated command tree for introspection.
+fn cmd() -> Command {
+    Cli::command()
+}
+
+// --- introspection helpers -----------------------------------------------------
+
+/// `--long` (or `-s` when no long form exists) of an argument, if any.
+fn flag_name(arg: &Arg) -> Option<String> {
+    if let Some(long) = arg.get_long() {
+        Some(format!("--{long}"))
+    } else {
+        arg.get_short().map(|s| format!("-{s}"))
+    }
+}
+
+/// Help text of an argument (plain, styling stripped).
+fn help_of(arg: &Arg) -> String {
+    arg.get_help().map(|h| h.to_string()).unwrap_or_default()
+}
+
+/// Visible args of `source`: `global == true` selects the root's global flags,
+/// `global == false` selects a subcommand's own flags.
+fn specs(source: &Command, global: bool) -> Vec<ArgSpec> {
+    source
+        .get_arguments()
+        .filter(|a| !a.is_hide_set())
+        .filter(|a| a.is_global_set() == global)
+        .filter_map(|a| {
+            flag_name(a).map(|flag| ArgSpec {
+                flag,
+                help: help_of(a),
+                value: matches!(a.get_action(), ArgAction::Set | ArgAction::Append),
+            })
+        })
+        .collect()
+}
+
+/// Global flags of the root command, plus the auto-added `--help`/`--version`
+/// (which only exist once clap builds the command, not during introspection).
+fn global_specs(root: &Command) -> Vec<ArgSpec> {
+    let mut out = specs(root, true);
+    for (flag, help) in [("--help", "Print help"), ("--version", "Print version")] {
+        if !out.iter().any(|s| s.flag == flag) {
+            out.push(ArgSpec {
+                flag: flag.to_string(),
+                help: help.to_string(),
+                value: false,
+            });
+        }
+    }
+    out
+}
+
+/// (name, about) of every visible subcommand.
+fn subcommands(root: &Command) -> Vec<(String, String)> {
+    root.get_subcommands()
+        .filter(|s| !s.is_hide_set())
+        .map(|s| {
+            (
+                s.get_name().to_string(),
+                s.get_about().map(|a| a.to_string()).unwrap_or_default(),
+            )
+        })
+        .collect()
+}
+
+/// Positional arguments of a subcommand as (NAME, help, multiple).
+fn positionals(source: &Command) -> Vec<(String, String, bool)> {
+    source
+        .get_arguments()
+        .filter(|a| !a.is_hide_set())
+        .filter(|a| a.get_long().is_none() && a.get_short().is_none())
+        .map(|a| {
+            (
+                a.get_id().to_string().to_uppercase(),
+                help_of(a),
+                matches!(a.get_action(), ArgAction::Append),
+            )
+        })
+        .collect()
+}
+
+// --- per-shell escaping --------------------------------------------------------
+
+/// Escape help text for roff (man page).
+fn esc_roff(text: &str) -> String {
+    text.replace('\\', "\\\\")
+        .replace('-', "\\-")
+        .replace('\'', "\\(aq")
+}
+
+/// Escape help text for a zsh `_arguments` spec (single-quoted, `[...]` block).
+fn esc_zsh(text: &str) -> String {
+    text.replace('\\', "\\\\")
+        .replace(':', "\\:")
+        .replace('[', "\\[")
+        .replace(']', "\\]")
+        .replace('\'', "")
+        .replace('\n', " ")
+}
+
+/// Escape help text for a fish `complete -d '...'` description.
+fn esc_fish(text: &str) -> String {
+    text.replace('\\', "\\\\").replace('\'', "\\'")
+}
+
+// --- generators ----------------------------------------------------------------
+
+/// bash: word-list completion with one `case` arm per subcommand.
+fn bash(root: &Command) -> String {
+    let globals = global_specs(root);
+    let subs = subcommands(root);
+    let global_words: Vec<&str> = globals.iter().map(|s| s.flag.as_str()).collect();
+
+    let mut s = String::new();
+    s.push_str("# bash completion for sweep\n");
+    s.push_str("# Generated by `sweep completions bash` - regenerate after CLI changes.\n");
+    s.push_str("_sweep() {\n");
+    s.push_str("    local cur sub opts\n");
+    s.push_str("    cur=\"${COMP_WORDS[COMP_CWORD]}\"\n");
+    s.push_str("    # first non-flag word on the line = subcommand\n");
+    s.push_str("    sub=\"\"\n");
+    s.push_str("    for w in \"${COMP_WORDS[@]:1:COMP_CWORD-1}\"; do\n");
+    s.push_str("        [[ \"$w\" == -* ]] || { sub=\"$w\"; break; }\n");
+    s.push_str("    done\n");
+    s.push_str(&format!(
+        "    local global_opts=\"{}\"\n",
+        global_words.join(" ")
+    ));
+    let sub_words: Vec<&str> = subs.iter().map(|(n, _)| n.as_str()).collect();
+    s.push_str(&format!(
+        "    local subcommands=\"{}\"\n",
+        sub_words.join(" ")
+    ));
+    s.push_str("    opts=\"$global_opts $subcommands\"\n");
+    s.push_str("    case \"$sub\" in\n");
+    for (name, _) in &subs {
+        let locals = root
+            .get_subcommands()
+            .find(|c| c.get_name() == name.as_str())
+            .map(|c| specs(c, false))
+            .unwrap_or_default();
+        let words: Vec<&str> = locals.iter().map(|l| l.flag.as_str()).collect();
+        s.push_str(&format!(
+            "        {name}) opts=\"$global_opts {}\" ;;\n",
+            words.join(" ")
+        ));
+    }
+    s.push_str("    esac\n");
+    s.push_str("    COMPREPLY=( $(compgen -W \"$opts\" -- \"$cur\") )\n");
+    s.push_str("}\n");
+    s.push_str("complete -F _sweep sweep\n");
+    s
+}
+
+/// One zsh `_arguments` spec line for a flag: `--flag[help]` (+ `:value`).
+fn zsh_spec(spec: &ArgSpec) -> String {
+    let mut line = format!("'{}[{}]'", spec.flag, esc_zsh(&spec.help));
+    if spec.value {
+        line.push_str(":value");
+    }
+    line
+}
+
+/// zsh: `_arguments -C` with a per-subcommand `args` state.
+fn zsh(root: &Command) -> String {
+    let globals = global_specs(root);
+    let subs = subcommands(root);
+
+    let mut s = String::new();
+    s.push_str("#compdef sweep\n");
+    s.push_str("# zsh completion for sweep\n");
+    s.push_str("# Generated by `sweep completions zsh` - regenerate after CLI changes.\n");
+    s.push_str("_sweep() {\n");
+    s.push_str("    local -a _sweep_commands\n");
+    s.push_str("    _sweep_commands=(\n");
+    for (name, about) in &subs {
+        s.push_str(&format!("        '{}:{}'\n", name, esc_zsh(about)));
+    }
+    s.push_str("    )\n");
+
+    let mut lines: Vec<String> = globals.iter().map(zsh_spec).collect();
+    lines.push("'1:command:->command'".to_string());
+    lines.push("'*::arg:->args'".to_string());
+    s.push_str(&format!(
+        "    _arguments -C \\\n        {}\n",
+        lines.join(" \\\n        ")
+    ));
+
+    s.push_str("    case $state in\n");
+    s.push_str("        command)\n");
+    s.push_str("            _describe -t commands 'sweep command' _sweep_commands\n");
+    s.push_str("            ;;\n");
+    s.push_str("        args)\n");
+    s.push_str("            case $words[1] in\n");
+    for (name, _) in &subs {
+        let locals = root
+            .get_subcommands()
+            .find(|c| c.get_name() == name.as_str())
+            .map(|c| specs(c, false))
+            .unwrap_or_default();
+        if locals.is_empty() {
+            continue;
+        }
+        let spec_lines: Vec<String> = locals.iter().map(zsh_spec).collect();
+        s.push_str(&format!("                {name})\n"));
+        s.push_str(&format!(
+            "                    _arguments {}\n",
+            spec_lines.join(" \\\n                        ")
+        ));
+        s.push_str("                    ;;\n");
+    }
+    s.push_str("            esac\n");
+    s.push_str("            ;;\n");
+    s.push_str("    esac\n");
+    s.push_str("}\n");
+    s.push_str("_sweep \"$@\"\n");
+    s
+}
+
+/// fish: one `complete` line per flag / subcommand.
+fn fish(root: &Command) -> String {
+    let globals = global_specs(root);
+    let subs = subcommands(root);
+
+    let mut s = String::new();
+    s.push_str("# fish completion for sweep\n");
+    s.push_str("# Generated by `sweep completions fish` - regenerate after CLI changes.\n");
+    s.push_str("complete -c sweep -f\n");
+    for spec in &globals {
+        let (kind, name) = match spec.flag.strip_prefix("--") {
+            Some(long) => ("-l", long),
+            None => ("-s", spec.flag.trim_start_matches('-')),
+        };
+        s.push_str(&format!(
+            "complete -c sweep {kind} {name} -d '{}'\n",
+            esc_fish(&spec.help)
+        ));
+    }
+    for (name, about) in &subs {
+        s.push_str(&format!(
+            "complete -c sweep -n '__fish_use_subcommand' -a '{name}' -d '{}'\n",
+            esc_fish(about)
+        ));
+    }
+    for (name, _) in &subs {
+        let locals = root
+            .get_subcommands()
+            .find(|c| c.get_name() == name.as_str())
+            .map(|c| specs(c, false))
+            .unwrap_or_default();
+        for spec in &locals {
+            let (kind, flag) = match spec.flag.strip_prefix("--") {
+                Some(long) => ("-l", long),
+                None => ("-s", spec.flag.trim_start_matches('-')),
+            };
+            s.push_str(&format!(
+                "complete -c sweep -n '__fish_seen_subcommand_from {name}' {kind} {flag} -d '{}'\n",
+                esc_fish(&spec.help)
+            ));
+        }
+    }
+    s
+}
+
+/// roff man page for packaging (`man/man1/sweep.1`).
+fn man_page(root: &Command) -> String {
+    let about = root.get_about().map(|a| a.to_string()).unwrap_or_default();
+    let globals = global_specs(root);
+    let subs = subcommands(root);
+
+    let mut s = String::new();
+    s.push_str(&format!(
+        ".TH SWEEP 1 \"sweep {}\" \"User Commands\"\n",
+        env!("CARGO_PKG_VERSION")
+    ));
+    s.push_str(".SH NAME\n");
+    s.push_str(&format!("sweep \\- {}\n", esc_roff(&about)));
+    s.push_str(".SH SYNOPSIS\n");
+    s.push_str(".B sweep\n");
+    s.push_str("[\\fIGLOBAL OPTIONS\\fR] \\fICOMMAND\\fR [\\fIARGS\\fR]...\n");
+    s.push_str(".SH DESCRIPTION\n");
+    s.push_str(&format!("{}\n", esc_roff(&about)));
+    s.push_str(".P\n");
+    s.push_str("Sweep cleans caches, logs and other regenerable junk. Run \\fBsweep preview\\fR before \\fBsweep clean\\fR to see what would be deleted. Destructive operations respect the keep list and protected system paths; see \\fBsweep doctor\\fR.\n");
+    s.push_str(".SH OPTIONS\n");
+    for spec in &globals {
+        s.push_str(".TP\n");
+        s.push_str(&format!(".B {}", esc_roff(&spec.flag)));
+        if spec.value {
+            s.push_str(" \\fIVALUE\\fR");
+        }
+        s.push('\n');
+        if !spec.help.is_empty() {
+            s.push_str(&format!("{}\n", esc_roff(&spec.help)));
+        }
+    }
+    s.push_str(".SH COMMANDS\n");
+    for (name, sub_about) in &subs {
+        let sub = root
+            .get_subcommands()
+            .find(|c| c.get_name() == name.as_str());
+        s.push_str(".TP\n");
+        s.push_str(&format!(".B {}", esc_roff(name)));
+        if let Some(sub) = sub {
+            for (pname, _, multiple) in positionals(sub) {
+                s.push_str(&format!(" \\fI{}\\fR", esc_roff(&pname)));
+                if multiple {
+                    s.push_str("...");
+                }
+            }
+        }
+        s.push('\n');
+        if !sub_about.is_empty() {
+            s.push_str(&format!("{}\n", esc_roff(sub_about)));
+        }
+        if let Some(sub) = sub {
+            let locals = specs(sub, false);
+            if !locals.is_empty() {
+                s.push_str(".RS\n");
+                for spec in &locals {
+                    s.push_str(".TP\n");
+                    s.push_str(&format!(".B {}", esc_roff(&spec.flag)));
+                    if spec.value {
+                        s.push_str(" \\fIVALUE\\fR");
+                    }
+                    s.push('\n');
+                    if !spec.help.is_empty() {
+                        s.push_str(&format!("{}\n", esc_roff(&spec.help)));
+                    }
+                }
+                s.push_str(".RE\n");
+            }
+        }
+    }
+    s.push_str(".SH SEE ALSO\n");
+    s.push_str("Full documentation: https://github.com/sweep-cleaner/sweep/tree/main/docs\n");
+    s
+}
+
+/// Generate a completion script for bash, zsh or fish.
+pub fn completions(shell: &str) -> Result<String, String> {
+    let root = cmd();
+    match shell.to_lowercase().as_str() {
+        "bash" => Ok(bash(&root)),
+        "zsh" => Ok(zsh(&root)),
+        "fish" => Ok(fish(&root)),
+        other => Err(format!(
+            "unsupported shell '{other}' (supported: bash, zsh, fish)"
+        )),
+    }
+}
+
+/// Generate the roff man page.
+pub fn man() -> String {
+    man_page(&cmd())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn all_shells_generate() {
+        for shell in ["bash", "zsh", "fish"] {
+            let script = completions(shell).unwrap_or_else(|e| panic!("{e}"));
+            assert!(!script.is_empty());
+            assert!(script.contains("sweep"));
+        }
+        assert!(completions("tcsh").is_err());
+    }
+
+    #[test]
+    fn generated_scripts_cover_cli() {
+        // Every subcommand name must appear in every shell script.
+        let root = cmd();
+        for shell in ["bash", "zsh", "fish"] {
+            let script = completions(shell).expect("shell");
+            for (name, _) in subcommands(&root) {
+                assert!(
+                    script.contains(&name),
+                    "{shell} script is missing subcommand '{name}'"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn man_page_is_roff() {
+        let page = man();
+        assert!(page.starts_with(".TH SWEEP 1"));
+        assert!(page.contains(".SH NAME"));
+        assert!(page.contains(".SH COMMANDS"));
+        assert!(page.contains(".B clean"));
+    }
+}

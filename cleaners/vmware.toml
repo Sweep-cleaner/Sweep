@@ -1,0 +1,40 @@
+id = "vmware"
+name = "VMware"
+description = "Workstation log files (VM disks, snapshots and inventory are kept)"
+
+[[running]]
+type = "exe"
+value = "vmware"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "vmware.exe"
+os = "windows"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.vmware"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\\VMware'
+
+[[option]]
+id = "logs"
+label = "Log files"
+description = "Delete client and per-VM log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/*.log"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/*/logs"

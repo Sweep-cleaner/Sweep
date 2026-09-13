@@ -1,0 +1,48 @@
+id = "viber"
+name = "Viber"
+description = "Viber: cache, logs and crash reports (your messages and media are kept)"
+
+[[running]]
+type = "exe"
+value = "viber"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.ViberPC"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\ViberPC'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Viber's cache and temporary files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/*/cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/*/Cache"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete Viber logs and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/*/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/*/Crashpad"

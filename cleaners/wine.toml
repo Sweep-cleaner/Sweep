@@ -1,0 +1,61 @@
+id = "wine"
+name = "Wine"
+description = "Windows compatibility layer: temp files and downloaded runtimes (prefixes and programs are kept)"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "wineserver"
+os = "unix"
+
+[[var]]
+name = "prefix"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.wine"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/wine"
+
+[[var]]
+name = "winetricks_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/winetricks"
+
+[[option]]
+id = "temp"
+label = "Windows temp"
+description = "Delete the emulated C:\\windows\\temp contents"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$prefix$$/drive_c/windows/temp"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$prefix$$/drive_c/users/*/Temp"
+max_depth = 3
+
+[[option]]
+id = "cache"
+label = "Runtime cache"
+description = "Delete re-downloadable Mono/Gecko packages and the winetricks cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$winetricks_cache$$"

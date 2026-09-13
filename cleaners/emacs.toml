@@ -1,0 +1,70 @@
+id = "emacs"
+name = "Emacs"
+description = "Emacs: native-compilation and package caches (your files and settings are kept)"
+
+[[running]]
+type = "exe"
+value = "emacs"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "emacs.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/emacs"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/.emacs.d"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\.emacs.d'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/emacs"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/emacs"
+
+[[option]]
+id = "eln_cache"
+label = "Native compilation cache"
+description = "Delete compiled .eln files (recompiled on demand)"
+warning = "The first start after this will recompile packages and be slow."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/eln-cache"
+
+[[option]]
+id = "cache"
+label = "Package cache"
+description = "Delete Emacs' package archive and download cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "auto_save"
+label = "Auto-save list"
+description = "Delete the list of files that have auto-save data"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/auto-save-list"

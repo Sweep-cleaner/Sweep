@@ -1,0 +1,79 @@
+id = "minecraft"
+name = "Minecraft"
+description = "Official launcher and game logs (worlds, mods and resource packs are kept)"
+
+[[running]]
+type = "exe"
+value = "minecraft-launcher"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Minecraft.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Minecraft"
+os = "macos"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.minecraft"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/minecraft"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\.minecraft'
+
+[[option]]
+id = "logs"
+label = "Game logs"
+description = "Delete rotated game logs older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/logs/*.log.gz"
+max_age_days = 30
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/logs/*.log"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "launcher_logs"
+label = "Launcher logs"
+description = "Delete launcher diagnostics (launcher_log, CEF logs)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/launcher_*.txt"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/webcache2"
+
+[[option]]
+id = "crash_reports"
+label = "Crash reports"
+description = "Delete crash reports (worlds and player data are kept)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/crash-reports/crash-*.txt"
+type = "f"

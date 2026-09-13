@@ -1,0 +1,43 @@
+id = "torbrowser"
+name = "Tor Browser"
+description = "Anonymous browser cache (cleaning is recommended for privacy)"
+
+[[running]]
+type = "exe"
+value = "tor-browser"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "firefox.exe"
+os = "windows"
+
+[[var]]
+name = "profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/tor-browser*/Browser/TorBrowser/Data/Browser/profile.default"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/TorBrowser-Data/Browser/profile.default*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = "$USERPROFILE\\tor-browser*\\Browser\\TorBrowser\\Data\\Browser\\profile.default"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the browsing cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$profile$$/thumbnails"

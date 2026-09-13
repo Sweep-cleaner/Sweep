@@ -1,0 +1,16 @@
+id = "x11"
+name = "X11"
+description = "X session error logs (active session file is kept)"
+os = "unix"
+
+[[option]]
+id = "logs"
+label = "Session errors"
+description = "Delete rotated X session error logs"
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "~/.xsession-errors.old"
+os = "unix"

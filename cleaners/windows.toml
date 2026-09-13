@@ -1,0 +1,127 @@
+id = "windows"
+name = "Windows"
+description = "Windows system cleaners: prefetch, recycle bin, error reports and caches"
+os = "windows"
+
+[[option]]
+id = "recycle_bin"
+label = "Recycle Bin"
+description = "Empty the recycle bin on every drive"
+
+[[option.action]]
+command = "system.recycle_bin"
+search = "file"
+path = ""
+
+[[option]]
+id = "prefetch"
+label = "Prefetch"
+description = "Delete Windows prefetch files"
+warning = "Prefetch speeds up program startup; deleting it only causes a one-time slowdown."
+
+[[option.action]]
+command = "system.prefetch"
+search = "file"
+path = ""
+
+[[option]]
+id = "wer"
+label = "Error reports"
+description = "Delete Windows Error Reporting queues"
+
+[[option.action]]
+command = "system.wer"
+search = "file"
+path = ""
+
+[[option]]
+id = "windows_update"
+label = "Windows Update cache"
+description = "Delete the Windows Update download cache"
+
+[[option.action]]
+command = "system.windows_update_cache"
+search = "file"
+path = ""
+
+[[option]]
+id = "delivery"
+label = "Delivery Optimization"
+description = "Delete the Windows Delivery Optimization peer-cache"
+
+[[option.action]]
+command = "system.delivery_optimization"
+search = "file"
+path = ""
+
+[[option]]
+id = "explorer"
+label = "Explorer caches"
+description = "Delete Explorer thumbnail and icon caches"
+
+[[option.action]]
+command = "system.explorer_caches"
+search = "file"
+path = ""
+
+[[option]]
+id = "recent"
+label = "Recent documents"
+description = "Clear the recent documents list"
+
+[[option.action]]
+command = "system.recent_documents"
+search = "file"
+path = ""
+
+[[option]]
+id = "thumbcache"
+label = "Thumbnail cache"
+description = "Delete Explorer thumbnail and icon database files (thumbcache_*.db)"
+warning = "Explorer rebuilds them on demand; thumbnails re-appear after browsing folders."
+
+[[option.action]]
+command = "system.thumbcache"
+search = "file"
+path = ""
+
+[[option]]
+id = "store_cache"
+label = "Microsoft Store cache"
+description = "Delete the Microsoft Store download and update cache"
+
+[[option.action]]
+command = "system.store_cache"
+search = "file"
+path = ""
+
+[[option]]
+id = "d3d_shader_cache"
+label = "DirectX shader cache"
+description = "Delete the per-user DirectX shader compilation cache (drivers rebuild it)"
+
+[[option.action]]
+command = "system.d3d_shader_cache"
+search = "file"
+path = ""
+
+[[option]]
+id = "crash_dumps"
+label = "Crash dumps"
+description = "Delete user-mode crash dumps"
+
+[[option.action]]
+command = "system.crash_dumps"
+search = "file"
+path = ""
+
+[[option]]
+id = "memory_dumps"
+label = "Memory dumps"
+description = "Delete system crash memory dumps (MEMORY.DMP, Minidump)"
+warning = "Diagnostic dumps are lost; skip when you plan to analyze crashes."
+
+[[option.action]]
+command = "system.memory_dumps"
+search = "file"
+path = ""

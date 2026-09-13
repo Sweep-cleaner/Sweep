@@ -1,0 +1,32 @@
+id = "pyenv"
+name = "pyenv"
+description = "pyenv: downloaded Python source cache (your installed versions are kept)"
+os = "unix"
+
+[[var]]
+name = "root"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.pyenv"
+
+[[option]]
+id = "cache"
+label = "Build cache"
+description = "Delete the Python source tarballs downloaded by `pyenv install`"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$root$$/cache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete pyenv log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$root$$/**/*.log"
+type = "f"

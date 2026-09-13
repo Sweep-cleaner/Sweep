@@ -1,0 +1,44 @@
+id = "linux_docker"
+name = "Docker"
+description = "Asılı imajlar, build cache ve durdurulmuş kapsayıcı logları (çalışan kapsayıcı ve volume'lere dokunulmaz)"
+os = "linux"
+
+[[var]]
+name = "podman_cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/containers/cache"
+
+[[option]]
+id = "prune"
+label = "Asılı imajlar ve loglar"
+description = "docker image prune + durdurulmuş kapsayıcı loglarını sıfırlar; build cache dahil değildir"
+warning = "Kapsayıcı logları sıfırlanır. Çalışan kapsayıcılar ve volume'ler korunur."
+
+[[option.action]]
+command = "system.docker"
+search = "file"
+path = ""
+
+[[option]]
+id = "podman_cache"
+label = "Podman build cache"
+description = "Podman katman önbelleğini temizler (görüntüler yeniden çekilir, volume'ler korunur)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$podman_cache$$"
+
+[[option]]
+id = "volumes"
+label = "Kullanılmayan volume'ler"
+description = "Hiçbir kapsayıcının referans vermediği volume'leri siler (docker volume prune)"
+warning = "Yalnızca hiçbir kapsayıcının kullanmadığı volume'ler silinir; adlandırılmış ve bağlı veri volume'leri korunur."
+
+[[option.action]]
+command = "system.docker_volumes"
+search = "file"
+path = ""
+

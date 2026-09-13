@@ -1,0 +1,51 @@
+# Rust
+/target/
+Cargo.lock.bak
+**/*.rs.bk
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Test / local artifacts
+/tmp/sweep-*
+sweep.toml
+operations.log
+
+# Packaging outputs
+*.deb
+*.rpm
+*.tar.gz
+packaging/flatpak/build/
+packaging/flatpak/.flatpak-builder/
+packaging/dist/
+packaging/qml/build/
+packaging/qml/build-*/
+packaging/windows/diagnostics/extract-*/
+
+# Local release staging (binaries + copies, rebuilt by release.yml)
+sweep-dist/
+sweep-main-packaging-dist/
+
+# Extracted / prebuilt artefacts that must never be committed:
+# they contain compiled binaries and cost hundreds of megabytes.
+/out/
+/squashfs-root/
+*.AppImage
+*.AppDir/
+
+# Agent scratch
+.omo/
+.unlazy/
+.workbuddy-ai/
+.freebuff/
+
+# Local installer log
+aqtinstall.log
+
+# Python helper
+__pycache__/

@@ -1,0 +1,24 @@
+id = "nextcloud"
+name = "Nextcloud"
+description = "Bulut istemcisi günlükleri ve önbelleği (eşleştirilen dosyalar ve hesap korunur)"
+os = "linux"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Eşleştirme günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.config/Nextcloud/logs"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Küçük resim ve keşif önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/Nextcloud"

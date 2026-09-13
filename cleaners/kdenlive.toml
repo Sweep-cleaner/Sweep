@@ -1,0 +1,51 @@
+id = "kdenlive"
+name = "Kdenlive"
+description = "Video editor: render cache, thumbnails and logs (projects are kept)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "kdenlive"
+os = "unix"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/kdenlive"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.local/share/kdenlive"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the preview-render and thumbnail caches (regenerated on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/preview"
+max_age_days = 7
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete render and application logs older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/*.log"
+max_age_days = 30
+type = "f"

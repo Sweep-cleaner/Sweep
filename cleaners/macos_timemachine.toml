@@ -1,0 +1,17 @@
+id = "macos_timemachine"
+name = "Time Machine Snapshots"
+description = "Thin local snapshots that silently fill the disk (backups on the Time Machine volume are kept)"
+os = "macos"
+
+[[option]]
+id = "thin"
+label = "Thin local snapshots"
+description = "tmutil thinlocalsnapshots / 2g: urgency-thin local snapshots"
+warning = "Local snapshots are safety copies; thinning only reclaims the requested 2 GB."
+os = "macos"
+
+[[option.action]]
+command = "system.tm_thin"
+search = "file"
+path = ""
+os = "macos"

@@ -1,0 +1,65 @@
+id = "mailspring"
+name = "Mailspring"
+description = "Mailspring mail client: cache, logs and crash reports (mail on the server is untouched)"
+
+[[running]]
+type = "exe"
+value = "mailspring"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Mailspring.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/Mailspring"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Mailspring'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Electron, code and GPU caches (rebuilt on the next start)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/GPUCache"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete Mailspring log files and crash dumps"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Crashpad"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

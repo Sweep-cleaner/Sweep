@@ -1,0 +1,48 @@
+id = "plex"
+name = "Plex"
+description = "Plex Media Server: cache, logs and crash reports (your media and library are kept)"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/Plex Media Server"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Plex Media Server"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Plex Media Server'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Plex' photo-transcoder and media caches (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Cache/PhotoTranscoder"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Cache/Transcode"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete Plex logs and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Crash Reports"

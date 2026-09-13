@@ -1,0 +1,188 @@
+id = "emulators"
+name = "Emulators"
+description = "Game emulators: logs and regenerable shader caches only (saves, states, ROMs, firmware and configs are never touched)"
+
+[[running]]
+type = "exe"
+value = "pcsx2"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "rpcs3"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Ryujinx"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "yuzu"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Cemu"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "pcsx2-qt.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Ryujinx.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "yuzu.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Cemu.exe"
+os = "windows"
+
+[[var]]
+name = "pcsx2"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/PCSX2"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\Documents\PCSX2'
+
+[[var]]
+name = "rpcs3"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/rpcs3"
+
+[[var]]
+name = "ryujinx"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/Ryujinx"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Ryujinx'
+
+[[var]]
+name = "yuzu"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/yuzu"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\yuzu'
+
+[[var]]
+name = "cemu"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/Cemu"
+
+[[option]]
+id = "pcsx2_logs"
+label = "PCSX2 logs"
+description = "Delete PCSX2 log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$pcsx2$$/logs/*.log"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "rpcs3_logs"
+label = "RPCS3 logs"
+description = "Delete RPCS3 log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$rpcs3$$/log*.log*"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "rpcs3_shader"
+label = "RPCS3 shader cache"
+description = "Delete compiled shader/LLVM cache (rebuilt while playing, may stutter once)"
+warning = "First runs after cleaning recompile shaders and can stutter."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$rpcs3$$/cache"
+
+[[option]]
+id = "ryujinx_logs"
+label = "Ryujinx logs"
+description = "Delete Ryujinx log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$ryujinx$$/Logs/*.log*"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "yuzu_logs"
+label = "yuzu logs"
+description = "Delete yuzu log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$yuzu$$/log/*.log"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "yuzu_shader"
+label = "yuzu shader cache"
+description = "Delete compiled shader caches (rebuilt while playing, may stutter once)"
+warning = "First runs after cleaning recompile shaders and can stutter."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$yuzu$$/shader"
+
+[[option]]
+id = "cemu_logs"
+label = "Cemu logs"
+description = "Delete Cemu log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$cemu$$/log.txt*"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "cemu_shader"
+label = "Cemu shader cache"
+description = "Delete precompiled shader cache (transferable cache is kept, stutter possible)"
+warning = "First runs after cleaning recompile shaders and can stutter."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cemu$$/shaderCache/precompiled"

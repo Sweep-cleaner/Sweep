@@ -1,0 +1,69 @@
+id = "notion"
+name = "Notion"
+description = "Notion desktop app: cache, logs and crash reports (your workspaces are kept)"
+
+[[running]]
+type = "exe"
+value = "notion"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Notion.exe"
+os = "windows"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/Notion"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Notion"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Notion'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Electron, code and GPU caches (rebuilt on the next start)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/GPUCache"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete Notion log files and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Crashpad"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/*.log*"
+type = "f"

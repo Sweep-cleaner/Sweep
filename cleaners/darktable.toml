@@ -1,0 +1,43 @@
+id = "darktable"
+name = "darktable"
+description = "Photo editor mipmap cache (library database and edits are kept)"
+
+[[running]]
+type = "exe"
+value = "darktable"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "darktable.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "darktable"
+os = "macos"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/darktable"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "~/Library/Caches/darktable"
+search = "literal"
+os = "macos"
+[[var.value]]
+value = "$LOCALAPPDATA\\darktable"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "cache"
+label = "Mipmap cache"
+description = "Delete generated thumbnails and mipmaps (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

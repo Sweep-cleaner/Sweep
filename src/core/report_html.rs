@@ -1,0 +1,171 @@
+//! Tek dosyalık HTML raporu (`--html PATH`): bağımlılıksız, çevrimdışı
+//! açılır. Özet kartları + kategori tablosu + girdi tablosu + hatalar.
+
+use std::collections::BTreeMap;
+use std::path::Path;
+
+use super::report::Report;
+
+/// HTML kaçışı (rapor dizgileri kullanıcı yolları içerir).
+fn esc(text: &str) -> String {
+    let mut out = String::with_capacity(text.len());
+    for c in text.chars() {
+        match c {
+            '&' => out.push_str("&amp;"),
+            '<' => out.push_str("&lt;"),
+            '>' => out.push_str("&gt;"),
+            '"' => out.push_str("&quot;"),
+            '\'' => out.push_str("&#39;"),
+            _ => out.push(c),
+        }
+    }
+    out
+}
+
+/// Raporu bağımsız HTML belgesine çevir.
+pub fn to_html(report: &Report, title: &str) -> String {
+    let mut by_option: BTreeMap<(String, String), (u64, u64)> = BTreeMap::new();
+    for entry in &report.entries {
+        if entry.reclaimed == 0 && !entry.kind.counts_as_deleted() {
+            continue;
+        }
+        let slot = by_option
+            .entry((entry.cleaner.clone(), entry.option.clone()))
+            .or_insert((0, 0));
+        slot.0 += u64::from(entry.kind.counts_as_deleted());
+        slot.1 += entry.reclaimed;
+    }
+
+    let mut cats = String::new();
+    for ((cleaner, option), (files, bytes)) in &by_option {
+        cats.push_str(&format!(
+            "<tr><td>{}.{}</td><td class=num>{}</td><td class=num>{}</td></tr>",
+            esc(cleaner),
+            esc(option),
+            files,
+            esc(&crate::fsutil::size::bytes_to_human(*bytes, false))
+        ));
+    }
+    if cats.is_empty() {
+        cats.push_str("<tr><td colspan=3>—</td></tr>");
+    }
+
+    let mut rows = String::new();
+    const ROW_CAP: usize = 2000;
+    for entry in report.entries.iter().take(ROW_CAP) {
+        let path = entry
+            .path
+            .as_ref()
+            .map(|p| esc(&p.display().to_string()))
+            .unwrap_or_default();
+        let size = if entry.reclaimed > 0 {
+            esc(&crate::fsutil::size::bytes_to_human(entry.reclaimed, false))
+        } else {
+            String::new()
+        };
+        rows.push_str(&format!(
+            "<tr><td>{}</td><td>{}.{}</td><td>{}</td><td>{}</td><td class=num>{}</td></tr>",
+            esc(entry.kind.label()),
+            esc(&entry.cleaner),
+            esc(&entry.option),
+            esc(&entry.label),
+            path,
+            size
+        ));
+    }
+
+    if report.entries.len() > ROW_CAP {
+        rows.push_str(&format!(
+            "<tr><td colspan=5>… {} more entries omitted</td></tr>",
+            report.entries.len() - ROW_CAP
+        ));
+    }
+
+    let mut fails = String::new();
+    for failure in &report.errors {
+        fails.push_str(&format!(
+            "<tr><td>{}.{}</td><td>{}</td></tr>",
+            esc(&failure.cleaner),
+            esc(&failure.option),
+            esc(&failure.message)
+        ));
+    }
+    if fails.is_empty() {
+        fails.push_str("<tr><td colspan=2>—</td></tr>");
+    }
+
+    format!(
+        "<!DOCTYPE html><html lang=en><head><meta charset=utf-8>\
+         <meta name=viewport content=\"width=device-width,initial-scale=1\">\
+         <title>{title}</title><style>\
+         body{{font-family:system-ui,sans-serif;background:#1e1e2e;color:#cdd6f4;margin:0;padding:24px}}\
+         h1{{font-size:22px}}h2{{font-size:17px;margin-top:28px}}\
+         .cards{{display:flex;gap:12px;flex-wrap:wrap}}\
+         .card{{background:#313244;border:1px solid #45475a;border-radius:12px;padding:12px 18px;min-width:140px}}\
+         .card b{{font-size:20px;display:block}}.card span{{color:#7f849c;font-size:12px}}\
+         table{{border-collapse:collapse;width:100%;margin-top:8px;font-size:13px}}\
+         th,td{{text-align:left;padding:6px 10px;border-bottom:1px solid #45475a;vertical-align:top}}\
+         th{{color:#7f849c}}.num{{text-align:right;font-variant-numeric:tabular-nums}}\
+         footer{{margin-top:24px;color:#7f849c;font-size:12px}}\
+         </style></head><body>\
+         <h1>{title}</h1>\
+         <div class=cards>\
+         <div class=card><b>{reclaimed}</b><span>reclaimed</span></div>\
+         <div class=card><b>{files}</b><span>files removed</span></div>\
+         <div class=card><b>{special}</b><span>special ops</span></div>\
+         <div class=card><b>{skipped}</b><span>skipped</span></div>\
+         <div class=card><b>{errors}</b><span>errors</span></div>\
+         </div>\
+         <h2>By category</h2>\
+         <table><tr><th>cleaner.option</th><th class=num>files</th><th class=num>size</th></tr>{cats}</table>\
+         <h2>Entries</h2>\
+         <table><tr><th>kind</th><th>target</th><th>label</th><th>path</th><th class=num>size</th></tr>{rows}</table>\
+         <h2>Failures</h2>\
+          <table><tr><th>target</th><th>message</th></tr>{fails}</table>\
+         <footer>generated by sweep {version}</footer></body></html>",
+        title = esc(title),
+        reclaimed = esc(&crate::fsutil::size::bytes_to_human(report.reclaimed(), false)),
+        files = report.files_removed(),
+        special = report.special_operations(),
+        skipped = report.skipped(),
+        errors = report.errors.len(),
+        cats = cats,
+        rows = rows,
+        fails = fails,
+        version = crate::VERSION,
+    )
+}
+
+/// Raporu dosyaya yaz (üst dizini açar).
+pub fn write_html(report: &Report, title: &str, dest: &Path) -> std::io::Result<()> {
+    if let Some(parent) = dest.parent() {
+        if !parent.as_os_str().is_empty() {
+            std::fs::create_dir_all(parent)?;
+        }
+    }
+    std::fs::write(dest, to_html(report, title))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::report::{Entry, EntryKind};
+
+    #[test]
+    fn escapes_and_renders() {
+        let mut report = Report::new();
+        report.push(Entry::new(
+            EntryKind::Delete,
+            "x",
+            "y",
+            "<b>kötü</b> & \"alıntı\"",
+            None,
+            10,
+        ));
+        let html = to_html(&report, "t <test>");
+        assert!(html.contains("&lt;b&gt;kötü&lt;/b&gt; &amp; &quot;alıntı&quot;"));
+        assert!(html.contains("<title>t &lt;test&gt;</title>"));
+        assert!(!html.contains("<b>kötü</b>"));
+        assert!(esc("a'b").contains("&#39;"));
+    }
+}

@@ -1,0 +1,55 @@
+id = "netbeans"
+name = "NetBeans"
+description = "Apache NetBeans IDE: index caches and logs (projects are kept)"
+
+[[running]]
+type = "exe"
+value = "netbeans"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/netbeans"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/netbeans"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\NetBeans\Cache'
+
+[[var]]
+name = "userdir"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.netbeans"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\NetBeans'
+
+[[option]]
+id = "cache"
+label = "Index cache"
+description = "Delete the NetBeans index and module caches (rebuilt on the next start)"
+warning = "The next start re-indexes every open project and is slower."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete NetBeans log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$userdir$$/*/var/log/*"
+type = "f"

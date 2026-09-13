@@ -1,0 +1,19 @@
+id = "packagekit"
+name = "PackageKit"
+description = "Cross-distro package metadata cache (re-downloaded on refresh)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "packagekitd"
+os = "unix"
+
+[[option]]
+id = "cache"
+label = "Metadata cache"
+description = "Delete downloaded repository metadata (refreshed automatically)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "/var/cache/PackageKit"

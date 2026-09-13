@@ -1,0 +1,28 @@
+id = "qbittorrent"
+name = "qBittorrent"
+description = "Torrent istemcisi günlükleri (torrent listesi ve inen dosyalar korunur)"
+
+[[var]]
+name = "qbit_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.local/share/qBittorrent"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/qBittorrent"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$LOCALAPPDATA\qBittorrent'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "İstemci günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$qbit_data$$/logs"

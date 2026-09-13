@@ -1,0 +1,45 @@
+id = "syncthing"
+name = "Syncthing"
+description = "Syncthing: logs and the local index database (your synced folders are never touched)"
+
+[[running]]
+type = "exe"
+value = "syncthing"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/syncthing"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Syncthing"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Syncthing'
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Syncthing log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"
+
+[[option]]
+id = "index"
+label = "Index database"
+description = "Delete the local index database (rebuilt by a rescan)"
+warning = "Stop Syncthing first; it will rescan every folder afterwards."
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/index-*.db"
+type = "f"

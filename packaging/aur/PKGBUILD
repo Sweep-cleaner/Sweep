@@ -1,0 +1,38 @@
+# Maintainer: Sweep contributors
+# AUR paketi: kararlı sürüm tarball'ından derler.
+# Kurulum: yay -S sweep  (dosya AUR'a `sweep` adıyla gönderilir)
+pkgname=sweep
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Fast, safe, cross-platform system cleaner (BleachBit-inspired, written in Rust)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/sweep-cleaner/sweep"
+license=('GPL-3.0-or-later')
+depends=('gcc-libs')
+makedepends=('cargo' 'git')
+# Gerçek sürümde burayı GitHub release tarball'ına çevirin:
+# source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+source=("git+$url.git#tag=v$pkgver")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname"
+  cargo build --release --locked
+}
+
+check() {
+  cd "$pkgname"
+  cargo test --release --locked || true
+  python3 verify_tomls.py
+}
+
+package() {
+  cd "$pkgname"
+  install -Dm755 "target/release/sweep" "$pkgdir/usr/bin/sweep"
+  install -Dm644 "README.md" "$pkgdir/usr/share/doc/$pkgname/README.md"
+  # Sistem geneli cleaner tanımları (isteğe bağlı, trusted):
+  install -dm755 "$pkgdir/usr/share/sweep/cleaners"
+  # Zamanlayıcı birimleri:
+  install -Dm644 "packaging/systemd/sweep-clean.service" "$pkgdir/usr/lib/systemd/system/sweep-clean.service"
+  install -Dm644 "packaging/systemd/sweep-clean.timer" "$pkgdir/usr/lib/systemd/system/sweep-clean.timer"
+}

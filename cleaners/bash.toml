@@ -1,0 +1,17 @@
+id = "bash"
+name = "Bash"
+description = "Shell command history"
+os = "unix"
+
+[[option]]
+id = "history"
+label = "Command history"
+description = "Delete the shell command history file"
+warning = "Command history is lost."
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "~/.bash_history"
+os = "unix"

@@ -1,0 +1,165 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'overview', title: 'Overview' },
+  { id: 'memory', title: 'Memory Optimization (memopt)' },
+  { id: 'startup', title: 'Startup Manager' },
+  { id: 'health', title: 'System Health & SMART' },
+  { id: 'network', title: 'Network Cache Maintenance' },
+  { id: 'privacy', title: 'Privacy Shield' },
+  { id: 'report-shape', title: 'The Standard Report Shape' }
+];
+---
+
+<DocsLayout
+  title="Memory, Startup & Health"
+  description="The 0.4.0 system-intelligence commands: native memory optimization, startup-impact analysis, SMART health, network caches and a privacy shield."
+  currentSlug="system-tools"
+  toc={toc}
+  prevPage={{ title: 'Qt6/QML GUI & Themes', href: '/docs/gui' }}
+  nextPage={{ title: 'Scheduling & Snapshots', href: '/docs/automation' }}
+>
+  <div class="space-y-10">
+    <!-- Overview -->
+    <section id="overview">
+      <h2 class="text-2xl font-bold text-white mb-3">Overview</h2>
+      <p class="text-text-muted leading-relaxed">
+        Version 0.4.0 widened Sweep from a disk cleaner into a system-maintenance tool. Five new subsystems sit alongside the filesystem cleaners, each implementing the right OS-native mechanism per platform rather than shelling out to a single lowest-common-denominator command. Every one of them supports <code class="text-cyan">--dry-run</code> and has a matching GUI screen.
+      </p>
+      <div class="callout callout-note mt-4">
+        <strong>Admin scope:</strong> the gentle paths of <code class="text-cyan">memopt</code> and the whole of <code class="text-cyan">startup</code>, <code class="text-cyan">sysinfo</code>, <code class="text-cyan">network</code> (flush) and <code class="text-cyan">privacy shield</code> need no elevation. The deeper memory layers and package-manager caches do.
+      </div>
+    </section>
+
+    <!-- Memory -->
+    <section id="memory">
+      <h2 class="text-2xl font-bold text-white mb-3">Memory Optimization (memopt)</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        <code class="text-cyan font-mono">sweep memopt</code> reclaims memory that is cached but not actually needed, using the native mechanism on each platform:
+      </p>
+      <div class="overflow-x-auto mb-4">
+        <table class="w-full text-sm border-collapse bg-bg-surface border border-border rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-bg-elevated text-left text-xs uppercase tracking-wider text-text-muted">
+              <th class="p-3">Platform</th>
+              <th class="p-3">Gentle pass</th>
+              <th class="p-3">--aggressive</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60 text-xs">
+            <tr>
+              <td class="p-3 font-mono text-cyan">Linux</td>
+              <td class="p-3 text-text-muted">drop page cache (<code>vm.drop_caches</code> 1)</td>
+              <td class="p-3 text-text-muted">drop caches 3 + a <code>swapoff</code>/<code>swapon</code> cycle</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">Windows</td>
+              <td class="p-3 text-text-muted"><code>EmptyWorkingSet</code> on running processes</td>
+              <td class="p-3 text-text-muted">plus a standby-list purge via <code>NtSetSystemInformation</code></td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">macOS</td>
+              <td class="p-3 text-text-muted"><code>purge</code> with <code>memory_pressure</code> analysis</td>
+              <td class="p-3 text-text-muted">same, after the pressure snapshot</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <pre class="code-block"><code><span class="text-rust"># Always estimate first — nothing is changed</span>
+<span class="text-rust">$ </span>sweep memopt --dry-run
+<span class="text-rust">$ </span>sweep memopt --aggressive --dry-run
+
+<span class="text-rust"># Apply (the aggressive layers need root / administrator)</span>
+<span class="text-rust">$ </span>sudo sweep memopt --aggressive</code></pre>
+
+      <h3 class="font-bold text-white mt-6 mb-2">Automatic memory keeper</h3>
+      <p class="text-sm text-text-muted leading-relaxed">
+        The Qt6/QML shell can watch memory on its own and trim <em>only when it matters</em>: it checks every five minutes, runs a safe memopt when RAM passes 80%, and respects a 15-minute cooldown. The toggle lives on the Memory screen and is persisted. For machines that are rarely open to the GUI, a separate daily <code class="text-cyan">memopt --quiet</code> task can be installed through the same scheduler used for cleanup:
+      </p>
+      <pre class="code-block"><code><span class="text-rust">$ </span>sweep schedule --enable --memopt</code></pre>
+      <p class="text-xs text-text-dim mt-3">
+        That installs <code class="text-cyan">Sweep\SweepMemory</code> on Windows Task Scheduler, <code class="text-cyan">sweep-memopt.timer</code> on systemd, or <code class="text-cyan">com.sweep.memopt</code> on launchd.
+      </p>
+    </section>
+
+    <!-- Startup -->
+    <section id="startup">
+      <h2 class="text-2xl font-bold text-white mb-3">Startup Manager</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        <code class="text-cyan font-mono">sweep startup</code> enumerates everything configured to launch at login and tells you what it costs. It reads XDG <code class="text-cyan">.desktop</code> entries and <code class="text-cyan">systemctl --user</code> units on Linux, registry <code class="text-cyan">Run</code>/<code class="text-cyan">RunOnce</code> keys and Startup folders on Windows, and launchd agents/daemons on macOS.
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># List every entry with a high / medium / low impact estimate</span>
+<span class="text-rust">$ </span>sweep startup list --impact
+
+<span class="text-rust"># Disable reversibly</span>
+<span class="text-rust">$ </span>sweep startup disable "Slack"</code></pre>
+      <div class="callout callout-tip mt-4">
+        <strong>Disable is reversible by design.</strong> XDG entries get <code class="text-cyan">Hidden=true</code>, systemd units get a <code class="text-cyan">sweep-disabled</code> marker, and launchd entries get a <code class="text-cyan">.disabled</code> suffix. Nothing is deleted, so <code class="text-cyan">sweep startup enable</code> restores the previous behaviour exactly.
+      </div>
+    </section>
+
+    <!-- Health -->
+    <section id="health">
+      <h2 class="text-2xl font-bold text-white mb-3">System Health &amp; SMART</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        <code class="text-cyan font-mono">sweep sysinfo</code> reports CPU, memory, disks and uptime; <code class="text-cyan">--json</code> emits it machine-readably and <code class="text-cyan">--health</code> reduces everything — including drive temperature and SMART attributes — to a single green, yellow or red verdict with its reasons.
+      </p>
+      <pre class="code-block"><code><span class="text-rust">$ </span>sweep sysinfo            <span class="text-text-dim"># full report</span>
+<span class="text-rust">$ </span>sweep sysinfo --json     <span class="text-text-dim"># machine-readable</span>
+<span class="text-rust">$ </span>sweep sysinfo --health   <span class="text-text-dim"># summary + reasons only</span></code></pre>
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/60">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep doctor</h3>
+          <p class="text-xs text-text-muted">A broader health pass: config validity, required tools, permission drift, disk state and systemd reachability.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/60">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep diagnostics</h3>
+          <p class="text-xs text-text-muted">Platform runtime diagnostics — which providers are available and what they depend on.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Network -->
+    <section id="network">
+      <h2 class="text-2xl font-bold text-white mb-3">Network Cache Maintenance</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        <code class="text-cyan font-mono">sweep network</code> covers the two failure modes that make "the network is slow" hard to diagnose: a poisoned DNS resolver cache, and stale package-manager caches that re-download the same artefacts.
+      </p>
+      <ul class="space-y-2 text-sm text-text-muted mb-4">
+        <li class="flex items-start gap-2"><span class="text-cyan">▸</span><span><strong>flush</strong> clears the DNS resolver cache (systemd-resolved on Linux, <code class="text-cyan">ipconfig /flushdns</code> on Windows, <code class="text-cyan">dscacheutil</code> on macOS).</span></li>
+        <li class="flex items-start gap-2"><span class="text-cyan">▸</span><span><strong>clean</strong> prunes the npm, pip, yarn, cargo and gem caches, runs <code class="text-cyan">git gc --auto</code>, and prunes unused Docker networks.</span></li>
+      </ul>
+      <pre class="code-block"><code><span class="text-rust">$ </span>sweep network flush --dry-run
+<span class="text-rust">$ </span>sweep network clean</code></pre>
+    </section>
+
+    <!-- Privacy -->
+    <section id="privacy">
+      <h2 class="text-2xl font-bold text-white mb-3">Privacy Shield</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        <code class="text-cyan font-mono">sweep privacy</code> has two verbs with very different blast radii, which is why they are separate:
+      </p>
+      <div class="grid sm:grid-cols-2 gap-4 mb-4">
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/60">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep privacy shield</h3>
+          <p class="text-xs text-text-muted">Turns OS telemetry off. Non-destructive — only flips telemetry-related settings.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-rust/5 border border-rust/25">
+          <h3 class="font-mono text-rust font-bold text-sm mb-2">sweep privacy wipe</h3>
+          <p class="text-xs text-text-primary/90">Wipes recent-files lists and clears the clipboard. Destructive — preview it with <code class="text-cyan">--dry-run</code> first.</p>
+        </div>
+      </div>
+      <pre class="code-block"><code><span class="text-rust">$ </span>sweep privacy shield
+<span class="text-rust">$ </span>sweep privacy wipe --dry-run</code></pre>
+    </section>
+
+    <!-- Report shape -->
+    <section id="report-shape">
+      <h2 class="text-2xl font-bold text-white mb-3">The Standard Report Shape</h2>
+      <p class="text-sm text-text-muted leading-relaxed">
+        Every command in this family reports the same JSON fields — <code class="text-cyan">duration_ms</code>, <code class="text-cyan">bytes_affected</code> and <code class="text-cyan">items_count</code> — so the Qt6/QML shell can render any of them from one code path and scripts can consume them uniformly. Each command also ships with unit tests, and the GUI bridge reports a missing engine with an amber banner rather than a silently empty screen.
+      </p>
+    </section>
+  </div>
+</DocsLayout>

@@ -1,0 +1,36 @@
+id = "nix"
+name = "Nix"
+description = "Functional package manager fetch cache (store roots are kept)"
+os = "unix"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/nix"
+search = "literal"
+os = "unix"
+
+[[option]]
+id = "cache"
+label = "Fetch cache"
+description = "Delete downloaded archives (re-fetched on next build)"
+os = "unix"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "unix"
+
+[[option]]
+id = "gc"
+label = "Store garbage collection"
+description = "nix-collect-garbage -d: remove unreachable store paths and old profile generations"
+warning = "Only unreachable store paths are removed; old generations are deleted. Nothing in use is touched."
+os = "unix"
+
+[[option.action]]
+command = "system.nix_gc"
+search = "file"
+path = ""
+os = "unix"

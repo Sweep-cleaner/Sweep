@@ -1,0 +1,18 @@
+[Unit]
+Description=Sweep scheduled system cleanup
+Documentation=https://github.com/sweep-cleaner/sweep
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+# SEÇİMİ kendinize göre daraltın; --yes onaysız çalışır (timer bağlamı).
+ExecStart=/usr/bin/sweep clean --yes system.journal_vacuum apt.deep_cache dnf.deep_cache
+Nice=19
+IOSchedulingClass=idle
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+
+[Install]
+WantedBy=multi-user.target

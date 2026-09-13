@@ -1,0 +1,143 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'what-is-sweep', title: 'What is Sweep?' },
+  { id: 'core-pillars', title: 'Core Architectural Pillars' },
+  { id: 'vs-legacy', title: 'Why Not BleachBit or CCleaner?' },
+  { id: 'quick-example', title: 'Quick Start in 30 Seconds' },
+  { id: 'safety-warning', title: 'Safety & Deletion Principles' }
+];
+---
+
+<DocsLayout
+  title="Sweep Overview & Philosophy"
+  description="Learn about Sweep, an independent, memory-safe system cleaner built from scratch in Rust for modern operating systems."
+  currentSlug="index"
+  toc={toc}
+  nextPage={{ title: 'Installation Guide', href: '/docs/installation' }}
+>
+  <div class="space-y-8">
+    <!-- Introduction section -->
+    <section id="what-is-sweep">
+      <h2 class="text-2xl font-bold text-white mb-3">What is Sweep?</h2>
+      <p class="text-text-muted leading-relaxed">
+        <strong>Sweep</strong> is a blazing-fast, memory-safe system and privacy cleanup utility written from the ground up in Rust. It provides both an intuitive command-line interface (<code class="text-cyan font-mono">sweep</code>) and a Qt6/QML desktop shell (<code class="text-cyan font-mono">sweep-qml</code>) that drives the same <code class="text-cyan font-mono">--json</code> engine.
+      </p>
+      <p class="text-text-muted leading-relaxed mt-3">
+        Inspired by the cleaner model of <a href="https://www.bleachbit.org" target="_blank" rel="noopener" class="text-cyan hover:underline">BleachBit</a>, Sweep is an independent implementation designed to resolve the limitations of legacy Python and Electron cleaners: heavy dependencies, sluggish file-tree traversals, untyped configurations, and unsafe defaults. Version 0.4.0 ships <strong>202</strong> native TOML cleaners and extends the tool well beyond disk cleanup — memory optimization, startup management, system health, network caches and privacy — all behind a fail-closed safety engine.
+      </p>
+    </section>
+
+    <!-- Key Stats Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 my-8">
+      <div class="p-4 rounded-xl bg-bg-surface/60 border border-border/70 text-center">
+        <div class="text-2xl sm:text-3xl font-bold font-mono text-cyan">6.0 MB</div>
+        <div class="text-xs text-text-dim mt-1 font-mono">Single Binary</div>
+      </div>
+      <div class="p-4 rounded-xl bg-bg-surface/60 border border-border/70 text-center">
+        <div class="text-2xl sm:text-3xl font-bold font-mono text-rust">4.85s</div>
+        <div class="text-xs text-text-dim mt-1 font-mono">12k File /usr Scan <span class="text-cyan">v0.2.5</span></div>
+      </div>
+      <div class="p-4 rounded-xl bg-bg-surface/60 border border-border/70 text-center">
+        <div class="text-2xl sm:text-3xl font-bold font-mono text-cyan-glow">202</div>
+        <div class="text-xs text-text-dim mt-1 font-mono">Native Cleaners</div>
+      </div>
+      <div class="p-4 rounded-xl bg-bg-surface/60 border border-border/70 text-center">
+        <div class="text-2xl sm:text-3xl font-bold font-mono text-white">0%</div>
+        <div class="text-xs text-text-dim mt-1 font-mono">Telemetry & Ads</div>
+      </div>
+    </div>
+
+    <!-- Core Pillars -->
+    <section id="core-pillars">
+      <h2 class="text-2xl font-bold text-white mb-4">Core Architectural Pillars</h2>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="p-5 rounded-xl bg-bg-surface/40 border border-border/60">
+          <div class="text-xl mb-2">⚡ Multi-Core Rayon Engine</div>
+          <p class="text-sm text-text-muted leading-relaxed">
+            Parallel directory walks execute across all available CPU cores. Disk checks and file metadata queries saturate NVMe/SSD bandwidth without blocking the UI thread.
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-bg-surface/40 border border-border/60">
+          <div class="text-xl mb-2">🛡️ Fail-Closed Safety Guards</div>
+          <p class="text-sm text-text-muted leading-relaxed">
+            An immutable protected-root set and your personal keep list are enforced before every unlink — <code class="text-cyan">--force</code> relaxes the running-app refusal but never the roots. Symlinks, mount points and reparse points are traversal walls, relative paths are rejected rather than resolved against the CWD, and untrusted definitions lose their <code class="text-cyan">process</code>/<code class="text-cyan">winreg</code> powers.
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-bg-surface/40 border border-border/60">
+          <div class="text-xl mb-2">📦 Zero-Dependency Architecture</div>
+          <p class="text-sm text-text-muted leading-relaxed">
+            No Python interpreter, no GTK runtimes, no Electron bloat. Runs immediately as a single static release binary on any Linux distribution, Windows, or macOS. The GUI is an optional Qt6/QML target.
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-bg-surface/40 border border-border/60">
+          <div class="text-xl mb-2">🧠 System Intelligence</div>
+          <p class="text-sm text-text-muted leading-relaxed">
+            Memory optimization, startup-impact analysis, SMART health, network cache flushing, a privacy shield and a confidence-scored residue engine — every command exposing <code class="text-cyan">--dry-run</code> and the same JSON report shape.
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-bg-surface/40 border border-border/60">
+          <div class="text-xl mb-2">🔄 Preview-First & Rollback</div>
+          <p class="text-sm text-text-muted leading-relaxed">
+            Every destructive command previews first, logs the operation, and writes an undo record. Made a mistake? <code class="text-cyan">sweep undo</code> restores deleted items from the operation log.
+          </p>
+        </div>
+        <div class="p-5 rounded-xl bg-bg-surface/40 border border-border/60">
+          <div class="text-xl mb-2">🤝 Compatibility Layer</div>
+          <p class="text-sm text-text-muted leading-relaxed">
+            Your existing rules still work: Sweep optionally imports BleachBit CleanerML XML (<code class="text-cyan">--bleachbit</code>) and translates community <code class="text-cyan">winapp2.ini</code> definitions (<code class="text-cyan">--winapp2</code>), both loaded untrusted by default.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Not Legacy -->
+    <section id="vs-legacy">
+      <h2 class="text-2xl font-bold text-white mb-3">Why Not BleachBit or CCleaner?</h2>
+      <p class="text-text-muted leading-relaxed">
+        Legacy cleaners were architected over a decade ago. CCleaner has become notorious for bundled adware, background telemetry, and invasive registry monitors. BleachBit remains respected and open source, but relies on a heavy Python 3 runtime and sequential directory scanning that struggles with modern development folders containing hundreds of thousands of files (<code class="text-cyan">node_modules</code>, <code class="text-cyan">target</code>, <code class="text-cyan">.cargo</code>).
+      </p>
+
+      <div class="callout callout-tip">
+        <strong>Compatibility Note:</strong> Sweep does not require abandoning your existing rules. Sweep can optionally import both BleachBit CleanerML XML rules (<code class="text-cyan">--bleachbit</code>) and community <code class="text-cyan">winapp2.ini</code> definitions!
+      </div>
+    </section>
+
+    <!-- Quick Start -->
+    <section id="quick-example">
+      <h2 class="text-2xl font-bold text-white mb-3">Quick Start in 30 Seconds</h2>
+      <p class="text-text-muted leading-relaxed mb-4">
+        Discover what Sweep can clean on your system without modifying a single byte on disk:
+      </p>
+
+      <pre class="code-block overflow-x-auto"><code><span class="text-rust"># Preview all cleanable files with disk space estimates</span>
+sweep preview --all
+
+<span class="text-rust"># Score uninstall residue, dead build output and version caches</span>
+sweep residue scan --confidence 0.7
+
+<span class="text-rust"># Clean development junk (node_modules, cargo target, venvs)</span>
+sweep devscan ~/projects
+
+<span class="text-rust"># Estimate a memory trim without changing anything</span>
+sweep memopt --dry-run
+
+<span class="text-rust"># Find the 15 largest files on your drive</span>
+sweep bigfiles --min-size 500MB --top 15</code></pre>
+    </section>
+
+    <!-- Safety Warning Callout -->
+    <section id="safety-warning">
+      <div class="callout callout-warning">
+        <h3 class="font-bold text-amber-300 mb-1 flex items-center gap-2">
+          <span>⚠️</span>
+          <span>Safety Notice</span>
+        </h3>
+        <p class="text-amber-100/90 text-sm leading-relaxed">
+          System cleanup is inherently destructive. Always run <code class="text-amber-200">sweep preview</code> first, close running applications before cleaning their databases, and maintain regular backups of important files. Operations such as <code class="text-amber-200">sweep wipe</code> and <code class="text-amber-200">sweep shred</code> are irreversible, and <code class="text-amber-200">wipe</code> is a <em>free-space</em> operation on the whole volume, not a preview.
+        </p>
+      </div>
+    </section>
+  </div>
+</DocsLayout>

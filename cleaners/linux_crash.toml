@@ -1,0 +1,25 @@
+id = "linux_crash"
+name = "Çökme Dökümleri"
+description = "Apport/ABRT çökme raporları ve systemd-coredump deposu (root gerekir)"
+os = "linux"
+
+[[option]]
+id = "dumps"
+label = "Çökme raporları"
+description = "/var/crash, /var/spool/abrt ve kullanıcı abrt önbelleğindeki raporlar"
+
+[[option.action]]
+command = "system.crash_reports"
+search = "file"
+path = ""
+
+[[option]]
+id = "coredumps"
+label = "Coredump deposu"
+description = "/var/lib/systemd/coredump içeriğini boşaltır"
+warning = "Aktif hata ayıklama yapıyorsanız dökümleri incelemeden silmeyin."
+
+[[option.action]]
+command = "system.coredumps"
+search = "file"
+path = ""

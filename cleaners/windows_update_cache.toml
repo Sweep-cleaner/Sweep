@@ -1,0 +1,23 @@
+id = "windows_update_cache"
+name = "Windows Update Cache"
+description = "Delivered update packages (re-fetched by Windows Update if needed)"
+os = "windows"
+
+[[var]]
+name = "download"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$windir\\SoftwareDistribution\\Download'
+
+[[option]]
+id = "packages"
+label = "Update packages"
+description = "Delete downloaded update packages"
+warning = "Run as administrator. Skip while Windows Update is actively installing."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$download$$"
+os = "windows"

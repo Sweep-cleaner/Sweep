@@ -1,0 +1,651 @@
+id = "browsers"
+name = "Chromium-based browsers"
+description = "Chrome, Chromium, Edge, Brave, Vivaldi and Opera: cache, code cache, cookies and history"
+
+# Çalışan tarayıcı profili temizlenmez (worker --force olmadan atlar).
+# Linux dağıtımları farklı ikili adları kullanır; hepsi listelenir.
+[[running]]
+type = "exe"
+value = "chrome"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "google-chrome"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "google-chrome-stable"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "chromium"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "chromium-browser"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "msedge"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "microsoft-edge"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "brave"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "brave-browser"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "vivaldi-bin"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "vivaldi-stable"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "opera"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "opera-stable"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "chrome.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "msedge.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "brave.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "vivaldi.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "opera.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Google Chrome"
+os = "macos"
+
+[[running]]
+type = "exe"
+value = "Chromium"
+os = "macos"
+
+[[running]]
+type = "exe"
+value = "Microsoft Edge"
+os = "macos"
+
+[[running]]
+type = "exe"
+value = "Brave Browser"
+os = "macos"
+
+[[running]]
+type = "exe"
+value = "Vivaldi"
+os = "macos"
+
+[[running]]
+type = "exe"
+value = "Opera"
+os = "macos"
+
+[[var]]
+name = "chrome_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/google-chrome/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Google/Chrome/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Google\Chrome\User Data\*'
+
+[[var]]
+name = "chromium_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/chromium/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Chromium/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Chromium\User Data\*'
+
+[[var]]
+name = "edge_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/microsoft-edge/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Microsoft Edge/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Microsoft\Edge\User Data\*'
+
+[[var]]
+name = "brave_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/BraveSoftware/Brave-Browser/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/BraveSoftware/Brave-Browser/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data\*'
+
+[[var]]
+name = "vivaldi_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/vivaldi/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Vivaldi/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Vivaldi\User Data\*'
+
+[[var]]
+name = "opera_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/opera/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/com.operasoftware.Opera/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Opera Software\Opera Stable\*'
+
+[[var]]
+name = "opera_gx_profile"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Opera Software\Opera GX Stable\*'
+
+# ---- Chrome ----
+[[option]]
+id = "chrome_cache"
+label = "Chrome cache"
+description = "Delete the Chrome cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/GPUCache"
+
+[[option]]
+id = "chrome_history"
+label = "Chrome history"
+description = "Delete browsing history, downloads and favicons"
+warning = "This clears your browsing history but not your bookmarks."
+
+[[option.action]]
+command = "chrome.history"
+search = "file"
+path = "$$chrome_profile$$/History"
+
+[[option.action]]
+command = "chrome.favicons"
+search = "file"
+path = "$$chrome_profile$$/Favicons"
+
+[[option]]
+id = "chrome_cookies"
+label = "Chrome cookies"
+description = "Delete cookies"
+
+[[option.action]]
+command = "chrome.cookies"
+search = "file"
+path = "$$chrome_profile$$/Cookies"
+
+# ---- Chromium ----
+[[option]]
+id = "chromium_cache"
+label = "Chromium cache"
+description = "Delete the Chromium cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chromium_profile$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chromium_profile$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chromium_profile$$/GPUCache"
+
+[[option]]
+id = "chromium_history"
+label = "Chromium history"
+description = "Delete browsing history and downloads"
+warning = "This clears your browsing history but not your bookmarks."
+
+[[option.action]]
+command = "chrome.history"
+search = "file"
+path = "$$chromium_profile$$/History"
+
+[[option]]
+id = "chromium_cookies"
+label = "Chromium cookies"
+description = "Delete cookies"
+warning = "Deleting cookies will log you out of websites."
+
+[[option.action]]
+command = "chrome.cookies"
+search = "file"
+path = "$$chromium_profile$$/Cookies"
+
+# ---- Edge ----
+[[option]]
+id = "edge_cache"
+label = "Edge cache"
+description = "Delete the Microsoft Edge cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$edge_profile$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$edge_profile$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$edge_profile$$/GPUCache"
+
+[[option]]
+id = "edge_history"
+label = "Edge history"
+description = "Delete browsing history and downloads"
+warning = "This clears your browsing history but not your bookmarks."
+
+[[option.action]]
+command = "chrome.history"
+search = "file"
+path = "$$edge_profile$$/History"
+
+[[option]]
+id = "edge_cookies"
+label = "Edge cookies"
+description = "Delete cookies"
+warning = "Deleting cookies will log you out of websites."
+
+[[option.action]]
+command = "chrome.cookies"
+search = "file"
+path = "$$edge_profile$$/Cookies"
+
+# ---- Brave ----
+[[option]]
+id = "brave_cache"
+label = "Brave cache"
+description = "Delete the Brave cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$brave_profile$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$brave_profile$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$brave_profile$$/GPUCache"
+
+[[option]]
+id = "brave_history"
+label = "Brave history"
+description = "Delete browsing history and downloads"
+
+[[option.action]]
+command = "chrome.history"
+search = "file"
+path = "$$brave_profile$$/History"
+
+[[option]]
+id = "brave_cookies"
+label = "Brave cookies"
+description = "Delete cookies (Brave Shields settings are kept)"
+warning = "Deleting cookies will log you out of websites."
+
+[[option.action]]
+command = "chrome.cookies"
+search = "file"
+path = "$$brave_profile$$/Cookies"
+
+# ---- Vivaldi ----
+[[option]]
+id = "vivaldi_cache"
+label = "Vivaldi cache"
+description = "Delete the Vivaldi cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vivaldi_profile$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vivaldi_profile$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vivaldi_profile$$/GPUCache"
+
+[[option]]
+id = "vivaldi_history"
+label = "Vivaldi history"
+description = "Delete browsing history and downloads"
+
+[[option.action]]
+command = "chrome.history"
+search = "file"
+path = "$$vivaldi_profile$$/History"
+
+[[option]]
+id = "vivaldi_cookies"
+label = "Vivaldi cookies"
+description = "Delete cookies"
+warning = "Deleting cookies will log you out of websites."
+
+[[option.action]]
+command = "chrome.cookies"
+search = "file"
+path = "$$vivaldi_profile$$/Cookies"
+
+# ---- Site verileri (Local Storage, IndexedDB, Service Worker) ----
+[[option]]
+id = "site_data"
+label = "Site verileri"
+description = "Yerel depolama, IndexedDB ve servis çalışanları (siteler veriyi yeniden indirir, girişler ÇEREZLERDE tutulur)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/Local Storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/IndexedDB"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/Service Worker"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chromium_profile$$/Local Storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chromium_profile$$/IndexedDB"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$edge_profile$$/Local Storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$edge_profile$$/IndexedDB"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$brave_profile$$/Local Storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$brave_profile$$/IndexedDB"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vivaldi_profile$$/Local Storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vivaldi_profile$$/IndexedDB"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$opera_profile$$/Local Storage"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$opera_profile$$/IndexedDB"
+
+# ---- Form + otomatik doldurma (Web Data) ----
+[[option]]
+id = "autofill"
+label = "Form ve otomatik doldurma"
+description = "Adres/e-posta/telefon otomatik doldurma profilleri silinir (şifreler ve kredi kartları ASLA silinmez)"
+warning = "Otomatik doldurma profilleri gider; kayıtlı şifreler ve kartlar korunur."
+
+[[option.action]]
+command = "chrome.autofill"
+search = "file"
+path = "$$chrome_profile$$/Web Data"
+
+[[option.action]]
+command = "chrome.autofill"
+search = "file"
+path = "$$chromium_profile$$/Web Data"
+
+[[option.action]]
+command = "chrome.autofill"
+search = "file"
+path = "$$edge_profile$$/Web Data"
+
+[[option.action]]
+command = "chrome.autofill"
+search = "file"
+path = "$$brave_profile$$/Web Data"
+
+[[option.action]]
+command = "chrome.autofill"
+search = "file"
+path = "$$vivaldi_profile$$/Web Data"
+
+[[option.action]]
+command = "chrome.autofill"
+search = "file"
+path = "$$opera_profile$$/Web Data"
+
+# ---- Shader önbellekleri (tüm Chromium tabanlılar) ----
+[[option]]
+id = "shader_cache"
+label = "Shader önbellekleri"
+description = "GPU shader derleme önbellekleri (ShaderCache, DawnCache, GrShaderCache); sürücüler yeniden üretir"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/ShaderCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/DawnCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chrome_profile$$/GrShaderCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$chromium_profile$$/ShaderCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$edge_profile$$/ShaderCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$edge_profile$$/DawnCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$brave_profile$$/ShaderCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$vivaldi_profile$$/ShaderCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$opera_profile$$/ShaderCache"
+
+# ---- Opera / Opera GX ----
+[[option]]
+id = "opera_cache"
+label = "Opera cache"
+description = "Delete the Opera and Opera GX cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$opera_profile$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$opera_gx_profile$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$opera_profile$$/GPUCache"
+
+[[option]]
+id = "opera_history"
+label = "Opera history"
+description = "Delete browsing history and downloads"
+warning = "This clears your browsing history but not your bookmarks, Speed Dial or Flow."
+
+[[option.action]]
+command = "chrome.history"
+search = "file"
+path = "$$opera_profile$$/History"
+
+[[option.action]]
+command = "chrome.history"
+search = "file"
+path = "$$opera_gx_profile$$/History"
+
+[[option]]
+id = "opera_cookies"
+label = "Opera cookies"
+description = "Delete cookies"
+warning = "Deleting cookies will log you out of websites."
+
+[[option.action]]
+command = "chrome.cookies"
+search = "file"
+path = "$$opera_profile$$/Cookies"
+
+[[option.action]]
+command = "chrome.cookies"
+search = "file"
+path = "$$opera_gx_profile$$/Cookies"

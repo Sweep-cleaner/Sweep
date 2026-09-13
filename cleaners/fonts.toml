@@ -1,0 +1,14 @@
+id = "fonts"
+name = "Font cache"
+description = "Rebuild the font cache"
+os = "unix"
+
+[[option]]
+id = "cache"
+label = "Font cache"
+description = "Delete the fontconfig cache and rebuild it"
+
+[[option.action]]
+command = "system.font_cache"
+search = "file"
+path = ""

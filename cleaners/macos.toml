@@ -1,0 +1,56 @@
+id = "macos"
+name = "macOS"
+description = "macOS system caches and logs"
+os = "macos"
+
+[[option]]
+id = "user_caches"
+label = "User caches"
+description = "Delete files in ~/Library/Caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/Library/Caches"
+
+[[option]]
+id = "user_logs"
+label = "User logs"
+description = "Delete files in ~/Library/Logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/Library/Logs"
+
+[[option]]
+id = "system_logs"
+label = "System logs"
+description = "Delete files in /Library/Logs"
+warning = "System logs may be useful for diagnostics; only remove if space is tight."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "/Library/Logs"
+
+[[option]]
+id = "xcode_derived"
+label = "Xcode derived data"
+description = "Delete Xcode build intermediates"
+warning = "Forces a re-index and rebuild of Xcode projects."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/Library/Developer/Xcode/DerivedData"
+
+[[option]]
+id = "trash"
+label = "Trash"
+description = "Empty the user trash"
+
+[[option.action]]
+command = "system.trash"
+search = "file"
+path = ""

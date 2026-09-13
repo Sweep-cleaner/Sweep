@@ -1,0 +1,17 @@
+.git
+target
+.omo
+.codegraph
+*.log
+
+# Build artefacts that would otherwise bloat the build context by ~750 MB:
+# packaging/dist holds prebuilt AppDir + Windows stages, out/ holds GUI
+# screenshots, squashfs-root/ holds an extracted AppImage with a binary.
+packaging/dist
+packaging/qml/build
+out
+squashfs-root
+*.AppImage
+*.tar.gz
+*.deb
+*.rpm

@@ -1,0 +1,30 @@
+//! The cleaning engine: selection, scheduling, deep scan and progress.
+
+pub mod analyze;
+pub mod autostart;
+pub mod bigfiles;
+pub mod deepscan;
+pub mod devscan;
+pub mod doctor;
+pub mod du;
+pub mod dupes;
+pub mod history;
+pub mod hub;
+pub mod leftovers;
+pub mod logline;
+pub mod memory;
+pub mod memopt;
+pub mod network;
+pub mod privacy;
+pub mod progress;
+pub mod residue;
+pub mod schedule;
+pub mod services;
+pub mod shredrun;
+pub mod snapshot;
+pub mod startup;
+pub mod sysinfo;
+pub mod undo;
+pub mod watch;
+pub mod winapp2upd;
+pub mod worker;

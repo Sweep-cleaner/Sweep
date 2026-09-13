@@ -1,0 +1,65 @@
+id = "arduino"
+name = "Arduino"
+description = "Arduino IDE staging downloads, cache and logs (sketches and libraries are kept)"
+
+[[running]]
+type = "exe"
+value = "arduino"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "arduino-ide"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "arduino.exe"
+os = "windows"
+
+[[var]]
+name = "legacy"
+[[var.value]]
+value = "~/.arduino15"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$LOCALAPPDATA\\Arduino15"
+search = "literal"
+os = "windows"
+
+[[var]]
+name = "ide2"
+[[var.value]]
+value = "~/.config/arduino-ide"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$APPDATA\\arduino-ide"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "staging"
+label = "Staging downloads"
+description = "Delete downloaded board packages (re-downloaded by the boards manager)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$legacy$$/staging"
+
+[[option]]
+id = "cache"
+label = "IDE cache"
+description = "Delete the Arduino IDE 2 cache and logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$ide2$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$ide2$$/logs"

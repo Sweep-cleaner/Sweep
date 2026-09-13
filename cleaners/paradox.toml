@@ -1,0 +1,40 @@
+id = "paradox"
+name = "Paradox Games"
+description = "Paradox grand-strategy logs and crash dumps (saves, settings and mods are kept)"
+os = "linux"
+
+[[var]]
+name = "pdx"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.local/share/Paradox Interactive"
+
+[[option]]
+id = "logs"
+label = "Game logs"
+description = "Delete per-game log directories"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$pdx$$/*/logs"
+os = "linux"
+
+[[option]]
+id = "crashes"
+label = "Crash dumps"
+description = "Delete crash dumps and stray log files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$pdx$$/*/crashes"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$pdx$$/*/*.log"
+type = "f"
+os = "linux"

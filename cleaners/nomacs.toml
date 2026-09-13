@@ -1,0 +1,44 @@
+id = "nomacs"
+name = "nomacs"
+description = "nomacs image viewer: thumbnail cache and logs (your photos are never touched)"
+
+[[running]]
+type = "exe"
+value = "nomacs"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/nomacs"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\nomacs'
+
+[[option]]
+id = "cache"
+label = "Thumbnail cache"
+description = "Delete nomacs' thumbnail cache (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/nomacs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/thumbnails"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete nomacs log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

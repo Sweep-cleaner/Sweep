@@ -1,0 +1,35 @@
+id = "gnumeric"
+name = "Gnumeric"
+description = "Gnumeric spreadsheet: cache and logs (your spreadsheets are kept)"
+
+[[running]]
+type = "exe"
+value = "gnumeric"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/gnumeric"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Gnumeric's plugin and document cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/gnumeric"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Gnumeric log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/**/*.log*"
+type = "f"

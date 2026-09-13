@@ -1,0 +1,53 @@
+id = "megasync"
+name = "MEGAsync"
+description = "MEGAsync client: cache, logs and crash dumps (your synced files are never touched)"
+
+[[running]]
+type = "exe"
+value = "megasync"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/data/Mega Limited/MEGAsync"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Mega Limited/MEGAsync"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Mega Limited\MEGAsync'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete MEGAsync's local cache and temporary files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/tmp"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete MEGAsync logs and crash dumps"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/**/*.log*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/crashdumps"

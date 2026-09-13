@@ -1,0 +1,35 @@
+id = "linux_kde"
+name = "KDE Plasma"
+description = "Plasma kabuğu/tema/simge önbellekleri, Baloo dizini ve Akonadi dosya önbelleği (yapılandırma ve KWallet korunur)"
+os = "unix"
+
+[[option]]
+id = "plasma_cache"
+label = "Plasma önbellekleri"
+description = "Yeniden üretilebilir plazma, KWin, KRunner, KIO, sycoca ve uygulama önbellekleri"
+
+[[option.action]]
+command = "system.kde_cache"
+search = "file"
+path = ""
+
+[[option]]
+id = "baloo"
+label = "Baloo dosya dizini"
+description = "balooctl purge ile dosya arama dizinini temizler (arama geçici olarak yavaşlar, sonra yeniden kurulur)"
+warning = "Baloo dizini silindikten sonra dosya araması bir süre eksik sonuç verir."
+
+[[option.action]]
+command = "system.baloo"
+search = "file"
+path = ""
+
+[[option]]
+id = "akonadi_cache"
+label = "Akonadi dosya önbelleği"
+description = "KMail/Kontact dosya önbelleği; veritabanına dokunulmaz. Temizlikten önce KMail'i kapatın."
+
+[[option.action]]
+command = "system.kde_pim"
+search = "file"
+path = ""

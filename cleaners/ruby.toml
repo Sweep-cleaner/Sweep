@@ -1,0 +1,25 @@
+id = "ruby"
+name = "Ruby"
+description = "RubyGems download cache: fetched *.gem archives (installed gems and bundle config are kept)"
+
+[[var]]
+name = "gem_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.gem/ruby/*/cache"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\.gem\\ruby\\*\\cache'
+
+[[option]]
+id = "gem_cache"
+label = "Downloaded gems"
+description = "Delete cached *.gem archives (re-downloaded on the next install)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$gem_cache$$/*.gem"
+type = "f"

@@ -1,0 +1,25 @@
+id = "kaggle"
+name = "Kaggle"
+description = "Downloaded competition datasets (re-download with the kaggle CLI)"
+
+[[var]]
+name = "competitions"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.kaggle/competitions"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\.kaggle\\competitions'
+
+[[option]]
+id = "datasets"
+label = "Competition datasets"
+description = "Delete downloaded competition datasets"
+warning = "Datasets are re-downloaded with `kaggle competitions download`; your notebooks and submissions are kept."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$competitions$$"

@@ -1,0 +1,59 @@
+id = "onlyoffice"
+name = "ONLYOFFICE"
+description = "ONLYOFFICE Desktop Editors: cache, logs and crash reports (your documents are kept)"
+
+[[running]]
+type = "exe"
+value = "desktopeditors"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/onlyoffice"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/onlyoffice"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\ONLYOFFICE'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/onlyoffice"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the editor cache and font cache (rebuilt on the next start)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/DesktopEditors/cache"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete ONLYOFFICE logs and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/DesktopEditors/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/DesktopEditors/crashdumps"

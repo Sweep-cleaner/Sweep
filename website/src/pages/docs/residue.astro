@@ -1,0 +1,131 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'what', title: 'What the Residue Engine Is' },
+  { id: 'finding-classes', title: 'What It Finds' },
+  { id: 'confidence', title: 'Confidence Scores & safe_to_delete' },
+  { id: 'safety', title: 'Safety Boundaries' },
+  { id: 'cli', title: 'Command Reference' },
+  { id: 'vs-leftovers', title: 'How It Relates to leftovers / devscan' }
+];
+---
+
+<DocsLayout
+  title="Residue Engine"
+  description="The context-aware Residue Intelligence Engine: uninstall residue, dead build output, version caches and junk-only empty dirs, each with a confidence score."
+  currentSlug="residue"
+  toc={toc}
+  prevPage={{ title: 'Disk Intelligence Tools', href: '/docs/disk-intelligence' }}
+  nextPage={{ title: 'Safety Model', href: '/docs/safety' }}
+>
+  <div class="space-y-10">
+    <!-- What -->
+    <section id="what">
+      <h2 class="text-2xl font-bold text-white mb-3">What the Residue Engine Is</h2>
+      <p class="text-text-muted leading-relaxed">
+        The Residue Intelligence Engine is a context-aware scanner that answers a harder question than "does this folder look like junk?". It checks whether a path's <em>reason to exist</em> still exists — is the binary that wrote this config still installed? Does this <code class="text-cyan">target/</code> still sit next to a <code class="text-cyan">Cargo.toml</code>? Is this an old version cache for a tool that has moved on?
+      </p>
+      <p class="text-text-muted leading-relaxed mt-2">
+        It works across Linux, Windows and macOS, and it is deliberately conservative: rather than a boolean "safe/unsafe", every finding carries a confidence score and an explicit flag so you can decide the threshold that matches your risk tolerance.
+      </p>
+    </section>
+
+    <!-- Finding classes -->
+    <section id="finding-classes">
+      <h2 class="text-2xl font-bold text-white mb-4">What It Finds</h2>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/60">
+          <h3 class="font-bold text-white text-sm mb-1">Uninstall residue</h3>
+          <p class="text-xs text-text-muted">A missing binary paired with orphaned configuration or data — the classic "I uninstalled it but my home directory still remembers it".</p>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/60">
+          <h3 class="font-bold text-white text-sm mb-1">Dead build output</h3>
+          <p class="text-xs text-text-muted">A <code class="text-cyan">target/</code> with no <code class="text-cyan">Cargo.toml</code>, a stale <code class="text-cyan">.next/</code>, or a marker-less <code class="text-cyan">__pycache__</code>/<code class="text-cyan">.venv</code> whose project no longer exists.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/60">
+          <h3 class="font-bold text-white text-sm mb-1">Version caches</h3>
+          <p class="text-xs text-text-muted">Superseded cache directories a tool will never read again after an upgrade.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-bg-surface/50 border border-border/60">
+          <h3 class="font-bold text-white text-sm mb-1">Junk-only empty dirs</h3>
+          <p class="text-xs text-text-muted">Directories left empty after their contents were removed — purely structural leftovers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Confidence -->
+    <section id="confidence">
+      <h2 class="text-2xl font-bold text-white mb-4">Confidence Scores &amp; safe_to_delete</h2>
+      <p class="text-sm text-text-muted leading-relaxed mb-4">
+        Each finding has a confidence value between 0 and 1 and a <code class="text-cyan">safe_to_delete</code> flag. The default clean threshold is <code class="text-cyan">0.6</code>, and anything below it stays preview-only no matter what — the scanner will show it, but the cleaner will not take it.
+      </p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse bg-bg-surface border border-border rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-bg-elevated text-left text-xs uppercase tracking-wider text-text-muted">
+              <th class="p-3">Finding</th>
+              <th class="p-3">Confidence</th>
+              <th class="p-3">Reasoning</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60 text-xs">
+            <tr>
+              <td class="p-3 font-medium text-text-primary">Empty directory</td>
+              <td class="p-3 font-mono text-cyan">1.0</td>
+              <td class="p-3 text-text-muted">Nothing to lose — the directory holds no data.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-medium text-text-primary">Binary gone + orphan config</td>
+              <td class="p-3 font-mono text-cyan">0.9</td>
+              <td class="p-3 text-text-muted">The application that owned this state is no longer installed.</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-medium text-text-primary">Cache-only residue</td>
+              <td class="p-3 font-mono text-cyan">0.7</td>
+              <td class="p-3 text-text-muted">Regenerable data with no live consumer.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Safety -->
+    <section id="safety">
+      <h2 class="text-2xl font-bold text-white mb-4">Safety Boundaries</h2>
+      <ul class="space-y-2 text-sm text-text-muted">
+        <li class="flex items-start gap-2"><span class="text-cyan">▸</span><span><strong>Documents, Desktop and Pictures are never scanned.</strong> The engine refuses to look at personal-media trees even if pointed there.</span></li>
+        <li class="flex items-start gap-2"><span class="text-cyan">▸</span><span><strong><code class="text-cyan">.git</code> trees are never touched</strong> — a repository's history is not residue.</span></li>
+        <li class="flex items-start gap-2"><span class="text-cyan">▸</span><span><strong>Sub-0.6 findings stay preview-only.</strong> Confidence is a filter, not just a label.</span></li>
+        <li class="flex items-start gap-2"><span class="text-cyan">▸</span><span><strong>Time Machine thinning is separate.</strong> On macOS it runs through the dedicated <code class="text-cyan">system.tm_thin</code> provider rather than the generic engine.</span></li>
+      </ul>
+    </section>
+
+    <!-- CLI -->
+    <section id="cli">
+      <h2 class="text-2xl font-bold text-white mb-3">Command Reference</h2>
+      <pre class="code-block"><code><span class="text-rust"># List every finding with its confidence and size (default verb)</span>
+<span class="text-rust">$ </span>sweep residue scan
+
+<span class="text-rust"># Interactively pick findings, then delete the selection</span>
+<span class="text-rust">$ </span>sweep residue preview
+
+<span class="text-rust"># Delete everything at or above a confidence threshold</span>
+<span class="text-rust">$ </span>sweep residue clean --confidence 0.7
+
+<span class="text-rust"># Restrict the build/empty scan roots; keep empty dirs</span>
+<span class="text-rust">$ </span>sweep residue scan --roots ~/src --keep-empty-dirs</code></pre>
+      <p class="text-xs text-text-dim mt-3">
+        Omitting the verb defaults to <code class="text-cyan">scan</code>. The <code class="text-cyan">--roots</code> flag only affects the build-output and empty-directory scans; the default is your home directory.
+      </p>
+    </section>
+
+    <!-- vs leftovers -->
+    <section id="vs-leftovers">
+      <h2 class="text-2xl font-bold text-white mb-3">How It Relates to leftovers / devscan</h2>
+      <p class="text-sm text-text-muted leading-relaxed">
+        The older <a href="/docs/disk-intelligence" class="text-cyan hover:underline">leftovers</a> and <code class="text-cyan">devscan</code> commands each answer one narrow question. The residue engine generalises both and adds scoring: it is the recommended entry point when you do not already know what you are looking for. All three are list-first and respect the same keep list and protected-root guards.
+      </p>
+    </section>
+  </div>
+</DocsLayout>

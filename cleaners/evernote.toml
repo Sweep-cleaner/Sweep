@@ -1,0 +1,46 @@
+id = "evernote"
+name = "Evernote"
+description = "Evernote desktop: cache, logs and crash reports (your notes are kept)"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Evernote.exe"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Evernote'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Evernote's cache and temporary files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Temp"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete Evernote logs and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/**/*.log*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/CrashReports"

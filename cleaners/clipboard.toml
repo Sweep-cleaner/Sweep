@@ -1,0 +1,17 @@
+id = "clipboard"
+name = "Clipboard history"
+description = "Clipboard manager history (current clipboard is kept)"
+os = "linux"
+
+[[option]]
+id = "gpaste"
+label = "GPaste history"
+description = "Delete the GPaste clipboard history database"
+warning = "Clipboard history entries are lost."
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "~/.local/share/gpaste/history.db"
+os = "linux"

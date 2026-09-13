@@ -1,0 +1,29 @@
+id = "linux_snap"
+name = "Snap"
+description = "Devre dışı Snap revizyonları ve Snap indirme önbelleği (root gerekir)"
+os = "linux"
+
+[[option]]
+id = "revisions"
+label = "Devre dışı revizyonlar"
+description = "snap list --all çıktısındaki disabled revizyonları kaldırır; güncel sürümlere dokunulmaz"
+
+[[option.action]]
+command = "system.snap"
+search = "file"
+path = ""
+
+[[option]]
+id = "cache"
+label = "Uygulama önbellekleri"
+description = "Snap uygulamalarının ortak önbellek dizinleri ve snapd indirme önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/snap/*/common/.cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/snapd"

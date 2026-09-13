@@ -1,0 +1,160 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'methodology', title: 'Hardware & Benchmark Methodology' },
+  { id: 'speed-comparison', title: 'Speed & Scan Performance' },
+  { id: 'resource-footprint', title: 'Memory Footprint & Binary Size' },
+  { id: 'feature-matrix', title: 'Comprehensive Feature Comparison' }
+];
+
+const benchmarkData = [
+  { metric: 'Single Binary Footprint', sweep: '6.0 MB', bleachbit: '13 MB + Python 3 (50MB+)', stacer: '95 MB (Electron)', sweeper: '18 MB' },
+  { metric: 'System Scan (/usr, 12.6k files)', sweep: '4.85s (Rayon)', bleachbit: '31.2s (Single thread)', stacer: '42.0s', sweeper: '26.4s' },
+  { metric: 'Dev Artifact Scan (400 git repos)', sweep: '0.21s', bleachbit: 'N/A (Unsupported)', stacer: 'N/A', sweeper: 'N/A' },
+  { metric: 'Deep Junk Scan (8k matches)', sweep: '0.18s', bleachbit: 'N/A', stacer: 'N/A', sweeper: 'N/A' },
+  { metric: 'Duplicate File Detection (16k files)', sweep: '0.68s', bleachbit: 'N/A', stacer: 'Partial', sweeper: 'N/A' },
+  { metric: 'Peak Memory Usage (RSS)', sweep: '24 MB', bleachbit: '145 MB', stacer: '290 MB', sweeper: '72 MB' },
+  { metric: 'Safety Guards (fail-closed)', sweep: 'Yes (protected roots + keep list)', bleachbit: 'Protected paths', stacer: 'Vulnerable', sweeper: 'Vulnerable' }
+];
+
+const matrix = [
+  { feature: 'Package Caches (APT / DNF / Pacman)', sweep: 'Yes + Size Preview', bleachbit: 'Yes', stacer: 'Partial', sweeper: 'No' },
+  { feature: 'Orphan Packages / Old Kernels', sweep: 'Yes (Native)', bleachbit: 'Partial', stacer: 'No', sweeper: 'No' },
+  { feature: 'Journal / Snap / Flatpak / Docker', sweep: 'Yes (Deep Clean)', bleachbit: 'No', stacer: 'No', sweeper: 'No' },
+  { feature: 'KDE & GNOME Deep Index Caches', sweep: 'Yes (Baloo, Tracker, Akonadi)', bleachbit: 'Shallow', stacer: 'No', sweeper: 'Shallow' },
+  { feature: 'Residue / Leftover Hunter', sweep: 'Yes (confidence scores)', bleachbit: 'No', stacer: 'No', sweeper: 'No' },
+  { feature: 'Dev Cruft (node_modules, target, venvs)', sweep: 'Yes (devscan)', bleachbit: 'No', stacer: 'Partial', sweeper: 'No' },
+  { feature: 'Content-Hash Duplicate Hunter', sweep: 'Yes (--keep / --link)', bleachbit: 'No', stacer: 'No', sweeper: 'No' },
+  { feature: 'Memory / Startup / Health Tools', sweep: 'Yes (memopt, startup, sysinfo)', bleachbit: 'No', stacer: 'Partial', sweeper: 'No' },
+  { feature: 'Preview + Confirm + Undo', sweep: 'Yes (instant undo)', bleachbit: 'Partial', stacer: 'Partial', sweeper: 'Basic' },
+  { feature: 'Scheduled Automation', sweep: 'Yes (systemd / Task Scheduler / launchd)', bleachbit: 'No', stacer: 'Partial', sweeper: 'No' },
+  { feature: 'GUI Framework', sweep: 'Qt6/QML (sweep-qml)', bleachbit: 'GTK3 (Python)', stacer: 'Electron (Chromium)', sweeper: 'Qt5' },
+  { feature: 'Winapp2.ini Community Rules', sweep: 'Yes (sweep hub)', bleachbit: 'Yes', stacer: 'No', sweeper: 'No' }
+];
+---
+
+<DocsLayout
+  title="Benchmarks & Comparison Matrix"
+  description="Verified performance numbers and side-by-side technical capability comparison against BleachBit, Stacer, and Sweeper."
+  currentSlug="benchmarks"
+  toc={toc}
+  prevPage={{ title: 'Configuration Reference', href: '/docs/configuration' }}
+>
+  <div class="space-y-10">
+    <!-- Methodology -->
+    <section id="methodology">
+      <h2 class="text-2xl font-bold text-white mb-3">Hardware &amp; Benchmark Methodology</h2>
+      <div class="mb-4">
+        <span class="text-[11px] font-mono px-3 py-1 rounded-full bg-cyan/10 border border-cyan/30 text-cyan">
+          Benchmarked on Sweep v0.2.5
+        </span>
+      </div>
+      <p class="text-text-muted leading-relaxed">
+        All benchmarks were executed on real hardware running Ubuntu 22.04 LTS (WSL2 sandbox), powered by an AMD Ryzen 7 5700U (8 cores / 16 threads, 4.3 GHz peak), 15 GB RAM, and a PCIe 3.0 NVMe SSD. This performance snapshot was measured on <strong>Sweep v0.2.5</strong>, compiled with Rust 1.88 using the release profile (<code class="text-cyan font-mono">lto = "thin"</code>, symbol stripping, <code class="text-cyan font-mono">codegen-units = 1</code>).
+      </p>
+      <div class="callout callout-note mt-4">
+        <strong>Why a separate version tag?</strong> These numbers predate the 0.4.0 feature work (system intelligence, the residue engine, the Qt6/QML shell). They are published unchanged and explicitly labelled so a reader can tell exactly which build they describe.
+      </div>
+    </section>
+
+    <!-- Speed Comparison -->
+    <section id="speed-comparison">
+      <h2 class="text-2xl font-bold text-white mb-4">Speed &amp; Scan Performance</h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse bg-bg-surface border border-border rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-bg-elevated text-left text-xs uppercase tracking-wider text-text-muted">
+              <th class="p-4">Benchmark Test</th>
+              <th class="p-4 text-cyan font-bold">Sweep (Rust)</th>
+              <th class="p-4">BleachBit (Python)</th>
+              <th class="p-4">Stacer</th>
+              <th class="p-4">Sweeper</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60 text-xs">
+            {benchmarkData.map(row => (
+              <tr class="hover:bg-bg-elevated/40 transition-colors">
+                <td class="p-4 font-medium text-text-primary">{row.metric}</td>
+                <td class="p-4 font-mono font-bold text-cyan">{row.sweep}</td>
+                <td class="p-4 font-mono text-text-muted">{row.bleachbit}</td>
+                <td class="p-4 font-mono text-text-muted">{row.stacer}</td>
+                <td class="p-4 font-mono text-text-muted">{row.sweeper}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Resource Footprint -->
+    <section id="resource-footprint">
+      <h2 class="text-2xl font-bold text-white mb-4">Memory Footprint &amp; Binary Size</h2>
+      <p class="text-sm text-text-muted mb-6 leading-relaxed">
+        Sweep's single-binary distribution packages all 202 compiled TOML cleaners, high-speed Rayon parallelism and the regex dispatchers into just <strong>6.0 MB</strong> — the Qt6/QML desktop shell is a separate, optional target:
+      </p>
+
+      <div class="space-y-4 max-w-2xl">
+        <div>
+          <div class="flex justify-between text-xs font-mono mb-1">
+            <span class="text-cyan font-semibold">Sweep (Standalone CLI Binary)</span>
+            <span class="text-cyan">6.0 MB</span>
+          </div>
+          <div class="w-full h-3 bg-bg-elevated rounded-full overflow-hidden border border-border">
+            <div class="h-full bg-gradient-to-r from-cyan to-rust rounded-full" style="width: 10%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-mono mb-1">
+            <span class="text-text-muted">BleachBit + Python Runtime</span>
+            <span class="text-text-muted">~63.0 MB</span>
+          </div>
+          <div class="w-full h-3 bg-bg-elevated rounded-full overflow-hidden border border-border">
+            <div class="h-full bg-border-glow/40 rounded-full" style="width: 50%"></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-mono mb-1">
+            <span class="text-text-muted">Stacer (Electron Runtime)</span>
+            <span class="text-text-muted">95.0 MB</span>
+          </div>
+          <div class="w-full h-3 bg-bg-elevated rounded-full overflow-hidden border border-border">
+            <div class="h-full bg-border rounded-full" style="width: 85%"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature Matrix -->
+    <section id="feature-matrix">
+      <h2 class="text-2xl font-bold text-white mb-4">Comprehensive Feature Comparison</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse bg-bg-surface border border-border rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-bg-elevated text-left text-xs uppercase tracking-wider text-text-muted">
+              <th class="p-4">Capability</th>
+              <th class="p-4 text-cyan font-bold">Sweep</th>
+              <th class="p-4">BleachBit</th>
+              <th class="p-4">Stacer</th>
+              <th class="p-4">Sweeper</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60 text-xs">
+            {matrix.map(row => (
+              <tr class="hover:bg-bg-elevated/40 transition-colors">
+                <td class="p-4 font-medium text-text-primary">{row.feature}</td>
+                <td class="p-4 font-bold text-cyan">{row.sweep}</td>
+                <td class="p-4 text-text-muted">{row.bleachbit}</td>
+                <td class="p-4 text-text-muted">{row.stacer}</td>
+                <td class="p-4 text-text-muted">{row.sweeper}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</DocsLayout>

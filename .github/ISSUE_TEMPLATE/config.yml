@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability report
+    url: https://github.com/sweep-cleaner/sweep/blob/main/SECURITY.md
+    about: Do NOT open a public issue for security problems — report privately.
+  - name: Question / discussion
+    url: https://github.com/sweep-cleaner/sweep/discussions
+    about: Ask how to use Sweep or propose an idea before filing a feature request.

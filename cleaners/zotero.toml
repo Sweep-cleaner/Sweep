@@ -1,0 +1,53 @@
+id = "zotero"
+name = "Zotero"
+description = "Zotero reference manager: caches, logs and crash reports (your library is kept)"
+
+[[running]]
+type = "exe"
+value = "zotero"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.zotero"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Zotero"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Zotero'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Zotero's cache and startup cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Zotero/*/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Zotero/*/startupCache"
+
+[[option]]
+id = "logs"
+label = "Logs and crashes"
+description = "Delete Zotero log files and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/**/*.log*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Zotero/*/crashes"

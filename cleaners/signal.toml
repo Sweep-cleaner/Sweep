@@ -1,0 +1,78 @@
+id = "signal"
+name = "Signal"
+description = "Signal messenger: cache, logs and crash dumps (messages and keys are kept)"
+
+[[running]]
+type = "exe"
+value = "signal-desktop"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Signal.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Signal"
+os = "macos"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/Signal"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Signal"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Signal'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Chromium, GPU and shader caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/GPUCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/ShaderCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/DawnCache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files and crash dumps"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/Crashpad"

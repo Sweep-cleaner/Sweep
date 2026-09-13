@@ -1,0 +1,56 @@
+id = "godot"
+name = "Godot"
+description = "Game engine: cache and export templates (projects are kept)"
+
+[[running]]
+type = "exe"
+value = "godot"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Godot.exe"
+os = "windows"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/godot"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Godot\cache'
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.local/share/godot"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Godot'
+
+[[option]]
+id = "cache"
+label = "Editor cache"
+description = "Delete the editor shader and metadata cache (rebuilt on next start)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "export_templates"
+label = "Export templates"
+description = "Delete installed export templates (re-downloadable from the Godot site)"
+warning = "Exporting again requires re-installing the templates."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/export_templates"

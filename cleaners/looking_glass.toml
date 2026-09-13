@@ -1,0 +1,22 @@
+id = "looking_glass"
+name = "Looking Glass"
+description = "Looking Glass client cache (VM configs are kept)"
+os = "linux"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/looking-glass"
+
+[[option]]
+id = "cache"
+label = "Client cache"
+description = "Delete the Looking Glass client cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

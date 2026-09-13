@@ -1,0 +1,26 @@
+id = "macos_fontcache"
+name = "macOS Font Cache"
+description = "Font registry caches (rebuilt by the system on demand)"
+os = "macos"
+
+[[var]]
+name = "fontreg"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Caches/com.apple.FontRegistry"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "/Library/Caches/com.apple.FontRegistry"
+
+[[option]]
+id = "cache"
+label = "Font caches"
+description = "Delete user and local font registry caches"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$fontreg$$"
+os = "macos"

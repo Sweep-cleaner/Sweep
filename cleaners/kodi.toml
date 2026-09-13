@@ -1,0 +1,51 @@
+id = "kodi"
+name = "Kodi"
+description = "Media center: temp files and artwork cache (library, sources and add-ons are kept)"
+
+[[running]]
+type = "exe"
+value = "kodi"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "kodi.bin"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "kodi.exe"
+os = "windows"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.kodi"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Kodi'
+
+[[option]]
+id = "temp"
+label = "Temp files"
+description = "Delete temporary files older than 7 days"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/temp"
+max_age_days = 7
+
+[[option]]
+id = "thumbnails"
+label = "Artwork cache"
+description = "Delete cached posters and fanart (re-scraped on demand)"
+warning = "Re-scraping large libraries takes a while."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/userdata/Thumbnails"

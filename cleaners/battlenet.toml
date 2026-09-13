@@ -1,0 +1,53 @@
+id = "battlenet"
+name = "Battle.net"
+description = "Blizzard oyun başlatıcısı günlükleri ve önbelleği"
+
+[[running]]
+type = "exe"
+value = "Battle.net.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Battle.net"
+os = "macos"
+
+[[var]]
+name = "battlenet_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/battlenet"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/Battle.net"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$PROGRAMDATA\Battle.net'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Başlatıcı ve oyun günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$battlenet_data$$/Logs"
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Arayüz ve mağaza önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$battlenet_data$$/Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$battlenet_data$$/Updates"

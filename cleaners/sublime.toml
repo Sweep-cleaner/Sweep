@@ -1,0 +1,80 @@
+id = "sublime"
+name = "Sublime Text"
+description = "Sublime Text editor: index cache and old logs (sessions and packages are kept)"
+
+[[running]]
+type = "exe"
+value = "subl"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "sublime_text"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "sublime_text.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Sublime Text"
+os = "macos"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/sublime-text"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/Sublime Text"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Sublime Text'
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/sublime-text"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Sublime Text"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Sublime Text'
+
+[[option]]
+id = "cache"
+label = "Index cache"
+description = "Delete the symbol index (rebuilt in the background)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Index"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/*.log"
+max_age_days = 30
+type = "f"

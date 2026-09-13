@@ -1,0 +1,40 @@
+id = "ollama"
+name = "Ollama"
+description = "Local LLM server: interrupted download fragments (installed models are NEVER touched)"
+
+[[running]]
+type = "exe"
+value = "ollama"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "ollama.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Ollama"
+os = "macos"
+
+[[var]]
+name = "models"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.ollama/models"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\.ollama\\models'
+
+[[option]]
+id = "partial_downloads"
+label = "Interrupted downloads"
+description = "Delete *.partial fragments of interrupted model pulls (restarted pulls re-download them)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$models$$/blobs/*.partial"
+type = "f"

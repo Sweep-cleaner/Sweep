@@ -1,0 +1,34 @@
+id = "geany"
+name = "Geany"
+description = "Lightweight IDE log file (config and plugins are kept)"
+
+[[running]]
+type = "exe"
+value = "geany"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "geany.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+value = "~/.config/geany"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$APPDATA\\geany"
+search = "literal"
+os = "windows"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete the Geany log file"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$config$$/geany.log"

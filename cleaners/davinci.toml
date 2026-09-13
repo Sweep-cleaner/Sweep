@@ -1,0 +1,54 @@
+id = "davinci"
+name = "DaVinci Resolve"
+description = "Video editor logs and render cache (projects and galleries are kept)"
+
+[[running]]
+type = "exe"
+value = "resolve"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Resolve.exe"
+os = "windows"
+
+[[var]]
+name = "data"
+[[var.value]]
+value = "~/.local/share/DaVinciResolve"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$APPDATA\\Blackmagic Design\\DaVinci Resolve\\Support"
+search = "literal"
+os = "windows"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/resolve"
+search = "literal"
+os = "linux"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/logs/*.log"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "cache"
+label = "Render cache"
+description = "Delete cached render files (re-rendered on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

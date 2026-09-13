@@ -1,0 +1,10 @@
+[Unit]
+Description=Sweep weekly cleanup timer
+
+[Timer]
+OnCalendar=weekly
+Persistent=true
+RandomizedDelaySec=1800
+
+[Install]
+WantedBy=timers.target

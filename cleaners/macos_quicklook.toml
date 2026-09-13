@@ -1,0 +1,22 @@
+id = "macos_quicklook"
+name = "macOS QuickLook Cache"
+description = "QuickLook thumbnail cache (regenerated on preview)"
+os = "macos"
+
+[[var]]
+name = "thumbs"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Caches/com.apple.QuickLook.thumbnailcache"
+
+[[option]]
+id = "thumbnails"
+label = "Thumbnails"
+description = "Delete cached QuickLook thumbnails"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$thumbs$$"
+os = "macos"

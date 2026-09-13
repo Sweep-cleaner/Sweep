@@ -1,0 +1,23 @@
+id = "proton_ge"
+name = "Proton-GE"
+description = "DXVK shader state caches inside compatibility tools (the Wine builds themselves are kept)"
+os = "linux"
+
+[[var]]
+name = "tools"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.local/share/Steam/compatibilitytools.d"
+
+[[option]]
+id = "dxvk_cache"
+label = "DXVK state caches"
+description = "Delete *.dxvk-cache files (shaders recompile once, then run as before)"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$tools$$/*/*.dxvk-cache"
+type = "f"
+os = "linux"

@@ -1,0 +1,26 @@
+id = "evolution"
+name = "Evolution"
+description = "GNOME mail client: disposable cache only (local mail in ~/.local/share/evolution is never touched)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "evolution"
+os = "unix"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/evolution"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Evolution attachment and folder-summary cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

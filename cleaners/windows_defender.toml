@@ -1,0 +1,23 @@
+id = "windows_defender"
+name = "Windows Defender"
+description = "Old scan history and logs (protection stays on, history is rebuilt)"
+os = "windows"
+
+[[var]]
+name = "history"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$ProgramData\\Microsoft\\Windows Defender\\Scans\\History'
+
+[[option]]
+id = "history"
+label = "Scan history"
+description = "Delete old scan history and logs"
+warning = "Run as administrator. Files in use by a running scan are skipped."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$history$$"
+os = "windows"

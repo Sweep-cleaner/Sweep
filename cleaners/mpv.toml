@@ -1,0 +1,72 @@
+id = "mpv"
+name = "mpv"
+description = "mpv media player: watch-later state, cache and log files"
+
+[[running]]
+type = "exe"
+value = "mpv"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "mpv.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/mpv"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\mpv'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/mpv"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/mpv"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\mpv\cache'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete mpv's stream and demuxer cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "watch_later"
+label = "Watch-later state"
+description = "Delete saved playback positions used to resume files"
+warning = "mpv will no longer remember where you stopped in a file."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/watch_later"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete mpv log files older than 14 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/mpv.log*"
+max_age_days = 14
+type = "f"

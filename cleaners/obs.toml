@@ -1,0 +1,53 @@
+id = "obs"
+name = "OBS Studio"
+description = "Yayın yazılımı günlükleri ve çökme raporları (sahneler ve profiller korunur)"
+
+[[running]]
+type = "exe"
+value = "obs"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "obs64.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "obs"
+os = "macos"
+
+[[var]]
+name = "obs_config"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/obs-studio"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/obs-studio"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\obs-studio'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Yayın/kayıt oturum günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$obs_config$$/logs"
+
+[[option]]
+id = "crashes"
+label = "Çökme raporları"
+description = "Kilitlenme dökümleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$obs_config$$/crashes"

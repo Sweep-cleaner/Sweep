@@ -1,0 +1,25 @@
+id = "cocoapods"
+name = "CocoaPods"
+description = "CocoaPods: downloaded pod cache and spec repositories (re-fetched by pod install)"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/CocoaPods"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cocoapods"
+
+[[option]]
+id = "cache"
+label = "Pod cache"
+description = "Delete downloaded pod archives and spec repositories"
+warning = "Every project re-downloads its pods on the next `pod install`."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

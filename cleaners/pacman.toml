@@ -1,0 +1,25 @@
+id = "pacman"
+name = "pacman"
+description = "Arch Linux package manager cache"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Package cache"
+description = "pacman -Scc: remove all cached packages"
+warning = "This removes the entire package cache and cannot be undone."
+
+[[option.action]]
+command = "pacman.clean"
+search = "file"
+path = ""
+
+[[option]]
+id = "deep_cache"
+label = "Derin önbellek taraması"
+description = "/var/cache/pacman/pkg için dosya bazında önizleme; paccache varsa son 2 sürümü tutar"
+
+[[option.action]]
+command = "system.pacman_cache"
+search = "file"
+path = ""

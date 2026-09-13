@@ -1,0 +1,6 @@
+[toolchain]
+# MSRV is 1.88: the locked dependency graph needs it (globset 0.4.20 declares
+# 1.88, clap 4.6 declares 1.85). Keep in sync with `rust-version` in Cargo.toml;
+# CI reads that field and checks with exactly this compiler.
+channel = "1.88"
+components = ["rustfmt", "clippy"]

@@ -1,0 +1,417 @@
+id = "firefox_forks"
+name = "Firefox tabanlı tarayıcılar"
+description = "LibreWolf, Zen, Waterfox, Pale Moon, Tor Browser, Floorp: önbellek, çerez ve geçmiş"
+
+[[running]]
+type = "exe"
+value = "librewolf"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "zen"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "zen-bin"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "firefox.real"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "waterfox"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "palemoon"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "floorp"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "librewolf.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "waterfox.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "palemoon.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "LibreWolf"
+os = "macos"
+
+# ---- LibreWolf ----
+[[var]]
+name = "librewolf_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.librewolf/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/LibreWolf/Profiles/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\LibreWolf\Profiles\*'
+
+# ---- Zen ----
+[[var]]
+name = "zen_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.zen/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Zen/Profiles/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Zen\Profiles\*'
+
+# ---- Waterfox ----
+[[var]]
+name = "waterfox_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.waterfox/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Waterfox/Profiles/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Waterfox\Profiles\*'
+
+# ---- Pale Moon ----
+[[var]]
+name = "palemoon_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.moonchild productions/pale moon/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Pale Moon/Profiles/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Moonchild Productions\Pale Moon\Profiles\*'
+
+# ---- Tor Browser (taşınabilir kurulum) ----
+[[var]]
+name = "tor_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/tor-browser*/Browser/TorBrowser/Data/Browser/profile.default*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/TorBrowser-Data/Browser/profile.default*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$DESKTOP\Tor Browser\Browser\TorBrowser\Data\Browser\profile.default*'
+
+# ---- Floorp ----
+[[var]]
+name = "floorp_profile"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.floorp/*"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/Floorp/Profiles/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\Floorp\Profiles\*'
+
+# ---- Önbellek (tüm fork'lar) ----
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Tüm Firefox tabanlıların sayfa ve uygulama önbelleği"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$librewolf_profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$zen_profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$waterfox_profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$palemoon_profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$tor_profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$floorp_profile$$/cache2"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/librewolf"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/zen"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/waterfox"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/floorp"
+os = "linux"
+
+# ---- Çerezler ----
+[[option]]
+id = "cookies"
+label = "Çerezler"
+description = "Tüm fork'larda çerezleri siler (oturumlar kapanır)"
+warning = "Çerezler silinince sitelerden çıkış yapılır. Tor Browser'da kimlikutzun ömrü kısalır."
+
+[[option.action]]
+command = "cookies"
+search = "file"
+path = "$$librewolf_profile$$/cookies.sqlite"
+
+[[option.action]]
+command = "cookies"
+search = "file"
+path = "$$zen_profile$$/cookies.sqlite"
+
+[[option.action]]
+command = "cookies"
+search = "file"
+path = "$$waterfox_profile$$/cookies.sqlite"
+
+[[option.action]]
+command = "cookies"
+search = "file"
+path = "$$palemoon_profile$$/cookies.sqlite"
+
+[[option.action]]
+command = "cookies"
+search = "file"
+path = "$$floorp_profile$$/cookies.sqlite"
+
+# ---- Geçmiş ----
+[[option]]
+id = "history"
+label = "Geçmiş"
+description = "Gezinti geçmişi ve indirmeler (yer imleri korunur)"
+warning = "Geçmiş temizlenir, yer imleri korunur."
+
+[[option.action]]
+command = "mozilla.url_history"
+search = "file"
+path = "$$librewolf_profile$$/places.sqlite"
+
+[[option.action]]
+command = "mozilla.url_history"
+search = "file"
+path = "$$zen_profile$$/places.sqlite"
+
+[[option.action]]
+command = "mozilla.url_history"
+search = "file"
+path = "$$waterfox_profile$$/places.sqlite"
+
+[[option.action]]
+command = "mozilla.url_history"
+search = "file"
+path = "$$palemoon_profile$$/places.sqlite"
+
+[[option.action]]
+command = "mozilla.url_history"
+search = "file"
+path = "$$tor_profile$$/places.sqlite"
+
+[[option.action]]
+command = "mozilla.url_history"
+search = "file"
+path = "$$floorp_profile$$/places.sqlite"
+
+# ---- Form geçmişi ----
+[[option]]
+id = "forms"
+label = "Form geçmişi"
+description = "Kaydedilmiş form girdileri (şifreler ASLA silinmez)"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$librewolf_profile$$/formhistory.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$zen_profile$$/formhistory.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$waterfox_profile$$/formhistory.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$palemoon_profile$$/formhistory.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$floorp_profile$$/formhistory.sqlite"
+
+# ---- Site verileri ----
+[[option]]
+id = "site_data"
+label = "Site verileri"
+description = "DOM depolama ve IndexedDB kalıntıları"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$librewolf_profile$$/webappsstore.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$librewolf_profile$$/storage/default"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$zen_profile$$/webappsstore.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$zen_profile$$/storage/default"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$waterfox_profile$$/webappsstore.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$waterfox_profile$$/storage/default"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$floorp_profile$$/webappsstore.sqlite"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$floorp_profile$$/storage/default"
+
+# ---- Telemetri ----
+[[option]]
+id = "telemetry"
+label = "Telemetri"
+description = "Gönderilmeyi bekleyen kullanım verileri ve sağlık raporları"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$librewolf_profile$$/datareporting"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$librewolf_profile$$/healthreport"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$zen_profile$$/datareporting"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$waterfox_profile$$/datareporting"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$floorp_profile$$/datareporting"
+
+# ---- Oturum ----
+[[option]]
+id = "session"
+label = "Oturum"
+description = "Oturum geri yükleme verileri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$librewolf_profile$$/sessionstore-backups"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$zen_profile$$/sessionstore-backups"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$waterfox_profile$$/sessionstore-backups"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$floorp_profile$$/sessionstore-backups"

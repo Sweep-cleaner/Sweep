@@ -1,0 +1,36 @@
+id = "virtualbox"
+name = "VirtualBox"
+description = "Sanal makine günlükleri (disk imajları ve anlık görüntüler korunur)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "VirtualBox"
+os = "unix"
+
+[[var]]
+name = "vms"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/VirtualBox VMs"
+
+[[option]]
+id = "vm_logs"
+label = "Sanal makine günlükleri"
+description = "Her makinenin Logs klasörü"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$vms$$/*/Logs"
+
+[[option]]
+id = "config_logs"
+label = "Yönetici günlükleri"
+description = "VirtualBox yöneticisi günlük dosyaları"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "~/.config/VirtualBox/*.log"

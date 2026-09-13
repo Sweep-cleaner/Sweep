@@ -1,0 +1,14 @@
+id = "linux_temp"
+name = "Geçici Dosyalar"
+description = "/tmp ve /var/tmp içindeki 1 günden eski dosyalar (X11/systemd soketleri korunur)"
+os = "linux"
+
+[[option]]
+id = "stale"
+label = "Eski geçici dosyalar"
+description = "1 günden eski geçici dosyaları siler; kritik kökler ve soketler atlanır"
+
+[[option.action]]
+command = "system.temp_deep"
+search = "file"
+path = ""

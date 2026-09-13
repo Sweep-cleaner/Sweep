@@ -1,0 +1,51 @@
+id = "neovim"
+name = "Neovim"
+description = "Neovim editor: cache, swap leftovers and old logs (config, plugins and shada are kept)"
+
+[[running]]
+type = "exe"
+value = "nvim"
+os = "unix"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/nvim"
+
+[[var]]
+name = "state"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.local/state/nvim"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the plugin and treesitter cache (rebuilt on next start)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Logs and stale swap"
+description = "Delete log files and swap files older than 7 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$state$$/*.log"
+max_age_days = 7
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$state$$/swap/*.swp"
+max_age_days = 7
+type = "f"

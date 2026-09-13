@@ -1,0 +1,58 @@
+id = "git"
+name = "Git clients"
+description = "GitHub CLI and pre-commit caches (repositories and credentials are kept)"
+
+[[var]]
+name = "gh_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/gh"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\GitHub CLI'
+
+[[var]]
+name = "precommit_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/pre-commit"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\.cache\pre-commit'
+
+[[var]]
+name = "gh_logs"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/gh/logs"
+
+[[option]]
+id = "gh_cache"
+label = "GitHub CLI cache"
+description = "Delete cached API responses (re-fetched on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gh_cache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gh_logs$$"
+
+[[option]]
+id = "precommit_cache"
+label = "pre-commit cache"
+description = "Delete hook environments older than 30 days (rebuilt on next commit)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$precommit_cache$$"
+max_age_days = 30

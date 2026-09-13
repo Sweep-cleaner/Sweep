@@ -1,0 +1,45 @@
+id = "audacious"
+name = "Audacious"
+description = "Audacious music player: playlist cache and logs (your music files are kept)"
+
+[[running]]
+type = "exe"
+value = "audacious"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/audacious"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\audacious'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Audacious' playlist and file cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$config$$/cache"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.cache"
+type = "f"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Audacious log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

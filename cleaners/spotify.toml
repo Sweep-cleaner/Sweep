@@ -1,0 +1,42 @@
+id = "spotify"
+name = "Spotify"
+description = "Müzik akış önbelleği (çevrimdışı şarkılar yeniden iner, oturum korunur)"
+
+[[running]]
+type = "exe"
+value = "spotify"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Spotify.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "Spotify"
+os = "macos"
+
+[[option]]
+id = "cache"
+label = "Akış önbelleği"
+description = "Önbelleğe alınmış şarkılar; GB'larca tutabilir, yeniden akar"
+warning = "Çevrimdışı listeler yeniden indirilmelidir."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/spotify"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/Library/Caches/com.spotify.client"
+os = "macos"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = '$LOCALAPPDATA\Spotify\Storage'
+os = "windows"

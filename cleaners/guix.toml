@@ -1,0 +1,23 @@
+id = "guix"
+name = "GNU Guix"
+description = "Functional package manager fetch cache (store roots are kept)"
+os = "linux"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/guix"
+search = "literal"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Fetch cache"
+description = "Delete downloaded archives (re-fetched on next build)"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

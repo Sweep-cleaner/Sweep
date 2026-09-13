@@ -1,0 +1,28 @@
+id = "rhythmbox"
+name = "Rhythmbox"
+description = "Music player cache (library and playlists are kept)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "rhythmbox"
+os = "unix"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/rhythmbox"
+search = "literal"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the album-art and plugin cache"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

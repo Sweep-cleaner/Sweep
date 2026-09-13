@@ -1,0 +1,106 @@
+id = "discord"
+name = "Discord"
+description = "Discord chat client: cache and downloaded data"
+
+[[running]]
+type = "exe"
+value = "discord"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Discord.exe"
+os = "windows"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/discord/Cache"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/discord/Cache"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\discord\Cache'
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\discord\Cache'
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/discord/*/Cache"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/discord/*"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\discord\*'
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\discord\*'
+
+[[var]]
+name = "root"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/discord"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/discord"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\discord'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Discord cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "web_cache"
+label = "Code and GPU caches"
+description = "Delete the Chromium code cache, GPU cache and crash reports"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$root$$/Code Cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$root$$/GPUCache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$root$$/Crashpad"
+
+[[option]]
+id = "downloads"
+label = "Downloaded data"
+description = "Delete Discord's local data and indexed databases"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/Local Storage"

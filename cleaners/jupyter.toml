@@ -1,0 +1,51 @@
+id = "jupyter"
+name = "Jupyter"
+description = "Jupyter: runtime files and caches (notebooks and kernelspecs are kept)"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.local/share/jupyter"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\jupyter'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/jupyter"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\jupyter'
+
+[[option]]
+id = "runtime"
+label = "Runtime files"
+description = "Delete stale Jupyter runtime files (connection files for live kernels)"
+warning = "Stop every Jupyter kernel first; running kernels lose their connection file."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/runtime"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Jupyter cache and nbextension staging data"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/nbserver"

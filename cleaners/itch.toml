@@ -1,0 +1,36 @@
+id = "itch"
+name = "itch.io"
+description = "itch.io app: logs only (library, downloads and credentials are kept)"
+
+[[running]]
+type = "exe"
+value = "itch"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "itch.exe"
+os = "windows"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/itch"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\itch'
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/logs/*.log"
+max_age_days = 30
+type = "f"

@@ -1,0 +1,22 @@
+id = "snapcraft"
+name = "Snapcraft"
+description = "Snapcraft build cache (project files and snaps are kept)"
+os = "linux"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/snapcraft"
+
+[[option]]
+id = "cache"
+label = "Build cache"
+description = "Delete the Snapcraft cache (rebuilt on next build)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

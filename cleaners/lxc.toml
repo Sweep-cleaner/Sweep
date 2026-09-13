@@ -1,0 +1,16 @@
+id = "lxc"
+name = "LXC"
+description = "Linux container image cache (running containers are kept)"
+os = "linux"
+
+[[option]]
+id = "cache"
+label = "Image cache"
+description = "Delete cached container images (re-downloaded on next create)"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "/var/cache/lxc"
+os = "linux"

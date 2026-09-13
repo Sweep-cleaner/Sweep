@@ -1,0 +1,34 @@
+id = "aptlogs"
+name = "APT logs"
+description = "Package manager history logs (package lists and cache are kept)"
+os = "linux"
+
+[[option]]
+id = "logs"
+label = "History logs"
+description = "Delete apt history, term and dpkg logs older than 30 days"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "/var/log/apt/history.log*"
+max_age_days = 30
+type = "f"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "/var/log/apt/term.log*"
+max_age_days = 30
+type = "f"
+os = "linux"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "/var/log/dpkg.log*"
+max_age_days = 30
+type = "f"
+os = "linux"

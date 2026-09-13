@@ -1,0 +1,402 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+
+const toc = [
+  { id: 'discovery', title: 'Discovery, Info & Config' },
+  { id: 'core-commands', title: 'Core Workflow: Preview & Clean' },
+  { id: 'disk-intelligence', title: 'Disk Intelligence & Hunters' },
+  { id: 'system-tools', title: 'System, Startup, Health & Privacy' },
+  { id: 'automation-monitoring', title: 'Automation, Watch & Schedule' },
+  { id: 'selectors-rules', title: 'Target Selectors & Exclusions' },
+  { id: 'global-flags', title: 'Global CLI Flags Reference' }
+];
+---
+
+<DocsLayout
+  title="CLI Command Reference"
+  description="Exhaustive reference for the Sweep command-line interface, including syntax, selectors, flags, and practical examples."
+  currentSlug="cli"
+  toc={toc}
+  prevPage={{ title: 'Installation Guide', href: '/docs/installation' }}
+  nextPage={{ title: 'Qt6/QML GUI & Themes', href: '/docs/gui' }}
+>
+  <div class="space-y-10">
+    <!-- Discovery -->
+    <section id="discovery">
+      <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+        <span>🔎</span>
+        <span>Discovery, Info &amp; Config</span>
+      </h2>
+      <div class="space-y-6">
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep list [cleaner] [--search TEXT] [--os NAME] [--running]</h3>
+          <p class="text-sm text-text-muted mb-3">Lists all 202 registered cleaner definitions, or inspects one cleaner's options. Filter by id/name/description with <code class="text-cyan">--search</code>, by platform with <code class="text-cyan">--os</code>, or to cleaners whose app is live right now with <code class="text-cyan">--running</code>.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep list
+<span class="text-rust">$ </span>sweep list firefox
+<span class="text-rust">$ </span>sweep list --search browser --os linux</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep info &lt;cleaner&gt;</h3>
+          <p class="text-sm text-text-muted mb-3">Full definition detail — trust level, source file, running check, variables, per-option warnings and every action with its filters.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep info firefox</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep config &lt;show|path|init|get|set&gt;</h3>
+          <p class="text-sm text-text-muted mb-3">The TOML file no longer has to be edited by hand. <code class="text-cyan">set</code> validates types and lists and writes atomically.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep config path
+<span class="text-rust">$ </span>sweep config show
+<span class="text-rust">$ </span>sweep config get shred
+<span class="text-rust">$ </span>sweep config set journal_days 14
+<span class="text-rust">$ </span>sweep config set languages tr,en</code></pre>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+            <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep providers</h3>
+            <p class="text-xs text-text-muted">Every platform-filtered action provider the engine can dispatch to.</p>
+          </div>
+          <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+            <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep diagnostics</h3>
+            <p class="text-xs text-text-muted">Runtime diagnostics for the current platform.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Commands -->
+    <section id="core-commands">
+      <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+        <span>⚡</span>
+        <span>Core Workflow: Preview &amp; Clean</span>
+      </h2>
+      <p class="text-sm text-text-muted mb-6 leading-relaxed">
+        Sweep follows a strict <em>Preview-First</em> philosophy. Every destructive command allows examining the exact file list and reclaimable space before deleting anything.
+      </p>
+
+      <div class="space-y-6">
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep preview &lt;selector&gt; [--all] [--exclude X] [--last|--remember]</h3>
+          <p class="text-sm text-text-muted mb-3">Calculates exact reclaimable bytes and generates a non-destructive file preview. Saves a selection with <code class="text-cyan">--remember</code> and replays it later with <code class="text-cyan">--last</code>.</p>
+          <pre class="code-block"><code><span class="text-rust"># Preview a single target</span>
+<span class="text-rust">$ </span>sweep preview firefox.cache
+
+<span class="text-rust"># Preview all targets except trash</span>
+<span class="text-rust">$ </span>sweep preview --all --exclude system.trash
+
+<span class="text-rust"># Save this selection, then replay it later</span>
+<span class="text-rust">$ </span>sweep clean firefox.cache apt.deep_cache --remember
+<span class="text-rust">$ </span>sweep clean --last</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep clean &lt;selector&gt;</h3>
+          <p class="text-sm text-text-muted mb-3">Deletes files matching the selector. Writes an operation log so changes can be reverted with <code class="text-cyan">undo</code>.</p>
+          <pre class="code-block"><code><span class="text-rust"># Interactive clean with confirmation prompt</span>
+<span class="text-rust">$ </span>sweep clean system.cache
+
+<span class="text-rust"># Non-interactive script execution with a custom backup directory</span>
+<span class="text-rust">$ </span>sweep clean --yes --backup-dir ~/backups/sweep apt.deep_cache</code></pre>
+        </div>
+
+        <div class="grid sm:grid-cols-2 gap-4">
+          <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+            <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep undo</h3>
+            <p class="text-xs text-text-muted mb-3">Restores files removed by a previous clean, using the backup manifest and operation log.</p>
+            <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep undo
+<span class="text-rust">$ </span>sweep undo --backup-dir ~/backups/sweep</code></pre>
+          </div>
+
+          <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+            <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep history [--days N]</h3>
+            <p class="text-xs text-text-muted mb-3">Cleaning history from the operation log (shared parser with <code class="text-cyan">undo</code>).</p>
+            <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep history --days 30</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Disk Intelligence -->
+    <section id="disk-intelligence">
+      <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+        <span>🎯</span>
+        <span>Disk Intelligence &amp; Hunters</span>
+      </h2>
+      <div class="space-y-6">
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep devscan [path]</h3>
+          <p class="text-sm text-text-muted mb-3">Scans repositories for regenerable build artifacts (<code class="text-cyan">node_modules</code>, <code class="text-cyan">target/</code>, <code class="text-cyan">.gradle</code>, <code class="text-cyan">venv</code>, <code class="text-cyan">__pycache__</code>). Requires an accompanying project manifest (<code class="text-cyan">package.json</code>, <code class="text-cyan">Cargo.toml</code>) to prevent accidental deletions.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep devscan ~/projects
+<span class="text-rust">$ </span>sweep devscan ~/projects --clean --yes</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep residue [scan|preview|clean] [--confidence F]</h3>
+          <p class="text-sm text-text-muted mb-3">Context-aware leftover scan across Linux/Windows/macOS: uninstall residue, dead build output, version caches and junk-only empty dirs, each with a confidence score and a <code class="text-cyan">safe_to_delete</code> flag. Findings below <code class="text-cyan">0.6</code> stay preview-only.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep residue scan --confidence 0.7
+<span class="text-rust">$ </span>sweep residue clean --confidence 0.7</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep leftovers &lt;app_name&gt;</h3>
+          <p class="text-sm text-text-muted mb-3">Hunts orphaned configurations, caches, and application state left behind after uninstallation. Protected by package-manager ownership guards.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep leftovers discord
+<span class="text-rust">$ </span>sweep leftovers discord --clean</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep bigfiles [path]</h3>
+          <p class="text-sm text-text-muted mb-3">Finds the largest disk-space hogs sorted by size, optionally filtered by age or a minimum threshold.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep bigfiles --min-size 500MB --top 20
+<span class="text-rust">$ </span>sweep bigfiles ~/Downloads --older-than 90d --clean</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-base mb-2">sweep dupes [path] [--keep POLICY] [--link]</h3>
+          <p class="text-sm text-text-muted mb-3">Detects duplicate files with a two-tier comparison (size, then content hash). <code class="text-cyan">--keep</code> chooses which copy survives (<code class="text-cyan">first|newest|oldest|largest|smallest</code>); <code class="text-cyan">--link</code> replaces duplicates with hard links to the kept copy instead of deleting them. Overlapping scan roots are never listed twice.</p>
+          <pre class="code-block"><code><span class="text-rust">$ </span>sweep dupes ~/Pictures --min-size 1MB --keep newest
+<span class="text-rust">$ </span>sweep dupes ~/Pictures --link --yes</code></pre>
+        </div>
+
+        <div class="grid sm:grid-cols-3 gap-4">
+          <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+            <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep du &lt;path&gt;</h3>
+            <p class="text-xs text-text-muted mb-3">Parallel per-child recursive sizes. Read-only, never deletes.</p>
+            <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep du ~ --top 15</code></pre>
+          </div>
+          <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+            <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep analyze [root]</h3>
+            <p class="text-xs text-text-muted mb-3">Read-only directory + file ranking (a terminal treemap).</p>
+            <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep analyze ~ --top 15</code></pre>
+          </div>
+          <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+            <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep deepscan [root]</h3>
+            <p class="text-xs text-text-muted mb-3">Glob-based junk hunt. Destructive unless <code class="text-cyan">--preview</code>.</p>
+            <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep deepscan /tmp --preview</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- System Tools -->
+    <section id="system-tools">
+      <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+        <span>🔧</span>
+        <span>System, Startup, Health &amp; Privacy</span>
+      </h2>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep startup list --impact</h3>
+          <p class="text-xs text-text-muted mb-3">Startup entries with high/medium/low impact estimates and reversible disable.</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep startup list --impact
+<span class="text-rust">$ </span>sweep startup disable "Slack"</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep services</h3>
+          <p class="text-xs text-text-muted mb-3">Control user and system systemd units safely.</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep services list --user
+<span class="text-rust">$ </span>sweep services restart pipewire --user</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep memopt [--aggressive] [--dry-run]</h3>
+          <p class="text-xs text-text-muted mb-3">Native memory optimization: Linux drops page cache and cycles swap, Windows trims working sets and purges the standby list, macOS purges inactive memory.</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep memopt --dry-run
+<span class="text-rust">$ </span>sudo sweep memopt --aggressive</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep sysinfo --health</h3>
+          <p class="text-xs text-text-muted mb-3">CPU, memory, disks, uptime, temperature and SMART with a green/yellow/red verdict.</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep sysinfo --json
+<span class="text-rust">$ </span>sweep sysinfo --health</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep network flush|clean</h3>
+          <p class="text-xs text-text-muted mb-3">DNS resolver cache, npm/pip/yarn/cargo/gem caches, <code class="text-cyan">git gc --auto</code>, <code class="text-cyan">docker network prune</code>.</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep network flush --dry-run
+<span class="text-rust">$ </span>sweep network clean</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep privacy shield|wipe</h3>
+          <p class="text-xs text-text-muted mb-3">Telemetry off, recent-files wipe, clipboard clear.</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep privacy shield
+<span class="text-rust">$ </span>sweep privacy wipe --dry-run</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep doctor</h3>
+          <p class="text-xs text-text-muted mb-3">Diagnoses config, tools, permissions, disk and systemd.</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep doctor</code></pre>
+        </div>
+
+        <div class="p-5 rounded-xl bg-bg-surface/50 border border-border/70">
+          <h3 class="font-mono text-cyan font-bold text-sm mb-2">sweep shred &lt;file&gt;</h3>
+          <p class="text-xs text-text-muted mb-3">Multi-pass overwrite before unlinking (best-effort on SSD/COW).</p>
+          <pre class="code-block text-xs"><code><span class="text-rust">$ </span>sweep shred ~/keys/token.txt</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Automation & Monitoring -->
+    <section id="automation-monitoring">
+      <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-2">
+        <span>⏱️</span>
+        <span>Automation, Watch &amp; Schedule</span>
+      </h2>
+      <p class="text-sm text-text-muted mb-4 leading-relaxed">
+        Sweep installs a timer on the platform's native scheduler: systemd user timers on Linux, Task Scheduler on Windows, launchd on macOS. A separate daily memory-trim task is available with <code class="text-cyan">--memopt</code>.
+      </p>
+      <pre class="code-block"><code><span class="text-rust"># Install a daily cleanup timer running at 3:00 AM</span>
+<span class="text-rust">$ </span>sweep schedule --enable --hour 3 -- system.journal_vacuum apt.deep_cache
+
+<span class="text-rust"># Also install the daily safe memory-trim task</span>
+<span class="text-rust">$ </span>sweep schedule --enable --memopt
+
+<span class="text-rust"># Watch disk utilization and notify above 90%</span>
+<span class="text-rust">$ </span>sweep watch --threshold 90 --interval 300
+
+<span class="text-rust"># Single-shot check (exit 3 if the threshold is exceeded — cron-friendly)</span>
+<span class="text-rust">$ </span>sweep watch --once --threshold 85
+
+<span class="text-rust"># Filesystem snapshots (snapper / timeshift)</span>
+<span class="text-rust">$ </span>sweep snapshot create "before-cleanup"
+<span class="text-rust">$ </span>sweep snapshot list</code></pre>
+    </section>
+
+    <!-- Selectors -->
+    <section id="selectors-rules">
+      <h2 class="text-2xl font-bold text-white mb-4">Target Selectors &amp; Exclusions</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse bg-bg-surface border border-border rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-bg-elevated text-left text-xs uppercase tracking-wider text-text-muted">
+              <th class="p-3">Selector Pattern</th>
+              <th class="p-3">Target Scope</th>
+              <th class="p-3">Example</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60">
+            <tr>
+              <td class="p-3 font-mono text-cyan">* or all</td>
+              <td class="p-3 text-text-muted">All active cleaner targets</td>
+              <td class="p-3 font-mono text-xs">sweep preview --all</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">&lt;cleaner&gt;</td>
+              <td class="p-3 text-text-muted">All options for a specific cleaner</td>
+              <td class="p-3 font-mono text-xs">sweep clean firefox</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">&lt;cleaner&gt;.&lt;option&gt;</td>
+              <td class="p-3 text-text-muted">Exact specific cleaner option</td>
+              <td class="p-3 font-mono text-xs">sweep clean apt.deep_cache</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">&lt;prefix&gt;*</td>
+              <td class="p-3 text-text-muted">Case-insensitive cleaner glob</td>
+              <td class="p-3 font-mono text-xs">sweep preview chrom*</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--exclude &lt;name&gt;</td>
+              <td class="p-3 text-text-muted">Omits matched targets from execution</td>
+              <td class="p-3 font-mono text-xs">sweep clean --all --exclude system.trash</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Global Flags -->
+    <section id="global-flags">
+      <h2 class="text-2xl font-bold text-white mb-4">Global CLI Flags Reference</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm border-collapse bg-bg-surface border border-border rounded-xl overflow-hidden">
+          <thead>
+            <tr class="bg-bg-elevated text-left text-xs uppercase tracking-wider text-text-muted">
+              <th class="p-3">Flag</th>
+              <th class="p-3">Description</th>
+              <th class="p-3">Safety Boundary</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60 text-xs">
+            <tr>
+              <td class="p-3 font-mono text-cyan">--config &lt;PATH&gt;</td>
+              <td class="p-3 text-text-muted">Explicit configuration file location.</td>
+              <td class="p-3 text-text-dim">Safe</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--portable &lt;DIR&gt;</td>
+              <td class="p-3 text-text-muted">Keep config, log and hub in one folder.</td>
+              <td class="p-3 text-text-dim">Safe</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--json</td>
+              <td class="p-3 text-text-muted">Emits structured machine-readable JSON reports.</td>
+              <td class="p-3 text-text-dim">Safe</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--summary</td>
+              <td class="p-3 text-text-muted">Aggregates the report instead of listing every touched path: exact <code>cleaner.option</code> totals plus a bounded sample. Counters stay exact, and a <code>preview --all</code> report drops from tens of megabytes to a few kilobytes.</td>
+              <td class="p-3 text-text-dim">Safe</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--html / --markdown &lt;PATH&gt;</td>
+              <td class="p-3 text-text-muted">Also write a standalone HTML or Markdown report.</td>
+              <td class="p-3 text-text-dim">Safe</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--backup-dir &lt;PATH&gt;</td>
+              <td class="p-3 text-text-muted">Mirror removed files here so <code>undo</code> can restore them.</td>
+              <td class="p-3 text-text-dim">Safe</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--shred</td>
+              <td class="p-3 text-text-muted">Forces multi-pass overwrite before unlinking.</td>
+              <td class="p-3 text-amber-300">Irreversible</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--bleachbit</td>
+              <td class="p-3 text-text-muted">Loads BleachBit CleanerML XML rules.</td>
+              <td class="p-3 text-text-dim">External untrusted</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--winapp2</td>
+              <td class="p-3 text-text-muted">Parses and applies winapp2.ini community definitions.</td>
+              <td class="p-3 text-text-dim">External untrusted</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--define &lt;PATH&gt;</td>
+              <td class="p-3 text-text-muted">Load an additional cleaner-definition directory (repeatable).</td>
+              <td class="p-3 text-text-dim">External untrusted</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--trust-external</td>
+              <td class="p-3 text-text-muted">Lets external definitions use <code>process</code> and <code>winreg</code> actions.</td>
+              <td class="p-3 text-rust font-bold">Privileged action</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--force</td>
+              <td class="p-3 text-text-muted">Bypasses the running-application refusal. Keep list and protected roots are still enforced.</td>
+              <td class="p-3 text-rust font-bold">High impact</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--yes</td>
+              <td class="p-3 text-text-muted">Skip the confirmation prompt (for scripts).</td>
+              <td class="p-3 text-rust font-bold">High impact</td>
+            </tr>
+            <tr>
+              <td class="p-3 font-mono text-cyan">--quiet / --debug</td>
+              <td class="p-3 text-text-muted">Suppress progress bars, or enable debug logging.</td>
+              <td class="p-3 text-text-dim">Safe</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</DocsLayout>

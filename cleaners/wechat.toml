@@ -1,0 +1,40 @@
+id = "wechat"
+name = "WeChat"
+description = "WeChat desktop: cache and logs (your chat history is kept)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "wechat"
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.xwechat"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/wechat"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete WeChat's cache and temporary files"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$data$$/cache"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete WeChat log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/**/*.log*"
+type = "f"

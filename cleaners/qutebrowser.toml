@@ -1,0 +1,79 @@
+id = "qutebrowser"
+name = "qutebrowser"
+description = "qutebrowser: web cache, history database and logs (settings and sessions are kept)"
+
+[[running]]
+type = "exe"
+value = "qutebrowser"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.config/qutebrowser"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\qutebrowser'
+
+[[var]]
+name = "data"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.local/share/qutebrowser"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\qutebrowser'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/qutebrowser"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\qutebrowser\cache'
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the web cache and QtWebEngine cache (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete qutebrowser log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/*.log*"
+type = "f"
+
+[[option]]
+id = "history"
+label = "Browsing history"
+description = "Delete the browsing history and web-history databases"
+warning = "Your browsing history will be lost."
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/history.sqlite*"
+type = "f"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$data$$/web-history.sqlite*"
+type = "f"

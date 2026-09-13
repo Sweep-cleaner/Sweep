@@ -1,0 +1,140 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            bin: sweep
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            bin: sweep.exe
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            bin: sweep
+    steps:
+      - uses: actions/checkout@v4
+      # Code signing is optional: without a certificate the release is still
+      # built and published, but Windows SmartScreen warns on first launch.
+      # See packaging/windows/README.md for how to obtain and configure one.
+      - name: Check for a code-signing certificate
+        id: signing
+        shell: bash
+        env:
+          CERT: ${{ secrets.WINDOWS_SIGN_CERT_BASE64 }}
+        run: |
+          if [ -n "$CERT" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Unsigned release::No WINDOWS_SIGN_CERT_BASE64 secret; publishing unsigned Windows binaries (SmartScreen will warn)."
+          fi
+      - name: Import code-signing certificate
+        id: cert
+        if: matrix.os == 'windows-latest' && steps.signing.outputs.enabled == 'true'
+        shell: pwsh
+        env:
+          CERT_B64: ${{ secrets.WINDOWS_SIGN_CERT_BASE64 }}
+          CERT_PASSWORD: ${{ secrets.WINDOWS_SIGN_CERT_PASSWORD }}
+        run: |
+          $pfx = Join-Path $env:RUNNER_TEMP 'sweep-signing.pfx'
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:CERT_B64))
+          $secure = ConvertTo-SecureString $env:CERT_PASSWORD -AsPlainText -Force
+          $imported = Import-PfxCertificate -FilePath $pfx `
+            -CertStoreLocation 'Cert:\CurrentUser\My' -Password $secure
+          Remove-Item $pfx -Force
+          "thumbprint=$($imported.Thumbprint)" >> $env:GITHUB_OUTPUT
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo build --release --locked --target ${{ matrix.target }}
+      # Sign before packaging so the signed binary is what ships in the archive.
+      - name: Sign CLI binary
+        if: matrix.os == 'windows-latest' && steps.signing.outputs.enabled == 'true'
+        shell: pwsh
+        run: |
+          $thumb = '${{ steps.cert.outputs.thumbprint }}'
+          $cert = Get-ChildItem "Cert:\CurrentUser\My\$thumb"
+          $bin = "target/${{ matrix.target }}/release/sweep.exe"
+          Set-AuthenticodeSignature -FilePath $bin -Certificate $cert `
+            -TimestampServer 'http://timestamp.digicert.com' -HashAlgorithm SHA256 | Out-Null
+          $status = (Get-AuthenticodeSignature -FilePath $bin).Status
+          if ($status -ne 'Valid') { throw "sweep.exe signature status: $status" }
+          Write-Host "Signed $bin ($status)"
+      # Ship generated shell completions + man page with the binary so
+      # packagers do not have to run the binary at install time.
+      - name: Generate completions and man page
+        shell: bash
+        run: |
+          BIN="target/${{ matrix.target }}/release/${{ matrix.bin }}"
+          mkdir -p stage/completions stage/man
+          "$BIN" completions bash > stage/completions/sweep.bash
+          "$BIN" completions zsh  > stage/completions/_sweep
+          "$BIN" completions fish > stage/completions/sweep.fish
+          "$BIN" man --output stage/man
+      - name: Package
+        shell: bash
+        run: |
+          STAGE="sweep-${{ matrix.target }}"
+          mkdir "$STAGE"
+          cp "target/${{ matrix.target }}/release/${{ matrix.bin }}" "$STAGE/"
+          cp -r stage/completions stage/man "$STAGE/"
+          cp README.md CHANGELOG.md COPYING "$STAGE/"
+          tar czf "$STAGE.tar.gz" "$STAGE"
+      # Windows sürümüne Qt6/QML GUI'yi de ekle (sweep-qml.exe + qml kaynakları).
+      - name: Build GUI (sweep-qml.exe)
+        if: matrix.os == 'windows-latest'
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.1'
+          cache: true
+      - name: Compile GUI
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          cmake -B packaging/qml/build -S packaging/qml -DCMAKE_PREFIX_PATH="$env:Qt6_DIR" -DCMAKE_BUILD_TYPE=Release
+          cmake --build packaging/qml/build --config Release
+      - name: Sign GUI binary
+        if: matrix.os == 'windows-latest' && steps.signing.outputs.enabled == 'true'
+        shell: pwsh
+        run: |
+          $thumb = '${{ steps.cert.outputs.thumbprint }}'
+          $cert = Get-ChildItem "Cert:\CurrentUser\My\$thumb"
+          $bin = 'packaging/qml/build/Release/sweep-qml.exe'
+          if (Test-Path $bin) {
+            Set-AuthenticodeSignature -FilePath $bin -Certificate $cert `
+              -TimestampServer 'http://timestamp.digicert.com' -HashAlgorithm SHA256 | Out-Null
+            $status = (Get-AuthenticodeSignature -FilePath $bin).Status
+            if ($status -ne 'Valid') { throw "sweep-qml.exe signature status: $status" }
+            Write-Host "Signed $bin ($status)"
+          }
+      - name: Package GUI zip
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path gui-stage\qml | Out-Null
+          Copy-Item packaging/qml/build/Release/sweep-qml.exe gui-stage\
+          Copy-Item packaging/qml/qml\* gui-stage\qml\ -Recurse
+          Compress-Archive -Path gui-stage\* -DestinationPath sweep-qml-windows.zip
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            sweep-*.tar.gz
+            sweep-qml-windows.zip
+          body_path: CHANGELOG.md

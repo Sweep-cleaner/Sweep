@@ -1,0 +1,46 @@
+id = "flutter"
+name = "Flutter / Dart"
+description = "Dart and Flutter pub cache and tool state (downloaded packages and analytics)"
+
+[[var]]
+name = "pub_cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.pub-cache"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$LOCALAPPDATA\Pub\Cache'
+
+[[var]]
+name = "tool_state"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.flutter"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\.flutter'
+
+[[option]]
+id = "pub"
+label = "Pub cache"
+description = "Delete downloaded Dart/Flutter packages (re-fetched by `flutter pub get`)"
+warning = "Every project will re-download its dependencies on the next build."
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$pub_cache$$"
+
+[[option]]
+id = "tool_state"
+label = "Tool state"
+description = "Delete the cached Flutter tool analytics and version state (regenerated on the next run)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$tool_state$$"

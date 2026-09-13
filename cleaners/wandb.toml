@@ -1,0 +1,24 @@
+id = "wandb"
+name = "Weights & Biases"
+description = "Cached W&B run data (cloud-synced runs are kept on the server)"
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "unix"
+search = "glob"
+value = "~/.cache/wandb"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$USERPROFILE\\.cache\\wandb'
+
+[[option]]
+id = "cache"
+label = "Run cache"
+description = "Delete cached run logs and downloaded artifacts"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"

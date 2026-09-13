@@ -1,0 +1,53 @@
+id = "gimp"
+name = "GIMP"
+description = "GIMP görüntü düzenleyici önbelleği ve günlükleri"
+
+[[running]]
+type = "exe"
+value = "gimp"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "gimp.exe"
+os = "windows"
+
+[[running]]
+type = "exe"
+value = "GIMP"
+os = "macos"
+
+[[var]]
+name = "gimp_data"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.config/GIMP"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/GIMP"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\GIMP'
+
+[[option]]
+id = "cache"
+label = "Önbellek"
+description = "Filtre ve eklenti önbelleği (kişisel fırçalar ve ayarlar korunur)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gimp_data$$/2.10/cache"
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "Hata ve işlemlim günlükleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$gimp_data$$/2.10/logs"

@@ -1,0 +1,54 @@
+id = "eclipse"
+name = "Eclipse"
+description = "Eclipse IDE logs and cache (workspaces and plugins are kept)"
+
+[[running]]
+type = "exe"
+value = "eclipse"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "eclipse.exe"
+os = "windows"
+
+[[var]]
+name = "home"
+[[var.value]]
+value = "~/.eclipse"
+search = "literal"
+os = "linux"
+[[var.value]]
+value = "$USERPROFILE\\.eclipse"
+search = "literal"
+os = "windows"
+
+[[var]]
+name = "cache"
+[[var.value]]
+value = "~/.cache/eclipse"
+search = "literal"
+os = "linux"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete configuration log files older than 30 days"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$home$$/*/*.log"
+max_age_days = 30
+type = "f"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete the Eclipse cache directory"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+os = "linux"

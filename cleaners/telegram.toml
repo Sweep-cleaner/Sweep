@@ -1,0 +1,58 @@
+id = "telegram"
+name = "Telegram"
+description = "Mesajlaşma istemcisi günlükleri (oturum ve sohbetler korunur)"
+
+[[running]]
+type = "exe"
+value = "Telegram"
+os = "unix"
+
+[[running]]
+type = "exe"
+value = "Telegram.exe"
+os = "windows"
+
+[[var]]
+name = "tdata"
+[[var.value]]
+os = "linux"
+search = "literal"
+value = "~/.local/share/TelegramDesktop"
+[[var.value]]
+os = "macos"
+search = "literal"
+value = "~/Library/Application Support/Telegram Desktop"
+[[var.value]]
+os = "windows"
+search = "literal"
+value = '$APPDATA\Telegram Desktop'
+
+[[option]]
+id = "logs"
+label = "Günlükler"
+description = "İstemci günlükleri ve çökme dökümleri"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$tdata$$/logs"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$tdata$$/dumps"
+
+[[option.action]]
+command = "delete"
+search = "file"
+path = "$$tdata$$/log.txt"
+
+[[option]]
+id = "temp"
+label = "Geçici dosyalar"
+description = "Yarım kalan indirme ve önizleme artıkları (oturum ve sohbetler korunur)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$tdata$$/temp"

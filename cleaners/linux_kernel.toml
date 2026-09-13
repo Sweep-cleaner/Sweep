@@ -1,0 +1,15 @@
+id = "linux_kernel"
+name = "Eski Çekirdekler"
+description = "Kullanılmayan eski Linux çekirdekleri (çalışan çekirdek asla silinmez, root gerekir)"
+os = "linux"
+
+[[option]]
+id = "old_kernels"
+label = "Eski çekirdekler"
+description = "Çalışan çekirdek ve en yeni yedek tutulur, diğerleri dağıtım aracıyla kaldırılır"
+warning = "Çekirdek kaldırma geri alınamaz. Önizlemeyi inceleyin ve yeniden başlatmaya hazır olun."
+
+[[option.action]]
+command = "system.old_kernels"
+search = "file"
+path = ""

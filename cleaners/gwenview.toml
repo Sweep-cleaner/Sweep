@@ -1,0 +1,18 @@
+id = "gwenview"
+name = "Gwenview"
+description = "Gwenview image viewer: thumbnail and cache data (your images are never touched)"
+os = "linux"
+
+[[running]]
+type = "exe"
+value = "gwenview"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Gwenview's thumbnail, history and image caches (rebuilt on demand)"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "~/.cache/gwenview"

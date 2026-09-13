@@ -1,0 +1,436 @@
+---
+const GITHUB = 'https://github.com/Sweep-cleaner/Sweep';
+const RELEASES = `${GITHUB}/releases/latest`;
+const ALL_RELEASES = `${GITHUB}/releases`;
+
+type Tone = 'ok' | 'soon' | 'neutral';
+
+interface Download {
+  label: string;
+  href: string;
+  note?: string;
+}
+
+interface Command {
+  prompt: string;
+  code: string;
+}
+
+interface Channel {
+  name: string;
+  tone: Tone;
+  label: string;
+  hint?: string;
+}
+
+interface Platform {
+  id: string;
+  label: string;
+  icon: string;
+  meta: string;
+  tone: Tone;
+  status: string;
+  summary: string;
+  downloads: Download[];
+  commands: Command[];
+  channels?: Channel[];
+  note?: string;
+}
+
+const toneClass: Record<Tone, string> = {
+  ok: 'badge-ok',
+  soon: 'badge-soon',
+  neutral: 'badge-cyan'
+};
+
+const quickPicks = [
+  {
+    icon: '🪟',
+    title: 'Windows',
+    detail: 'Setup.exe installer + portable CLI',
+    href: RELEASES
+  },
+  {
+    icon: '🐧',
+    title: 'Linux',
+    detail: 'AppImage with the Qt6/QML GUI',
+    href: RELEASES
+  },
+  {
+    icon: '🍎',
+    title: 'macOS',
+    detail: 'Apple Silicon tarball',
+    href: RELEASES
+  }
+];
+
+const platforms: Platform[] = [
+  {
+    id: 'windows',
+    label: 'Windows',
+    icon: '🪟',
+    meta: 'Windows 10 / 11 · x86_64',
+    tone: 'ok',
+    status: 'Shipped',
+    summary:
+      'GitHub Releases is the only live channel today. It carries the NSIS installer, the portable CLI archive and the Qt6/QML desktop bundle — there is no WinGet, Scoop or Chocolatey submission yet.',
+    downloads: [
+      {
+        label: 'Download the installer',
+        href: RELEASES,
+        note: 'Sweep-0.4.0-Setup.exe — NSIS installer for the CLI, with the GUI staged alongside it'
+      },
+      {
+        label: 'Download the portable CLI',
+        href: RELEASES,
+        note: 'sweep-x86_64-pc-windows-msvc.tar.gz, bundled with completions and the man page'
+      }
+    ],
+    commands: [
+      { prompt: '>', code: 'tar -xzf sweep-x86_64-pc-windows-msvc.tar.gz' },
+      { prompt: '>', code: '.\\sweep.exe --help' }
+    ],
+    channels: [
+      { name: 'WinGet', tone: 'soon', label: 'Coming soon', hint: 'winget install sweep' },
+      { name: 'Scoop', tone: 'soon', label: 'Coming soon', hint: 'scoop install sweep' },
+      { name: 'Chocolatey', tone: 'soon', label: 'Coming soon', hint: 'choco install sweep' }
+    ],
+    note: 'Windows binaries are Authenticode-signed when the release secrets are configured; without a certificate SmartScreen warns on first launch. The installer is produced by packaging/dist/windows/sweep.nsi.'
+  },
+  {
+    id: 'linux-appimage',
+    label: 'Linux — AppImage',
+    icon: '🐧',
+    meta: 'Any x86_64 distro · glibc',
+    tone: 'ok',
+    status: 'Shipped',
+    summary:
+      'One self-contained executable: no package manager, no root, no dependencies to reconcile. The AppImage bundles the CLI together with the Qt6/QML desktop shell.',
+    downloads: [
+      {
+        label: 'Download the AppImage',
+        href: RELEASES,
+        note: 'Sweep-0.4.0-x86_64.AppImage — the desktop build. The portable tarball below is the headless fallback.'
+      },
+      {
+        label: 'Download the portable tarball',
+        href: RELEASES,
+        note: 'sweep-x86_64-unknown-linux-gnu.tar.gz'
+      }
+    ],
+    commands: [
+      { prompt: '$', code: 'chmod +x Sweep-0.4.0-x86_64.AppImage' },
+      { prompt: '$', code: './Sweep-0.4.0-x86_64.AppImage' }
+    ],
+    note: 'Built with packaging/dist/appimage/build-appimage.sh, which bundles Qt6 alongside the Rust binary.'
+  },
+  {
+    id: 'linux-packages',
+    label: 'Linux — Package managers',
+    icon: '📦',
+    meta: 'AUR · COPR · .deb · Flatpak',
+    tone: 'soon',
+    status: 'Coming soon',
+    summary:
+      'Distribution packaging is written but not published. The PKGBUILD, RPM spec, Debian rules and Flatpak manifest all live in packaging/ inside the repository, and none of them are pushed to a public repository yet — so there is nothing a package manager can install at 0.4.0.',
+    downloads: [
+      {
+        label: 'Watch GitHub Releases',
+        href: ALL_RELEASES,
+        note: 'The first published channel will be announced as a release asset and in the changelog.'
+      }
+    ],
+    commands: [],
+    channels: [
+      { name: 'AUR · Arch Linux', tone: 'soon', label: 'Coming soon', hint: 'yay -S sweep' },
+      {
+        name: 'COPR · Fedora & RHEL',
+        tone: 'soon',
+        label: 'Coming soon',
+        hint: 'sudo dnf install sweep'
+      },
+      {
+        name: 'APT · Debian & Ubuntu',
+        tone: 'soon',
+        label: 'Coming soon',
+        hint: 'sudo apt install sweep'
+      },
+      {
+        name: 'Flatpak · Flathub',
+        tone: 'soon',
+        label: 'Coming soon',
+        hint: 'flatpak install flathub org.sweep.Sweep'
+      }
+    ],
+    note: 'Until then, every distro can run the AppImage or the portable tarball. If you want a specific channel prioritised, open an issue and say which one.'
+  },
+  {
+    id: 'macos',
+    label: 'macOS',
+    icon: '🍎',
+    meta: 'Apple Silicon · aarch64',
+    tone: 'ok',
+    status: 'Shipped',
+    summary:
+      'A single unsigned CLI archive built on GitHub-hosted macOS runners. The Qt6/QML desktop shell is not packaged for macOS yet.',
+    downloads: [
+      {
+        label: 'Download the portable CLI',
+        href: RELEASES,
+        note: 'sweep-aarch64-apple-darwin.tar.gz'
+      }
+    ],
+    commands: [
+      { prompt: '$', code: 'tar -xzf sweep-aarch64-apple-darwin.tar.gz' },
+      { prompt: '$', code: './sweep --help' }
+    ],
+    channels: [{ name: 'Homebrew', tone: 'soon', label: 'Coming soon', hint: 'brew install sweep' }],
+    note: 'Only aarch64-apple-darwin is produced — Intel Macs need to build from source.'
+  },
+  {
+    id: 'containers',
+    label: 'Containers',
+    icon: '🐳',
+    meta: 'Podman · Docker',
+    tone: 'ok',
+    status: 'Shipped',
+    summary:
+      'The repository ships a Containerfile, so you can run the CLI in a throwaway container without touching your host packages.',
+    downloads: [],
+    commands: [
+      { prompt: '$', code: 'podman build -t sweep -f packaging/podman/Containerfile .' },
+      { prompt: '$', code: 'podman run --rm sweep --help' }
+    ],
+    note: 'See packaging/podman/README.md for host bind mounts and the SELinux :z note.'
+  },
+  {
+    id: 'source',
+    label: 'Build from source',
+    icon: '🦀',
+    meta: 'Rust 1.88+ · Qt 6.8',
+    tone: 'ok',
+    status: 'Shipped',
+    summary:
+      'The CLI is a single Cargo build with no runtime dependencies. The GUI is a separate CMake target and stays entirely optional.',
+    downloads: [],
+    commands: [
+      {
+        prompt: '$',
+        code: 'git clone https://github.com/Sweep-cleaner/Sweep.git && cd Sweep && cargo build --release --locked'
+      },
+      { prompt: '$', code: 'cmake -B packaging/qml/build -S packaging/qml -DCMAKE_BUILD_TYPE=Release' },
+      { prompt: '$', code: 'cmake --build packaging/qml/build --config Release' }
+    ],
+    note: 'The release profile uses lto = "thin" and codegen-units = 1 for a roughly 6.0 MB binary. The GUI renders on Qt\'s software scene graph by default; opt into hardware acceleration with SWEEP_GPU=1.'
+  }
+];
+---
+
+<section id="install" class="section">
+  <div class="text-center mb-14">
+    <p class="section-kicker">// DOWNLOAD &amp; INSTALL</p>
+    <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
+      Pick Your Platform.
+    </h2>
+    <div class="section-divider"></div>
+    <p class="text-text-muted text-base sm:text-lg max-w-2xl mx-auto">
+      Every artifact ships from GitHub Releases. The AppImage and the portable tarballs are live
+      today; native package-manager channels are on the way.
+    </p>
+  </div>
+
+  <div class="max-w-5xl mx-auto">
+    <!-- Quick picks: the three live downloads, one click from GitHub -->
+    <div class="grid sm:grid-cols-3 gap-4 mb-12">
+      {
+        quickPicks.map(pick => (
+          <a
+            href={pick.href}
+            target="_blank"
+            rel="noopener"
+            class="group flex items-center gap-4 p-4 rounded-2xl bg-[#141522] border border-border/70 hover:border-cyan/50 hover:bg-[#171829] transition-all duration-200"
+          >
+            <span class="text-2xl">{pick.icon}</span>
+            <span class="flex-1 min-w-0">
+              <span class="block text-sm font-semibold text-white group-hover:text-cyan transition-colors">
+                {pick.title}
+              </span>
+              <span class="block text-xs text-text-dim truncate">{pick.detail}</span>
+            </span>
+            <span class="text-text-dim group-hover:text-cyan group-hover:translate-x-0.5 transition-all">↓</span>
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- Platform picker + detail panel -->
+    <div class="grid lg:grid-cols-[260px_1fr] gap-6 items-start">
+      <!-- Picker -->
+      <div class="glass-panel p-3 lg:sticky lg:top-24">
+        <div class="text-[10px] font-mono uppercase tracking-[0.2em] text-text-dim px-4 pt-2 pb-3">
+          Platform
+        </div>
+        <div class="space-y-1.5" role="tablist" aria-label="Installation platforms">
+          {
+            platforms.map((platform, index) => (
+              <button
+                type="button"
+                role="tab"
+                data-platform={platform.id}
+                aria-selected={index === 0 ? 'true' : 'false'}
+                aria-controls={`panel-${platform.id}`}
+                class:list={['platform-tab', index === 0 && 'is-active']}
+              >
+                <span class="text-lg">{platform.icon}</span>
+                <span class="flex-1 min-w-0">
+                  <span class="block truncate">{platform.label}</span>
+                  <span class="block text-[10px] font-mono text-text-dim truncate">{platform.meta}</span>
+                </span>
+                <span class="text-text-dim text-xs">›</span>
+              </button>
+            ))
+          }
+        </div>
+      </div>
+
+      <!-- Panels -->
+      <div>
+        {
+          platforms.map((platform, index) => (
+            <div
+              role="tabpanel"
+              id={`panel-${platform.id}`}
+              data-panel={platform.id}
+              class:list={['glass-panel p-6 sm:p-8 space-y-6', index !== 0 && 'hidden']}
+            >
+              <div class="flex flex-wrap items-center gap-3">
+                <span class="text-3xl">{platform.icon}</span>
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-xl font-bold text-white">{platform.label}</h3>
+                  <p class="text-[11px] font-mono text-text-dim uppercase tracking-wider">
+                    {platform.meta}
+                  </p>
+                </div>
+                <span class={toneClass[platform.tone]}>{platform.status}</span>
+              </div>
+
+              <p class="text-sm text-text-muted leading-relaxed">{platform.summary}</p>
+
+              {platform.downloads.length > 0 && (
+                <div class="grid sm:grid-cols-2 gap-3">
+                  {platform.downloads.map(download => (
+                    <a
+                      href={download.href}
+                      target="_blank"
+                      rel="noopener"
+                      class="group flex items-start gap-3 p-4 rounded-xl bg-cyan/5 border border-cyan/25 hover:bg-cyan/10 hover:border-cyan/60 transition-all duration-200"
+                    >
+                      <svg class="w-4 h-4 mt-0.5 shrink-0 text-cyan" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
+                      </svg>
+                      <span class="min-w-0">
+                        <span class="block text-sm font-semibold text-white group-hover:text-cyan transition-colors">
+                          {download.label}
+                        </span>
+                        {download.note && (
+                          <span class="block text-xs text-text-dim mt-1 leading-relaxed">{download.note}</span>
+                        )}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              )}
+
+              {platform.channels && (
+                <div class="grid sm:grid-cols-2 gap-2.5">
+                  {platform.channels.map(channel => (
+                    <div class="channel-row">
+                      <span class="flex-1 min-w-0">
+                        <span class="block text-xs font-medium text-text-primary truncate">{channel.name}</span>
+                        {channel.hint && (
+                          <code class="block text-[11px] font-mono text-text-dim truncate mt-0.5">
+                            {channel.hint}
+                          </code>
+                        )}
+                      </span>
+                      <span class={toneClass[channel.tone]}>{channel.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {platform.commands.length > 0 && (
+                <div class="space-y-2.5">
+                  {platform.commands.map(command => (
+                    <div class="code-block flex items-center justify-between gap-4">
+                      <code class="text-cyan overflow-x-auto whitespace-nowrap">
+                        <span class="text-rust">{command.prompt} </span>
+                        {command.code}
+                      </code>
+                      <button
+                        type="button"
+                        class="cmd-copy shrink-0 text-xs font-mono px-3 py-1.5 rounded-lg bg-bg-surface border border-border text-text-dim hover:text-cyan hover:border-cyan transition-all cursor-pointer"
+                        data-copy={command.code}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {platform.note && (
+                <p class="text-xs text-text-dim leading-relaxed border-t border-border/40 pt-4">
+                  {platform.note}
+                </p>
+              )}
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div class="text-center mt-10">
+      <a href="/docs/installation" class="text-xs text-cyan hover:underline font-mono">
+Read the full installation guide, portable mode and packaging status →
+      </a>
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  // Platform picker
+  const platformButtons = document.querySelectorAll('[data-platform]');
+  const platformPanels = document.querySelectorAll('[data-panel]');
+
+  platformButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const target = button.dataset.platform;
+      platformButtons.forEach(btn => {
+        btn.classList.toggle('is-active', btn === button);
+        btn.setAttribute('aria-selected', btn === button ? 'true' : 'false');
+      });
+      platformPanels.forEach(panel => {
+        panel.classList.toggle('hidden', panel.dataset.panel !== target);
+      });
+    });
+  });
+
+  // Copy-to-clipboard for every command block
+  document.querySelectorAll('.cmd-copy').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = btn.dataset.copy || '';
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.innerText = 'Copied!';
+        btn.classList.add('text-cyan', 'border-cyan');
+        setTimeout(() => {
+          btn.innerText = 'Copy';
+          btn.classList.remove('text-cyan', 'border-cyan');
+        }, 2000);
+      } catch (e) {
+        btn.innerText = 'Failed';
+      }
+    });
+  });
+</script>

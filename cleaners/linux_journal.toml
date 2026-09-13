@@ -1,0 +1,24 @@
+id = "linux_journal"
+name = "Systemd Journal"
+description = "Systemd journal logları için boyut/zaman bütçeli vacuum (varsayılan 500M, 7 gün; root gerekir)"
+os = "linux"
+
+[[option]]
+id = "vacuum"
+label = "Journal vacuum"
+description = "journalctl --vacuum-size=500M --vacuum-time=7d çalıştırır, öncesi/sonrası raporlanır"
+
+[[option.action]]
+command = "system.journal_vacuum"
+search = "file"
+path = ""
+
+[[option]]
+id = "user_vacuum"
+label = "Kullanıcı journal vacuum"
+description = "journalctl --user --vacuum-size=500M --vacuum-time=7d — kök yetkisi GEREKMEZ"
+
+[[option.action]]
+command = "system.journal_user"
+search = "file"
+path = ""

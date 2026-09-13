@@ -1,0 +1,158 @@
+name: Release (AppImage + Windows installer)
+
+# Builds both desktop distributables on tag push (v*:
+#   - Linux AppImage  → Sweep-<ver>-x86_64.AppImage   (CLI + Qt6 GUI)
+#   - Windows NSIS    → Sweep-<ver>-Setup.exe          (sweep.exe + optional GUI)
+#
+# The AppImage script (packaging/dist/appimage/build-appimage.sh) auto-installs
+# Qt6 dev dependencies on Debian/Ubuntu runners; no sudo Qt6 setup needed.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # ---- Linux: AppImage (CLI + Qt6 GUI) ---------------------------------------
+  appimage:
+    name: Sweep AppImage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-gnu
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install Qt6 build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake g++ pkg-config patchelf file \
+            qt6-base-dev qt6-declarative-dev qt6-declarative-dev-tools \
+            libqt6svg6-dev libqt6svg6 \
+            qml6-module-qtquick qml6-module-qtquick-window \
+            qml6-module-qtqml-models qml6-module-qtqml-workerscript
+
+      - name: Build Qt6 GUI (if deps present)
+        shell: bash
+        run: |
+          mkdir -p packaging/qml/build
+          if cmake -B packaging/qml/build -S packaging/qml -DCMAKE_BUILD_TYPE=Release; then
+            cmake --build packaging/qml/build -j"$(nproc)"
+          else
+            echo "::warning::Qt6 GUI build skipped (cmake configure failed)"
+          fi
+
+      - name: Build AppImage
+        run: packaging/dist/appimage/build-appimage.sh packaging/dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sweep-appimage
+          path: packaging/dist/Sweep-*.AppImage
+          if-no-files-found: error
+
+  # ---- macOS: CLI binary (Apple Silicon + Intel) ---------------------------
+  macos:
+    name: Sweep macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin, x86_64-apple-darwin
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build (universal)
+        run: |
+          cargo build --release --locked --target aarch64-apple-darwin
+          cargo build --release --locked --target x86_64-apple-darwin
+          mkdir -p dist/macos
+          cp target/aarch64-apple-darwin/release/sweep dist/macos/sweep-aarch64
+          cp target/x86_64-apple-darwin/release/sweep dist/macos/sweep-x86_64
+          lipo -create -output dist/macos/sweep dist/macos/sweep-aarch64 dist/macos/sweep-x86_64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sweep-macos
+          path: dist/macos/sweep
+
+  # ---- Windows: NSIS installer (sweep.exe, optional GUI) -------------------
+  windows:
+    name: Sweep Windows installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build CLI
+        run: cargo build --release --locked
+
+      - name: Build Qt6 GUI (optional — needs Qt6 + CMake on PATH)
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          if (Get-Command cmake -ErrorAction SilentlyContinue) {
+            cmake -B packaging/qml/build -S packaging/qml -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+            cmake --build packaging/qml/build --config Release
+          } else {
+            Write-Host "::warning::CMake not found; skipping Qt6 GUI"
+          }
+
+      - name: Stage files
+        shell: pwsh
+        run: |
+          mkdir packaging\dist\windows\stage
+          copy target\release\sweep.exe packaging\dist\windows\stage\
+          if (Test-Path packaging\qml\build\sweep-qml.exe) {
+            copy packaging\qml\build\sweep-qml.exe packaging\dist\windows\stage\
+            if (Test-Path packaging\qml\qml) {
+              cmd /c "xcopy /E /I /Y packaging\qml\qml packaging\dist\windows\stage\qml"
+            }
+          }
+          if (Test-Path packaging\dist\windows\stage\sweep.exe) {
+            "done"
+          }
+
+      - name: Build NSIS installer
+        shell: cmd
+        run: |
+          cd packaging\dist\windows
+          if not exist stage\sweep.exe exit /b 1
+          cscript //nologo "%ProgramFiles (x86)%\NSIS\makensis.exe" sweep.nsi || pynsist sweep.nsi
+          if errorlevel 1 (
+            choco install nsis -y
+            "%ProgramFiles (x86)%\NSIS\makensis.exe" sweep.nsi
+          )
+
+  # ---- Release: create GitHub Release with both artifacts --------------------
+  release:
+    name: Publish Release
+    needs: [appimage, macos, windows]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist/artifacts
+          merge-multiple: true
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF_NAME#refs/tags/}"
+          gh release create "$TAG" \
+            dist/artifacts/Sweep-*.AppImage \
+            dist/artifacts/Sweep-*.Setup.exe \
+            dist/artifacts/sweep \
+            --title "Sweep $TAG" \
+            --generate-notes

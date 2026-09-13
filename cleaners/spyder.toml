@@ -1,0 +1,54 @@
+id = "spyder"
+name = "Spyder"
+description = "Spyder Python IDE: caches and logs (settings and scripts are kept)"
+
+[[running]]
+type = "exe"
+value = "spyder"
+
+[[var]]
+name = "config"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.config/spyder-py3"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Application Support/spyder-py3"
+[[var.value]]
+os = "windows"
+search = "glob"
+value = '$APPDATA\spyder-py3'
+
+[[var]]
+name = "cache"
+[[var.value]]
+os = "linux"
+search = "glob"
+value = "~/.cache/spyder"
+[[var.value]]
+os = "macos"
+search = "glob"
+value = "~/Library/Caches/spyder"
+
+[[option]]
+id = "cache"
+label = "Cache"
+description = "Delete Spyder's code-analysis and completion cache"
+
+[[option.action]]
+command = "delete"
+search = "walk.all"
+path = "$$cache$$"
+
+[[option]]
+id = "logs"
+label = "Logs"
+description = "Delete Spyder log files"
+
+[[option.action]]
+command = "delete"
+search = "glob"
+path = "$$config$$/*.log*"
+type = "f"

@@ -1,0 +1,321 @@
+.TH SWEEP 1 "sweep 0.2.5" "User Commands"
+.SH NAME
+sweep \- Fast, safe system cleaner (BleachBit\-inspired, written in Rust)
+.SH SYNOPSIS
+.B sweep
+[\fIGLOBAL OPTIONS\fR] \fICOMMAND\fR [\fIARGS\fR]...
+.SH DESCRIPTION
+Fast, safe system cleaner (BleachBit\-inspired, written in Rust)
+.P
+Sweep cleans caches, logs and other regenerable junk. Run \fBsweep preview\fR before \fBsweep clean\fR to see what would be deleted. Destructive operations respect the keep list and protected system paths; see \fBsweep doctor\fR.
+.SH OPTIONS
+.TP
+.B \-\-config \fIVALUE\fR
+Path to the configuration file
+.TP
+.B \-\-shred
+Overwrite files before deleting (secure deletion), overriding the config
+.TP
+.B \-\-force
+Allow cleaning protected system paths and the keep list (expert only)
+.TP
+.B \-\-trust\-external
+Treat cleaners loaded from disk as trusted (lets them run processes / edit the registry)
+.TP
+.B \-\-bleachbit
+Also load BleachBit\(aqs CleanerML definitions from their standard locations
+.TP
+.B \-\-winapp2
+Also load and translate winapp2.ini
+.TP
+.B \-\-define \fIVALUE\fR
+Extra directory of cleaner definitions to load
+.TP
+.B \-\-json
+Print machine\-readable JSON instead of a human summary
+.TP
+.B \-\-summary
+Aggregate the report: exact per\-option totals plus a bounded entry sample
+.TP
+.B \-\-quiet
+Do not print progress bars
+.TP
+.B \-\-debug
+Enable debug logging
+.TP
+.B \-\-yes
+Skip the pre\-clean confirmation prompt (required for non\-interactive runs)
+.TP
+.B \-\-backup\-dir \fIVALUE\fR
+Copy files here (mirroring layout) before deleting them
+.TP
+.B \-\-log\-file \fIVALUE\fR
+Append every operation to this log file
+.TP
+.B \-\-portable \fIVALUE\fR
+Portable mode: keep config, log and hub under DIR (USB\-friendly)
+.TP
+.B \-\-html \fIVALUE\fR
+Also write a standalone HTML report to this file
+.TP
+.B \-\-markdown \fIVALUE\fR
+Also write a Markdown report to this file (CI / issue friendly)
+.TP
+.B \-\-help
+Print help
+.TP
+.B \-\-version
+Print version
+.SH COMMANDS
+.TP
+.B list \fICLEANER\fR
+List cleaners and their options
+.RS
+.TP
+.B \-\-search \fIVALUE\fR
+Only cleaners whose id, name or description contains this text
+.TP
+.B \-\-os \fIVALUE\fR
+Only cleaners that (also) apply to this OS (linux, macos, windows…)
+.TP
+.B \-\-running
+Only cleaners whose target application is currently running
+.RE
+.TP
+.B info \fICLEANER\fR
+Show everything Sweep knows about one cleaner (definition detail)
+.TP
+.B preview \fISELECTORS\fR...
+Preview what would be cleaned (no changes are made)
+.RS
+.TP
+.B \-\-all
+Clean every active option of every applicable cleaner
+.TP
+.B \-\-exclude \fIVALUE\fR
+Exclude these `cleaner.option` selectors
+.TP
+.B \-\-last
+Reuse the selection remembered by the last `\-\-remember` run
+.TP
+.B \-\-remember
+Remember this selection for a later `\-\-last` run
+.RE
+.TP
+.B clean \fISELECTORS\fR...
+Clean (actually deletes files)
+.RS
+.TP
+.B \-\-all
+Clean every active option of every applicable cleaner
+.TP
+.B \-\-exclude \fIVALUE\fR
+Exclude these `cleaner.option` selectors
+.TP
+.B \-\-last
+Reuse the selection remembered by the last `\-\-remember` run
+.TP
+.B \-\-remember
+Remember this selection for a later `\-\-last` run
+.RE
+.TP
+.B deepscan \fIROOTS\fR...
+Deep\-scan directories for junk by name pattern
+.RS
+.TP
+.B \-\-pattern \fIVALUE\fR
+Extra glob patterns (repeatable)
+.TP
+.B \-\-preview
+Just list matches without deleting
+.RE
+.TP
+.B leftovers \fINAME\fR
+Find leftover files of an (uninstalled) app by name
+.RS
+.TP
+.B \-\-clean
+Actually delete the leftovers (default only lists them)
+.TP
+.B \-\-min\-size \fIVALUE\fR
+Only report hits at least this big (e.g. 10MB)
+.RE
+.TP
+.B devscan \fIROOTS\fR...
+Find regenerable developer cruft (node_modules, target, __pycache__...)
+.RS
+.TP
+.B \-\-clean
+Actually delete the cruft (default only lists it)
+.TP
+.B \-\-max\-depth \fIVALUE\fR
+Max recursion depth (default 6)
+.TP
+.B \-\-min\-size \fIVALUE\fR
+Only report cruft at least this big (e.g. 50MB)
+.RE
+.TP
+.B bigfiles \fIROOTS\fR...
+Find the largest files above a size threshold, biggest first
+.RS
+.TP
+.B \-\-clean
+Actually delete the files (default only lists them)
+.TP
+.B \-\-min\-size \fIVALUE\fR
+Minimum file size (default 100MB, e.g. 500MB)
+.TP
+.B \-\-older\-than \fIVALUE\fR
+Only files older than this (e.g. 90d, 12w, 6m, 1y)
+.TP
+.B \-\-top \fIVALUE\fR
+Show only the top N files
+.TP
+.B \-\-max\-depth \fIVALUE\fR
+Max recursion depth (default 12)
+.RE
+.TP
+.B dupes \fIROOTS\fR...
+Find duplicate files by size + content hash
+.RS
+.TP
+.B \-\-clean
+Actually delete duplicates, keeping the first of each group
+.TP
+.B \-\-min\-size \fIVALUE\fR
+Minimum file size (default 1MB, e.g. 100KB)
+.TP
+.B \-\-max\-depth \fIVALUE\fR
+Max recursion depth (default 12)
+.RE
+.TP
+.B wipe \fIPATH\fR
+Overwrite free space on the volume containing a path
+.TP
+.B schedule \fISELECTION\fR...
+Manage the scheduled cleanup timer (Linux + systemd)
+.RS
+.TP
+.B \-\-enable
+Install and enable the daily timer
+.TP
+.B \-\-disable
+Stop and remove the timer
+.TP
+.B \-\-hour \fIVALUE\fR
+Hour of day for the run (0\-23, default 3)
+.RE
+.TP
+.B undo
+Restore files deleted with \-\-backup\-dir, using the operation log
+.RS
+.TP
+.B \-\-log\-file \fIVALUE\fR
+Operation log to replay (defaults to the standard log)
+.TP
+.B \-\-backup\-dir \fIVALUE\fR
+Backup root used during cleaning
+.RE
+.TP
+.B update\-winapp2
+Download and validate the community winapp2.ini rules
+.RS
+.TP
+.B \-\-url \fIVALUE\fR
+Custom source URL
+.RE
+.TP
+.B hub \fIOP\fR \fITARGET\fR
+Manage community cleaner rules (list/install/remove/update)
+.RS
+.TP
+.B \-\-url \fIVALUE\fR
+Custom index URL
+.RE
+.TP
+.B shred \fIPATHS\fR...
+Securely shred files (overwrite then delete)
+.TP
+.B analyze \fIROOT\fR
+Analyze disk usage (read\-only directory + file ranking)
+.RS
+.TP
+.B \-\-top \fIVALUE\fR
+How many entries per section (default 15)
+.TP
+.B \-\-max\-depth \fIVALUE\fR
+Max recursion depth for the file ranking (default 8)
+.RE
+.TP
+.B startup \fIOP\fR \fITARGET\fR
+Manage XDG autostart entries
+.TP
+.B services \fIOP\fR \fIUNIT\fR
+Manage systemd services
+.RS
+.TP
+.B \-\-user
+Manage user services instead of system ones
+.RE
+.TP
+.B doctor
+Diagnose config, tools, permissions, disk and systemd
+.TP
+.B memopt
+Optimize memory (drop unused page cache; Linux + root)
+.TP
+.B snapshot \fIOP\fR \fITARGET\fR
+Manage filesystem snapshots (snapper/timeshift)
+.TP
+.B history
+Show cleaning history from the operation log
+.RS
+.TP
+.B \-\-log\-file \fIVALUE\fR
+Operation log (defaults to the standard log)
+.TP
+.B \-\-days \fIVALUE\fR
+Only this many past days (0 = all time)
+.RE
+.TP
+.B watch \fIPATHS\fR...
+Watch disk usage and notify when a threshold is crossed
+.RS
+.TP
+.B \-\-threshold \fIVALUE\fR
+Usage percent that triggers an alarm (default 90)
+.TP
+.B \-\-interval \fIVALUE\fR
+Seconds between checks (ignored with \-\-once)
+.TP
+.B \-\-once
+Check once and exit (code 3 = alarm fired)
+.TP
+.B \-\-suggest \fIVALUE\fR
+Include this many biggest files in the alarm (0 = off)
+.RE
+.TP
+.B providers
+List every action command Sweep understands
+.TP
+.B diagnostics
+Print platform diagnostics
+.TP
+.B import \fIPATH\fR
+Validate a cleaner definition file or directory without running it
+.TP
+.B config \fIOP\fR \fIKEY\fR \fIVALUE\fR
+Inspect and edit the configuration file (show/path/init/get/set)
+.TP
+.B completions \fISHELL\fR
+Generate a shell completion script (bash, zsh or fish)
+.TP
+.B man
+Generate a roff man page (for packaging)
+.RS
+.TP
+.B \-\-output \fIVALUE\fR
+Write sweep.1 into this directory instead of stdout
+.RE
+.SH SEE ALSO
+Full documentation: https://github.com/sweep-cleaner/sweep/tree/main/docs
