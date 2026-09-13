@@ -132,7 +132,7 @@ jobs:
           Copy-Item packaging/qml/build/Release/sweep-qml.exe gui-stage\
           Copy-Item packaging/qml/qml\* gui-stage\qml\ -Recurse
           Compress-Archive -Path gui-stage\* -DestinationPath sweep-qml-windows.zip
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: |
             sweep-*.tar.gz
