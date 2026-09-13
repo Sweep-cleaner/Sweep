@@ -67,7 +67,7 @@ indicatif = "0.17"
 libc = "0.2"
 
 [target.'cfg(windows)'.dependencies]
-winreg = "0.52"
+winreg = "0.56"
 
 [profile.release]
 opt-level = 3
