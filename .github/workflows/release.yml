@@ -28,7 +28,7 @@ jobs:
             target: aarch64-apple-darwin
             bin: sweep
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Code signing is optional: without a certificate the release is still
       # built and published, but Windows SmartScreen warns on first launch.
       # See packaging/windows/README.md for how to obtain and configure one.
