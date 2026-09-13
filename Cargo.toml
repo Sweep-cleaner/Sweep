@@ -60,7 +60,7 @@ rusqlite = { version = "0.32", features = ["bundled"] }
 # --- misc -------------------------------------------------------------------
 dirs = "5"
 rand = "0.8"
-sysinfo = "0.30"
+sysinfo = "0.39"
 indicatif = "0.17"
 
 [target.'cfg(unix)'.dependencies]
